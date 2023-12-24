@@ -256,3 +256,8 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+api/api_JMAI/share/jupyter/kernels/python3/kernel.json
+api/api_JMAI/share/jupyter/
+api/api_JMAI/Scripts/
+api/api_JMAI/Include/
+api/api_JMAI/share/
