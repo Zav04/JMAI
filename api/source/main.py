@@ -1,9 +1,15 @@
 from sqlalchemy.sql import text
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, status, Depends
 from database import SessionLocal
 import uvicorn
+# from decouple import config
+# from supabase import create_client, Client
+
+# url = config("SUPERBASE_URL")
+# key = config("SUPERBASE_KEY")
 
 api = FastAPI()
+# supabase: Client = create_client(url, key)
 
 # Função para obter a sessão do banco de dados
 def get_db():
@@ -12,8 +18,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
 
 
 if __name__ == "__main__":

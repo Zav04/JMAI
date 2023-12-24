@@ -261,3 +261,16 @@ api/api_JMAI/share/jupyter/
 api/api_JMAI/Scripts/
 api/api_JMAI/Include/
 api/api_JMAI/share/
+api/emulation/api_emulation/android/
+api/emulation/api_emulation/ios/Flutter/AppFrameworkInfo.plist
+api/emulation/api_emulation/ios/Flutter/
+api/emulation/api_emulation/ios/Runner/
+api/emulation/api_emulation/ios/
+api/emulation/api_emulation/linux/.gitignore
+api/emulation/api_emulation/linux/
+api/emulation/api_emulation/macos/
+api/emulation/api_emulation/web/
+api/emulation/api_emulation/windows/
+api/source/api_JMAI/Include/site/
+api/source/api_JMAI/Scripts/
+api/source/api_JMAI/share/
