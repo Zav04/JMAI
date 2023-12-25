@@ -1,16 +1,21 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base  # Atualizado aqui
+from sqlalchemy.orm import sessionmaker, declarative_base 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+password = os.getenv('DB_PASSWORD')
+host = os.getenv('DB_HOST')
+port = os.getenv('DB_PORT')
+user = os.getenv('DB_USER')
+database_name = os.getenv('DB_NAME')
+
+URL_DATABASE = f'postgresql://{user}:{password}@{host}:{int(port)}/{database_name}'
 
 
-#import os
-
-#password = os.getenv('tDd15fe2LxCmqV8J')
-#URL_DATABASE = f'postgresql://postgres:{password}@db.exaeozpjrqqzfrztgulf.supabase.co:5432/postgres'
-
-URL_DATABASE = f'postgresql://postgres.exaeozpjrqqzfrztgulf:[tDd15fe2LxCmqV8J]@aws-0-eu-central-1.pooler.supabase.com:5432/postgres'
-
-engine = create_engine(URL_DATABASE)
-
+engine = create_engine(
+    URL_DATABASE)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()  # Não mudou o uso, apenas a importação
+Base = declarative_base()

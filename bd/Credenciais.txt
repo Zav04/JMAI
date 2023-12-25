@@ -1,0 +1,2 @@
+BD= db.udhumpgfbabvtpjsbehd.supabase.co
+PW = HhyGP8xZrQO8AafU
