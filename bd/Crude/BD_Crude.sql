@@ -1,28 +1,29 @@
-CREATE TABLE Utente (
-  id_utente                            BIGSERIAL NOT NULL, 
-  hashed_id                            varchar(255) UNIQUE, 
-  id_utilizador                        BIGINT NOT NULL UNIQUE, 
-  "Nome Completo"                      varchar(255) NOT NULL, 
-  Sexo                                 varchar(255) NOT NULL, 
-  morada                               varchar(255) NOT NULL, 
-  data_nascimento                      varchar(255) NOT NULL, 
-  pais                                 varchar(255) NOT NULL, 
-  distrito                             varchar(255) NOT NULL, 
-  concelho                             varchar(255) NOT NULL, 
-  freguesia                            varchar(255) NOT NULL, 
-  naturalidade                         varchar(255) NOT NULL, 
-  pais_nacionalidade                   varchar(255) NOT NULL, 
-  tipo_documento_identificacao         BIGINT NOT NULL, 
-  numero_de_documento_de_identificação BIGINT NOT NULL, 
-  numero_utente_saude                  BIGINT NOT NULL, 
-  "numero _de_identificacao_fiscal"    BIGINT NOT NULL, 
-  numero_de_segurança_social           BIGINT NOT NULL, 
-  numero_de_telemovel                  BIGINT NOT NULL, 
-  obito                                bool NOT NULL, 
-  id_entidade_responsavel              BIGINT NOT NULL UNIQUE, 
-  PRIMARY KEY (id_utente));
-
-
+  CREATE TABLE Utente (
+  id_utente                             BIGSERIAL NOT NULL, 
+  hashed_id                             VARCHAR(255) UNIQUE, 
+  id_utilizador                         BIGINT NOT NULL UNIQUE, 
+  nome_completo                         VARCHAR(255) NOT NULL, 
+  Sexo                                  VARCHAR(255) NOT NULL, 
+  morada                                VARCHAR(255) NOT NULL, 
+  data_nascimento                       VARCHAR(255) NOT NULL, 
+  pais                                  VARCHAR(255) NOT NULL, 
+  distrito                             varchar(255) NOT NULL UNIQUE, 
+  concelho                             varchar(255) NOT NULL UNIQUE, 
+  freguesia                            varchar(255) NOT NULL UNIQUE, 
+  naturalidade                          VARCHAR(255) NOT NULL, 
+  pais_nacionalidade                    VARCHAR(255) NOT NULL, 
+  tipo_documento_identificacao          BIGINT NOT NULL, 
+  numero_de_documento_de_identificacao  BIGINT NOT NULL, 
+  numero_utente_saude                   BIGINT NOT NULL, 
+  numero_de_identificacao_fiscal        BIGINT NOT NULL, 
+  numero_de_seguranca_social            BIGINT NOT NULL, 
+  numero_de_telemovel                   BIGINT NOT NULL, 
+  obito                                 BOOLEAN NOT NULL, 
+  id_entidade_responsavel               BIGINT NOT NULL UNIQUE, 
+  PRIMARY KEY (id_utente)
+);
+  
+  
 CREATE TABLE Utilizador (
   id_utilizador BIGSERIAL NOT NULL, 
   hashed_id     varchar(255) UNIQUE, 
@@ -30,8 +31,8 @@ CREATE TABLE Utilizador (
   password      varchar(255) NOT NULL, 
   id_cargo      BIGINT NOT NULL, 
   PRIMARY KEY (id_utilizador));
-
-
+  
+  
 CREATE TABLE Secretarios_Clinicos (
   id_secretarios_clinicos  BIGSERIAL NOT NULL, 
   hashed_id                varchar(255) UNIQUE, 
@@ -46,8 +47,8 @@ CREATE TABLE Secretarios_Clinicos (
   freguesia                varchar(255) NOT NULL, 
   pais_nacionalidade       varchar(255) NOT NULL, 
   PRIMARY KEY (id_secretarios_clinicos));
-
-
+  
+  
 CREATE TABLE Agendamento_JuntaMedica (
   id_agendamento_junta_medica BIGSERIAL NOT NULL, 
   hashed_id                   varchar(255) UNIQUE, 
@@ -55,8 +56,8 @@ CREATE TABLE Agendamento_JuntaMedica (
   data                        date NOT NULL, 
   status                      BIGINT NOT NULL, 
   PRIMARY KEY (id_agendamento_junta_medica));
-
-
+  
+  
 CREATE TABLE RequerimentoJuntaMedica (
   id_requerimento_junta_medica BIGSERIAL NOT NULL, 
   hashed_id                    varchar(255) UNIQUE, 
@@ -67,8 +68,8 @@ CREATE TABLE RequerimentoJuntaMedica (
   observacoes                  varchar(255), 
   type                         BIGINT NOT NULL, 
   PRIMARY KEY (id_requerimento_junta_medica));
-
-
+  
+  
 CREATE TABLE PreAvaliacao (
   id_pre_avaliacao             BIGSERIAL NOT NULL, 
   hashed_id                    varchar(255) UNIQUE, 
@@ -78,8 +79,8 @@ CREATE TABLE PreAvaliacao (
   observacoes                  varchar(255), 
   data_pre_avaliacao           date NOT NULL, 
   PRIMARY KEY (id_pre_avaliacao));
-
-
+  
+  
 CREATE TABLE JuntaMedica (
   id_junta_medica             BIGSERIAL NOT NULL, 
   hashed_id                   varchar(255) UNIQUE, 
@@ -87,29 +88,29 @@ CREATE TABLE JuntaMedica (
   resultado                   float4 NOT NULL, 
   observacoes                 varchar(255), 
   PRIMARY KEY (id_junta_medica));
-
-
+  
+  
 CREATE TABLE Medicos_JuntaMedica (
   id_medicos_junta_medica BIGSERIAL NOT NULL, 
   id_medico               BIGINT NOT NULL UNIQUE, 
   id_junta_medica         BIGINT NOT NULL UNIQUE, 
   PRIMARY KEY (id_medicos_junta_medica));
-
-
+  
+  
 CREATE TABLE Cargo (
   id_cargo  SERIAL NOT NULL, 
   hashed_id varchar(255) UNIQUE, 
   cargo     varchar(255) NOT NULL UNIQUE, 
   PRIMARY KEY (id_cargo));
-
-
+  
+  
 CREATE TABLE Especialidade (
   id_especialidade BIGSERIAL NOT NULL, 
   hashed_id        varchar(255) UNIQUE, 
   especialidade    varchar(255) NOT NULL, 
   PRIMARY KEY (id_especialidade));
-
-
+  
+  
 CREATE TABLE Medico (
   id_medico          BIGSERIAL NOT NULL, 
   hashed_id          varchar(255) UNIQUE, 
@@ -127,8 +128,8 @@ CREATE TABLE Medico (
   freguesia          varchar(255) NOT NULL, 
   pais_nacionalidade varchar(255) NOT NULL, 
   PRIMARY KEY (id_medico));
-
-
+  
+  
 CREATE TABLE EntidadeResponsavel (
   id_entidade_responsavel BIGSERIAL NOT NULL, 
   hashed_id               varchar(255) UNIQUE, 
@@ -137,8 +138,8 @@ CREATE TABLE EntidadeResponsavel (
   descricao               varchar(255), 
   pais                    varchar(255) NOT NULL, 
   PRIMARY KEY (id_entidade_responsavel));
-
-
+  
+  
 ALTER TABLE PreAvaliacao ADD CONSTRAINT FKPreAvaliac576859 FOREIGN KEY (id_requerimento_junta_medica) REFERENCES RequerimentoJuntaMedica (id_requerimento_junta_medica);
 ALTER TABLE Agendamento_JuntaMedica ADD CONSTRAINT FKAgendament432865 FOREIGN KEY (id_pre_avaliacao) REFERENCES PreAvaliacao (id_pre_avaliacao);
 ALTER TABLE Utilizador ADD CONSTRAINT FKUtilizador366594 FOREIGN KEY (id_cargo) REFERENCES Cargo (id_cargo);

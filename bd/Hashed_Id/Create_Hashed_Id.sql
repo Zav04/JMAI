@@ -64,3 +64,7 @@ FOR EACH ROW EXECUTE FUNCTION hash_id('id_cargo');
 CREATE OR REPLACE TRIGGER hash_id_before_insert_Especialidade
 AFTER INSERT ON Especialidade
 FOR EACH ROW EXECUTE FUNCTION hash_id('id_especialidade');
+
+CREATE OR REPLACE TRIGGER hash_id_before_entidade_responsavel
+AFTER INSERT ON EntidadeResponsavel
+FOR EACH ROW EXECUTE FUNCTION hash_id('id_entidade_responsavel');
