@@ -1,34 +1,36 @@
-import 'package:admin/constants.dart';
-import 'package:admin/controllers/MenuAppController.dart';
-import 'package:admin/screens/main/main_screen.dart';
+import 'package:JMAI/constants.dart';
+import 'package:JMAI/controllers/MenuAppController.dart';
+import 'package:JMAI/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import './screens/sing_up/sing_up.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() {
+  setPathUrlStrategy();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'JMAI - Juntas Médicas',
-      theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: bgColor,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-            .apply(bodyColor: Colors.black),
-        canvasColor: secondaryColor,
-      ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => MenuAppController(),
-          ),
-        ],
-        child: MainScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => MenuAppController()),
+      ],
+      child: MaterialApp(
+        title: 'JMAI - Juntas Médicas',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => LoginScreen(),
+          '/signup': (context) => Singup(),
+          // ... outras rotas
+        },
       ),
     );
   }

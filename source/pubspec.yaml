@@ -1,5 +1,5 @@
-name: admin
-description: A new Flutter project.
+name: JMAI
+description: JMAI - Juntas Médicas.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -23,15 +23,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.3
-
+  gap: ^3.0.1
   google_fonts: ^4.0.4
   flutter_svg: ^2.0.5
   fl_chart: ^0.62.0
   provider: ^6.0.5
+  cupertino_icons: ^1.0.2
+  url_strategy: ^0.2.0
+  firebase_core: any
+  cloud_firestore: ^4.8.2
+  firebase_auth: ^4.15.3
+  firebase_storage: ^11.2.4
+  fluttertoast: ^8.2.2
+  font_awesome_flutter: ^10.6.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +57,8 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/images/logo-black.svg
+    - assets/images/logo-white.svg
+    - assets/images/logo-color.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

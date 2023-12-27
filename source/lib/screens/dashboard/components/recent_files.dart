@@ -1,4 +1,4 @@
-import 'package:admin/models/RecentFile.dart';
+import 'package:JMAI/models/RecentFile.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

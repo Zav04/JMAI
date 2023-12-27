@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:admin/constants.dart';
+import 'package:JMAI/constants.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({
     Key? key,
   }) : super(key: key);
 
+//TODO FALTA MANDAR PARA AS PAGINAS CERTAS DEPOIS
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: secondaryColor,
+        color: bgColor,
         child: ListView(
           children: [
             DrawerHeader(
-              child: SvgPicture.asset("assets/images/logo-color.svg"),
+              child: SvgPicture.asset("assets/images/logo-no-background.svg"),
             ),
             DrawerListTile(
               title: "Dashboard",
@@ -89,8 +90,8 @@ class _DrawerListTileState extends State<DrawerListTile> {
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
         color: _isHovered
-            ? Colors.lightBlueAccent
-            : secondaryColor, // Cor do retângulo ao passar o mouse
+            ? secondaryColor
+            : bgColor, // Cor do retângulo ao passar o mouse
         child: ListTile(
           onTap: widget.press,
           horizontalTitleGap: 0.0,

@@ -1,5 +1,5 @@
-import 'package:admin/controllers/MenuAppController.dart';
-import 'package:admin/responsive.dart';
+import 'package:JMAI/controllers/MenuAppController.dart';
+import 'package:JMAI/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -48,9 +48,9 @@ class ProfileCard extends StatelessWidget {
         vertical: defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: bgColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        border: Border.all(color: Colors.black),
+        border: null,
       ),
       child: Row(
         children: [
