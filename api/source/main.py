@@ -2,8 +2,17 @@ from sqlalchemy.sql import text
 from fastapi import FastAPI, status, Depends
 from database import SessionLocal
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 api = FastAPI()
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
 
 def get_db():
     db = SessionLocal()
