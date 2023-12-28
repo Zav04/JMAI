@@ -28,7 +28,6 @@ CREATE TABLE Utilizador (
   id_utilizador BIGSERIAL NOT NULL, 
   hashed_id     varchar(255) UNIQUE, 
   email         varchar(255) NOT NULL UNIQUE, 
-  password      varchar(255) NOT NULL, 
   id_cargo      BIGINT NOT NULL, 
   PRIMARY KEY (id_utilizador));
   

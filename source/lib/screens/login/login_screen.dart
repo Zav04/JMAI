@@ -4,10 +4,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants.dart';
 import '../main/main_screen.dart';
 import '../sing_up/sing_up.dart';
+import '../../controllers/API_Connection.dart';
+import '../../overlay/ErrorAlert.dart';
+import '../../overlay/WarningAlert.dart';
+import '../../overlay/SuccessAlert.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
+  @override
+  _LoginScreen createState() => _LoginScreen();
+}
+
+class _LoginScreen extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -88,7 +97,8 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 30),
                 TextButton(
                   onPressed: () {
-                    // Implementar esqueceu a senha
+                    // TODOImplementar esqueceu a senha
+                    ErrorAlert.show(context, 'Ocorreu um erro:');
                   },
                   child: const Text(
                     'Esqueceu-se da sua Palavra passe',

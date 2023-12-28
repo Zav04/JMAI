@@ -1,4 +1,3 @@
-import 'package:JMAI/constants.dart';
 import 'package:JMAI/controllers/MenuAppController.dart';
 import 'package:JMAI/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import './screens/sing_up/sing_up.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
   setPathUrlStrategy();
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
