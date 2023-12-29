@@ -1,10 +1,8 @@
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'dart:html' as html;
 import 'dart:typed_data';
-import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class RequerimentoForm extends StatefulWidget {

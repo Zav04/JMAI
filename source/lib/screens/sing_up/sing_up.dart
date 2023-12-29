@@ -268,6 +268,33 @@ class _SingupState extends State<Singup> {
                           isExpanded: true,
                         ),
                       ),
+                      const SizedBox(width: 20),
+                      Flexible(
+                        child: TextFormField(
+                          //controller: _birthDateController,
+                          decoration: InputDecoration(
+                            labelText: 'Validade Identificação',
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.calendar_today),
+                              onPressed: _presentDatePicker,
+                            ),
+                          ),
+                          keyboardType: TextInputType.datetime,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9\-]')),
+                            createAutoHyphenDateFormatter(), // Adiciona o formatador personalizado
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Insira a Validade da Identificação';
+                            }
+                            // Adicione mais validação conforme necessário
+                            return null;
+                          },
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -275,7 +302,7 @@ class _SingupState extends State<Singup> {
                     children: [
                       Flexible(
                         child: TextFormField(
-                          controller: _phoneNumberController,
+                          //controller: _phoneNumberController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº Iden. Fiscal',
@@ -290,7 +317,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          controller: _phoneNumberController,
+                          //controller: _phoneNumberController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº de Identificação',
@@ -305,7 +332,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          controller: _phoneNumberController,
+                          //controller: _phoneNumberController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº Segurança Social',
@@ -320,7 +347,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          controller: _phoneNumberController,
+                          //controller: _phoneNumberController,
                           keyboardType: TextInputType.phone,
                           decoration: const InputDecoration(
                             labelText: 'Nº Utente Saúde',
@@ -563,7 +590,7 @@ class _SingupState extends State<Singup> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 150),
                   ElevatedButton(
                     onPressed: () {
                       // TODO Lógica para submeter o formulário
@@ -574,8 +601,9 @@ class _SingupState extends State<Singup> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      fixedSize: const Size(200, 50),
                     ),
-                    child: Text('Registrar'),
+                    child: Text('Registar', style: TextStyle(fontSize: 20)),
                   ),
                   const SizedBox(height: 20),
                 ],

@@ -1,8 +1,6 @@
 import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
 import 'requerimento_form.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-
 import '../main/components/constants.dart';
 import 'components/header.dart';
 import '../../screens/dashboard/components/tabela.dart';
