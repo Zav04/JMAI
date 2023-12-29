@@ -138,7 +138,7 @@ CREATE TABLE EntidadeResponsavel (
   pais                    varchar(255) NOT NULL, 
   PRIMARY KEY (id_entidade_responsavel));
   
-  
+ALTER TABLE Utente ADD COLUMN documento_validade DATE;
 ALTER TABLE PreAvaliacao ADD CONSTRAINT FKPreAvaliac576859 FOREIGN KEY (id_requerimento_junta_medica) REFERENCES RequerimentoJuntaMedica (id_requerimento_junta_medica);
 ALTER TABLE Agendamento_JuntaMedica ADD CONSTRAINT FKAgendament432865 FOREIGN KEY (id_pre_avaliacao) REFERENCES PreAvaliacao (id_pre_avaliacao);
 ALTER TABLE Utilizador ADD CONSTRAINT FKUtilizador366594 FOREIGN KEY (id_cargo) REFERENCES Cargo (id_cargo);

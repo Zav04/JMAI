@@ -237,12 +237,13 @@
     <!-- Removes the loading indicator after 10 seconds -->
     <script>
       window.onload = function () {
+        loadingIndicator.remove();
         setTimeout(function () {
           var loadingIndicator = document.getElementById("loading_container");
           if (loadingIndicator) {
             loadingIndicator.remove();
           }
-        }, 10000);
+        }, 0);
       };
     </script>
   </body>

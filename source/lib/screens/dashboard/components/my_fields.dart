@@ -1,8 +1,8 @@
 import 'package:JMAI/models/MyFiles.dart';
-import 'package:JMAI/responsive.dart';
+import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
+import '../../main/components/constants.dart';
 import 'file_info_card.dart';
 
 class MyFiles extends StatelessWidget {

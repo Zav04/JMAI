@@ -34,10 +34,12 @@ dependencies:
   cloud_firestore: ^4.8.2
   firebase_auth: ^4.15.3
   firebase_storage: ^11.2.4
-  fluttertoast: ^8.2.2
   font_awesome_flutter: ^10.6.0
   intl: ^0.19.0
   flutter_dotenv: ^5.1.0
+  file_picker: ^6.1.1
+  html: ^0.15.4
+  universal_html: ^2.2.4
 
 dev_dependencies:
   flutter_test:
@@ -57,9 +59,12 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    - assets/images/logo-black.svg
-    - assets/images/logo-white.svg
-    - assets/images/logo-color.svg
+    - .env
+    - assets/images/pdf_icon.svg
+    - assets/images/docx_icon.svg
+    - assets/images/excel_icon.svg
+    - assets/images/images_icon.svg
+    - assets/images/desconhecido_icon.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

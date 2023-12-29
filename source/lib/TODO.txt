@@ -1,0 +1,4 @@
+Falta fazer login com registro no Firebase
+Falta fazer registro no Firebase e na nossa base de dados
+
+Faltar implementar todo o Backend

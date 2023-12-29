@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:JMAI/constants.dart';
+import 'package:JMAI/screens/main/components/constants.dart';
 
 class SideMenu extends StatelessWidget {
+  final Function(int) onItemSelected;
   const SideMenu({
+    required this.onItemSelected,
     Key? key,
   }) : super(key: key);
 
@@ -21,42 +23,42 @@ class SideMenu extends StatelessWidget {
             DrawerListTile(
               title: "Dashboard",
               svgSrc: "assets/icons/menu_dashboard.svg",
-              press: () {},
+              press: () => onItemSelected(0),
             ),
             DrawerListTile(
-              title: "Verificação de Requerimentos",
+              title: "Requerimentos",
               svgSrc: "assets/icons/menu_tran.svg",
-              press: () {},
+              press: () => onItemSelected(1),
             ),
             DrawerListTile(
               title: "Task",
               svgSrc: "assets/icons/menu_task.svg",
-              press: () {},
+              press: () => onItemSelected(2),
             ),
             DrawerListTile(
               title: "Documents",
               svgSrc: "assets/icons/menu_doc.svg",
-              press: () {},
+              press: () => onItemSelected(3),
             ),
             DrawerListTile(
               title: "Store",
               svgSrc: "assets/icons/menu_store.svg",
-              press: () {},
+              press: () => onItemSelected(4),
             ),
             DrawerListTile(
               title: "Notification",
               svgSrc: "assets/icons/menu_notification.svg",
-              press: () {},
+              press: () => onItemSelected(5),
             ),
             DrawerListTile(
               title: "Profile",
               svgSrc: "assets/icons/menu_profile.svg",
-              press: () {},
+              press: () => onItemSelected(6),
             ),
             DrawerListTile(
               title: "Settings",
               svgSrc: "assets/icons/menu_setting.svg",
-              press: () {},
+              press: () => onItemSelected(7),
             ),
           ],
         ),

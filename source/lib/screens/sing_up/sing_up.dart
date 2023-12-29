@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'distritos_concelhos.dart';
-import 'concelhos_freguesias.dart';
-import '../../constants.dart';
+import '../main/components/Maps/distritos_concelhos.dart';
+import '../main/components/Maps/concelhos_freguesias.dart';
+import '../main/components/Maps/paises.dart';
+import '../main/components/constants.dart';
 import 'package:flutter/services.dart';
 import '../main/components/password_field.dart';
 import '../main/components/codigo_postal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../controllers/API_Connection.dart';
 import '../../overlay/ErrorAlert.dart';
-import '../../screens/dashboard/components/dropdown_autocomplete.dart';
 
 class Singup extends StatefulWidget {
   const Singup({Key? key}) : super(key: key);
@@ -31,6 +31,8 @@ class _SingupState extends State<Singup> {
 
   String _selectedGender = 'Masculino';
   String _selectedIdentification = 'CC';
+  String _selectedpaisNaturalidade = 'Portugal';
+  String _selectedpaisNacionalidade = 'Portugal';
   String? selectedDistrito;
   String? selectedConcelho;
   String? selectedFreguesia;
@@ -185,6 +187,60 @@ class _SingupState extends State<Singup> {
                     children: [
                       Flexible(
                         child: DropdownButtonFormField<String>(
+                          value: _selectedpaisNaturalidade,
+                          items: naturalidade
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedpaisNaturalidade = newValue!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Naturalidade',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 5),
+                          ),
+                          isExpanded: true,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Flexible(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedpaisNacionalidade,
+                          items: paises
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedpaisNacionalidade = newValue!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Nacionalidade',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 5),
+                          ),
+                          isExpanded: true,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Flexible(
+                        child: DropdownButtonFormField<String>(
                           value: _selectedIdentification,
                           items: <String>[
                             'CC',
@@ -213,11 +269,15 @@ class _SingupState extends State<Singup> {
                           isExpanded: true,
                         ),
                       ),
-                      SizedBox(width: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
                       Flexible(
                         child: TextFormField(
                           controller: _phoneNumberController,
-                          keyboardType: TextInputType.phone,
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº Iden. Fiscal',
                             border: OutlineInputBorder(),
@@ -232,7 +292,7 @@ class _SingupState extends State<Singup> {
                       Flexible(
                         child: TextFormField(
                           controller: _phoneNumberController,
-                          keyboardType: TextInputType.phone,
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº de Identificação',
                             border: OutlineInputBorder(),
@@ -247,7 +307,7 @@ class _SingupState extends State<Singup> {
                       Flexible(
                         child: TextFormField(
                           controller: _phoneNumberController,
-                          keyboardType: TextInputType.phone,
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº Segurança Social',
                             border: OutlineInputBorder(),
@@ -289,6 +349,7 @@ class _SingupState extends State<Singup> {
                       const SizedBox(width: 20),
                       Flexible(
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           controller: _doorNumberController,
                           decoration: InputDecoration(
                             labelText: 'Número da Porta',
@@ -299,6 +360,7 @@ class _SingupState extends State<Singup> {
                       const SizedBox(width: 20),
                       Flexible(
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           controller: _floorNumberController,
                           decoration: InputDecoration(
                             labelText: 'Andar',
@@ -487,6 +549,7 @@ class _SingupState extends State<Singup> {
                     children: [
                       Flexible(
                         child: TextField(
+                          keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
                           decoration: InputDecoration(
                             labelText: 'Email',
@@ -506,6 +569,13 @@ class _SingupState extends State<Singup> {
                     onPressed: () {
                       // TODO Lógica para submeter o formulário
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: buttonColor,
+                      onPrimary: buttonTextColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     child: Text('Registrar'),
                   ),
                   const SizedBox(height: 20),

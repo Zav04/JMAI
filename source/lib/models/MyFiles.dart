@@ -1,4 +1,4 @@
-import 'package:JMAI/constants.dart';
+import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
 
 class CloudStorageInfo {

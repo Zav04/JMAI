@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../main/components/password_field.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../constants.dart';
+import '../main/components/constants.dart';
 import '../main/main_screen.dart';
 import '../sing_up/sing_up.dart';
 import '../../controllers/API_Connection.dart';
@@ -51,6 +51,7 @@ class _LoginScreen extends State<LoginScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: TextField(
+                          keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -86,7 +87,8 @@ class _LoginScreen extends State<LoginScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
+                      onPrimary: buttonTextColor,
+                      primary: buttonColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -97,8 +99,9 @@ class _LoginScreen extends State<LoginScreen> {
                 SizedBox(height: 30),
                 TextButton(
                   onPressed: () {
+                    checkConnection();
                     // TODOImplementar esqueceu a senha
-                    ErrorAlert.show(context, 'Ocorreu um erro:');
+                    SuccessAlert.show(context, 'Ocorreu um erro:');
                   },
                   child: const Text(
                     'Esqueceu-se da sua Palavra passe',

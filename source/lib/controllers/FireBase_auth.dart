@@ -1,6 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import '../overlay/ErrorAlert.dart';
-import '../overlay/WarningAlert.dart';
 
 class FirebaseAuthService {
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,9 +10,11 @@ class FirebaseAuthService {
           email: email, password: password);
       return credential.user;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {}
+      if (e.code == 'email-already-in-use') {
+        return null;
+      }
+      return null;
     }
-    return null;
   }
 
   Future<User?> signInWithEmailAndPassword(
