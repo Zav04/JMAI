@@ -24,23 +24,19 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           inputDecorationTheme: InputDecorationTheme(
             labelStyle: TextStyle(color: Colors.grey),
-            border: OutlineInputBorder(), // Bordas padrão para todos os estados
+            border: OutlineInputBorder(),
             enabledBorder: OutlineInputBorder(
-              // Bordas específicas quando o TextField está habilitado, mas não focado
               borderSide: BorderSide(color: Colors.grey),
             ),
             focusedBorder: OutlineInputBorder(
-              // Bordas específicas para quando o TextField está focado
               borderSide: BorderSide(color: Colors.blue),
             ),
             floatingLabelStyle: TextStyle(color: Colors.blue),
           ),
           textSelectionTheme: TextSelectionThemeData(
-            cursorColor: Colors.blue, // Cor do cursor
-            selectionColor:
-                Colors.blue.withOpacity(0.5), // Cor da seleção de texto
-            selectionHandleColor:
-                Colors.blue, // Cor do manipulador de seleção de texto
+            cursorColor: Colors.blue,
+            selectionColor: Colors.blue.withOpacity(0.5),
+            selectionHandleColor: Colors.blue,
           ),
         ),
         initialRoute: '/',

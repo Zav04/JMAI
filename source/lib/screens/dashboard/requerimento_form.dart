@@ -2,12 +2,10 @@ import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html' as html;
 import 'dart:typed_data';
 import 'dart:convert';
-import '../main/components/pick/file_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 
 class RequerimentoForm extends StatefulWidget {
   const RequerimentoForm({Key? key}) : super(key: key);
@@ -17,7 +15,6 @@ class RequerimentoForm extends StatefulWidget {
 }
 
 class _RequerimentoFormState extends State<RequerimentoForm> {
-  FilePickerPlatform _filePicker = getPlatformFilePicker();
   List<File> uploadedFiles = [];
   List<String> webUploadedFileNames = [];
   List<Uint8List> webUploadedFiles = [];
@@ -43,7 +40,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
           child: Container(
             width: double.infinity,
             child: Card(
-              color: bgColor,
+              color: bgColor, // Use a cor desejada
               margin: const EdgeInsets.all(10),
               child: Padding(
                 padding: const EdgeInsets.all(10),
@@ -93,7 +90,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                     TextButton.icon(
                       icon: Icon(Icons.upload_file),
                       label: Text('Carregar ficheiro'),
-                      onPressed: kIsWeb ? _pickWebFile : _pickMobileFile,
+                      onPressed: _pickFile,
                     ),
                     buildFileList(),
                     const SizedBox(height: 100),
@@ -121,27 +118,20 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                               style: TextStyle(color: buttonTextColor),
                             ),
                             style: ElevatedButton.styleFrom(
-                              primary:
-                                  cancelButtonColor, // Define a cor de fundo do botão aqui
+                              primary: cancelButtonColor,
                             ),
                           ),
                         ),
                         SizedBox(width: 20),
                         Flexible(
                           child: ElevatedButton(
-                            onPressed:
-                                (_aceitaTermos && (_multioso || _ipveiculo))
-                                    ? () {
-                                        // TODO: Lógica para submeter o formulário
-                                      }
-                                    : null,
+                            onPressed: _isFormValid() ? _submitForm : null,
                             child: Text(
                               'Submeter Requerimento',
                               style: TextStyle(color: buttonTextColor),
                             ),
                             style: ElevatedButton.styleFrom(
-                              primary:
-                                  buttonColor, // Define a cor de fundo do botão aqui
+                              primary: buttonColor,
                             ),
                           ),
                         ),
@@ -157,29 +147,55 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
     );
   }
 
+  void _pickFile() async {
+    final html.FileUploadInputElement input = html.FileUploadInputElement()
+      ..accept = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg';
+    input.click();
+
+    input.onChange.listen((e) {
+      final files = input.files;
+      if (files != null && files.isNotEmpty) {
+        final file = files[0];
+        final reader = html.FileReader();
+        reader.onLoad.listen((e) {
+          final result = reader.result;
+          if (result is Uint8List) {
+            setState(() {
+              webUploadedFiles.add(result);
+              webUploadedFileNames.add(file.name);
+            });
+          } else {
+            // Tratar erro de leitura do ficheiro
+          }
+        });
+        reader.readAsArrayBuffer(file);
+      } else {
+        // Nenhum ficheiro selecionado
+      }
+    });
+  }
+
   Widget buildFileIcon(String fileName, String assetName) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // FittedBox se ajustará ao espaço disponível
         FittedBox(
           child: SvgPicture.asset(
             assetName,
-            width: 40, // Tamanho máximo do ícone
-            height: 40, // Tamanho máximo do ícone
+            width: 40,
+            height: 40,
           ),
         ),
-        SizedBox(height: 4), // Espaço entre o ícone e o texto
-        // O Wrap permite que o texto ocupe mais de uma linha se necessário
+        SizedBox(height: 4),
         Wrap(
           children: [
             Text(
               fileName,
               style: TextStyle(
-                  fontSize:
-                      12), // Você pode ajustar o tamanho da fonte se necessário
+                fontSize: 12,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ],
@@ -189,152 +205,85 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   }
 
   Widget buildFileList() {
-    if (kIsWeb) {
-      return SingleChildScrollView(
-        child: Column(
-          children: webUploadedFileNames.asMap().entries.map((entry) {
-            final index = entry.key;
-            final fileName = entry.value;
-            final fileExtension = fileName.split('.').last.toLowerCase();
+    return SingleChildScrollView(
+      child: Column(
+        children: webUploadedFileNames.asMap().entries.map((entry) {
+          final index = entry.key;
+          final fileName = entry.value;
+          final fileExtension = fileName.split('.').last.toLowerCase();
 
-            String assetName;
-            switch (fileExtension) {
-              case 'pdf':
-                assetName = 'assets/images/pdf_icon.svg';
-                break;
-              case 'doc':
-              case 'docx':
-                assetName = 'assets/images/docx_icon.svg';
-                break;
-              case 'xls':
-              case 'xlsx':
-                assetName = 'assets/images/excel_icon.svg';
-                break;
-              case 'png':
-              case 'jpg':
-              case 'jpeg':
-                assetName = 'assets/images/images_icon.svg';
-                break;
-              default:
-                assetName = 'assets/images/unknown_icon.svg';
-                break;
-            }
+          String assetName;
+          switch (fileExtension) {
+            case 'pdf':
+              assetName = 'assets/images/pdf_icon.svg';
+              break;
+            case 'doc':
+            case 'docx':
+              assetName = 'assets/images/docx_icon.svg';
+              break;
+            case 'xls':
+            case 'xlsx':
+              assetName = 'assets/images/excel_icon.svg';
+              break;
+            case 'png':
+            case 'jpg':
+            case 'jpeg':
+              assetName = 'assets/images/images_icon.svg';
+              break;
+            default:
+              assetName = 'assets/images/unknown_icon.svg';
+              break;
+          }
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: IntrinsicHeight(
-                // Adiciona-se IntrinsicHeight para manter a altura do ícone e do texto iguais
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceAround, // Isso distribui o espaço uniformemente
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      assetName,
-                      width: 40, // Tamanho do ícone
-                      height: 40, // Tamanho do ícone
-                    ),
-                    SizedBox(width: 8), // Espaçamento entre o ícone e o texto
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal:
-                                8.0), // Adiciona-se padding horizontal para o texto
-                        child: Text(
-                          fileName,
-                          style: TextStyle(fontSize: 14),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    assetName,
+                    width: 40,
+                    height: 40,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                      ),
+                      child: Text(
+                        fileName,
+                        style: TextStyle(fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          webUploadedFiles.removeAt(index);
-                          webUploadedFileNames.removeAt(index);
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        webUploadedFiles.removeAt(index);
+                        webUploadedFileNames.removeAt(index);
+                      });
+                    },
+                  ),
+                ],
               ),
-            );
-          }).toList(),
-        ),
-      );
-    } else {
-      {
-        // Aqui você pode adicionar lógica semelhante para exibir ícones com base nas extensões de arquivo
-        return Column(
-          children: uploadedFiles.map((file) {
-            final fileExtension = file.path.split('.').last.toLowerCase();
-            IconData? fileTypeIcon;
-            if (fileExtension == 'pdf') {
-              fileTypeIcon = Icons.picture_as_pdf;
-            } else if (fileExtension == 'doc' || fileExtension == 'docx') {
-              fileTypeIcon = Icons.description;
-            } else {
-              fileTypeIcon = Icons.insert_drive_file; // Ícone padrão
-            }
-
-            return ListTile(
-              leading: Icon(fileTypeIcon),
-              title: Text(file.path),
-            );
-          }).toList(),
-        );
-      }
-    }
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 
-  void _pickMobileFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
-    if (result != null) {
-      List<File> files = result.files
-          .where((file) => file.path != null) // Filter out null file paths
-          .map((file) => File(file.path!)) // Use non-null file paths
-          .toList();
-      setState(() {
-        uploadedFiles.addAll(files);
-      });
-    } else {
-      // The user canceled the file selection
-    }
+  bool _isFormValid() {
+    return _aceitaTermos && (_multioso || _ipveiculo);
   }
 
-  void _pickWebFile() async {
-    if (kIsWeb) {
-      final html.FileUploadInputElement input = html.FileUploadInputElement()
-        ..accept = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg';
-      input.click();
-
-      input.onChange.listen((e) {
-        final files = input.files;
-        if (files != null && files.isNotEmpty) {
-          final file = files[0];
-          final reader = html.FileReader(); // Use dart:html.FileReader aqui
-          reader.onLoad.listen((e) {
-            final result = reader.result;
-            if (result is Uint8List) {
-              setState(() {
-                webUploadedFiles.add(result);
-                webUploadedFileNames.add(file.name);
-              });
-            } else {
-              // Tratar erro de leitura do ficheiro
-            }
-          });
-          reader.readAsArrayBuffer(file);
-        } else {
-          // Nenhum ficheiro selecionado
-        }
-      });
-    }
-  }
-
-  FilePickerPlatform getPlatformFilePicker() {
-    return kIsWeb ? FilePickerWeb() : FilePickerMobile();
+  void _submitForm() {
+    // Lógica para submeter o formulário
+    // Você pode implementar a lógica de envio do formulário aqui
   }
 }
