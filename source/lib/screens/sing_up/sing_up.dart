@@ -9,7 +9,6 @@ import '../main/components/password_field.dart';
 import '../main/components/codigo_postal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../controllers/API_Connection.dart';
-import '../../overlay/ErrorAlert.dart';
 
 class Singup extends StatefulWidget {
   const Singup({Key? key}) : super(key: key);

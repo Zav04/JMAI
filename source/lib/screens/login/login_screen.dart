@@ -3,10 +3,7 @@ import '../main/components/password_field.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../main/components/constants.dart';
 import '../main/main_screen.dart';
-import '../sing_up/sing_up.dart';
 import '../../controllers/API_Connection.dart';
-import '../../overlay/ErrorAlert.dart';
-import '../../overlay/WarningAlert.dart';
 import '../../overlay/SuccessAlert.dart';
 
 class LoginScreen extends StatefulWidget {

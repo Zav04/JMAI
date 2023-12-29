@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import '../main/components/constants.dart';
-import '../../controllers/API_Connection.dart';
-import '../../overlay/ErrorAlert.dart';
 import 'package:file_picker/file_picker.dart';
-import '../../overlay/WarningAlert.dart';
-import '../../overlay/SuccessAlert.dart';
 import '../main/components/responsive.dart';
 
 class RequerimentoForm extends StatefulWidget {
