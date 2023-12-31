@@ -1,37 +1,38 @@
 CREATE OR REPLACE FUNCTION register_utente(
-  p_email VARCHAR(255),
+p_email VARCHAR(255),
 p_password VARCHAR(255),
-  p_nome_completo VARCHAR(255),
-  p_sexo VARCHAR(255),
-  p_morada VARCHAR(255),
-	p_nr_porta VARCHAR(255),
-	p_nr_andar VARCHAR(255),
-	p_codigo_postal VARCHAR(255),
-  p_data_nascimento VARCHAR(255),
-  p_pais VARCHAR(255),
-  p_distrito VARCHAR(255),
-  p_concelho VARCHAR(255),
-  p_freguesia VARCHAR(255),
-  p_naturalidade VARCHAR(255),
-  p_pais_nacionalidade VARCHAR(255),
-  p_tipo_documento_identificacao VARCHAR(255),
-  p_numero_de_documento_de_identificacao VARCHAR(255),
-  p_numero_utente_saude VARCHAR(255),
-  p_numero_de_identificacao_fiscal VARCHAR(255),
-  p_numero_de_seguranca_social VARCHAR(255),
-  p_numero_de_telemovel VARCHAR(255),
-  p_id_entidade_responsavel VARCHAR(255),
-  p_documento_validade VARCHAR(255)
+p_nome_completo VARCHAR(255),
+p_sexo VARCHAR(255),
+p_morada VARCHAR(255),
+p_nr_porta VARCHAR(255),
+p_nr_andar VARCHAR(255),
+p_codigo_postal VARCHAR(255),
+p_data_nascimento VARCHAR(255),
+p_distrito VARCHAR(255),
+p_concelho VARCHAR(255),
+p_freguesia VARCHAR(255),
+p_naturalidade VARCHAR(255),
+p_pais_nacionalidade VARCHAR(255),
+p_tipo_documento_identificacao VARCHAR(255),
+p_numero_de_documento_de_identificacao VARCHAR(255),
+p_numero_utente_saude VARCHAR(255),
+p_numero_de_identificacao_fiscal VARCHAR(255),
+p_numero_de_seguranca_social VARCHAR(255),
+p_numero_de_telemovel VARCHAR(255),
+p_id_entidade_responsavel VARCHAR(255),
+p_documento_validade VARCHAR(255),
+p_justvalidate_inputs BOOL
 ) RETURNS BOOL AS $$
 DECLARE
   v_id_utilizador BIGINT;
   v_morada_completa TEXT;
   v_id_entidade_responsavel BIGINT;
+  v_tipo_documento_identificacao BIGINT;
 BEGIN
 
 
 	IF p_nome_completo IS NULL OR p_nome_completo = '' THEN
-        RAISE EXCEPTION 'Nome é um campo obrigatorio.';
+        RAISE EXCEPTION 'Nome Completo é um campo obrigatorio.';
     END IF;
 	
 	IF p_data_nascimento IS NULL or p_data_nascimento='' THEN
@@ -55,7 +56,7 @@ BEGIN
         RAISE EXCEPTION 'Data de validade do Documento de Identificação é um campo obrigatorio.';
     END IF;
 	
-	IF validate_date_string(p_documento_validade) IS FALSE THEN
+	IF validate_date_string_validade(p_documento_validade) IS FALSE THEN
         RAISE EXCEPTION 'Data de Validade do Documento de Identificação inválida.';
     END IF;
 	
@@ -98,19 +99,19 @@ BEGIN
         RAISE EXCEPTION 'Morada é um campo obrigatorio.';
     END IF;
 	
-	IF p_nr_porta IS NULL THEN
+	IF p_nr_porta IS NULL or p_nr_porta='' THEN
         RAISE EXCEPTION 'Número da porta é um campo obrigatorio.';
     END IF;
 	
-	IF p_nr_porta=0 THEN
+	IF p_nr_porta='0' THEN
         RAISE EXCEPTION 'Número da porta incorreto.';
     END IF;
 	
-	IF p_nr_andar IS NULL THEN
+	IF p_nr_andar IS NULL or p_nr_andar='' THEN
         p_nr_andar=NULL;
     END IF;
 	
-	IF p_nr_andar <> NULL AND p_nr_andar=0 THEN
+	IF  p_nr_andar!='' AND p_nr_andar='0' THEN
         RAISE EXCEPTION 'Número da piso invalido.';
     END IF;
 	
@@ -121,6 +122,8 @@ BEGIN
 	IF p_codigo_postal='0000-000' or p_codigo_postal NOT SIMILAR TO '[0-9]{4}-[0-9]{3}' THEN
         RAISE EXCEPTION 'Codigo de Postal Invalido.';
     END IF;
+	
+	
 	
 v_morada_completa := CONCAT_WS(' ',
     NULLIF(p_morada, ''),        
@@ -159,19 +162,35 @@ v_morada_completa := CONCAT_WS(' ',
     IF p_password IS NULL OR p_password = '' THEN
         RAISE EXCEPTION 'Password é um campo obrigatorio.';
     END IF;
+	
+	IF  LENGTH(p_password) <> 6 THEN
+        RAISE EXCEPTION 'Password tem de ter no minimo 6 carateres.';
+    END IF;
+	
+	
+ 	IF p_tipo_documento_identificacao = 'CC' THEN
+        v_tipo_documento_identificacao := 1;
+    ELSIF p_tipo_documento_identificacao = 'Bilhete Indentidade' THEN
+        v_tipo_documento_identificacao := 2;
+    ELSIF p_tipo_documento_identificacao = 'Cedula Militar' THEN
+        v_tipo_documento_identificacao := 3;
+    ELSE
+        RAISE EXCEPTION 'Tipo de Documento de Identificação inválido.';
+    END IF;
+	
 
 
+  IF p_justvalidate_inputs IS TRUE THEN
+  
   INSERT INTO Utilizador(email, id_cargo)
   VALUES (p_email, 1) 
   RETURNING id_utilizador INTO v_id_utilizador;
   
   
-  
-  
   -- Procurar o id da entidade responsável pelo nome
   SELECT id_entidade_responsavel INTO v_id_entidade_responsavel
   FROM EntidadeResponsavel
-  WHERE nome = p_nome_entidade_responsavel;
+  WHERE nome = p_id_entidade_responsavel;
   
   INSERT INTO Utente(
     id_utilizador,
@@ -179,7 +198,6 @@ v_morada_completa := CONCAT_WS(' ',
     Sexo,
     morada,
     data_nascimento,
-    pais,
     distrito,
     concelho,
     freguesia,
@@ -200,13 +218,12 @@ v_morada_completa := CONCAT_WS(' ',
     p_sexo,
     p_morada,
     p_data_nascimento,
-    p_pais,
     p_distrito,
     p_concelho,
     p_freguesia,
     p_naturalidade,
     p_pais_nacionalidade,
-    p_tipo_documento_identificacao,
+    v_tipo_documento_identificacao,
     p_numero_de_documento_de_identificacao,
     p_numero_utente_saude,
     p_numero_de_identificacao_fiscal,
@@ -216,7 +233,9 @@ v_morada_completa := CONCAT_WS(' ',
     FALSE, 
     p_documento_validade
   );
+ END IF;
 
 RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
+

@@ -36,6 +36,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
       body: SingleChildScrollView(
         child: Center(
           child: Container(
+            color: bgColor,
             width: double.infinity,
             child: Card(
               color: bgColor, // Use a cor desejada

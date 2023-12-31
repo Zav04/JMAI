@@ -37,6 +37,10 @@ CREATE OR REPLACE TRIGGER hash_id_before_insert_utilizador
 AFTER INSERT ON Utilizador
 FOR EACH ROW EXECUTE FUNCTION hash_id('id_utilizador');
 
+CREATE OR REPLACE TRIGGER hash_id_before_utente
+AFTER INSERT ON Utente
+FOR EACH ROW EXECUTE FUNCTION hash_id('id_utente');
+
 CREATE OR REPLACE TRIGGER hash_id_before_insert_secretarios_clinicos
 AFTER INSERT ON Secretarios_Clinicos
 FOR EACH ROW EXECUTE FUNCTION hash_id('id_secretarios_clinicos');

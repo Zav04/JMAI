@@ -6,7 +6,6 @@
   Sexo                                  VARCHAR(255) NOT NULL, 
   morada                                VARCHAR(255) NOT NULL, 
   data_nascimento                       VARCHAR(255) NOT NULL, 
-  pais                                  VARCHAR(255) NOT NULL, 
   distrito                             VARCHAR(255) NOT NULL UNIQUE, 
   concelho                             VARCHAR(255) NOT NULL UNIQUE, 
   freguesia                            VARCHAR(255) NOT NULL UNIQUE, 
@@ -18,7 +17,8 @@
   numero_de_identificacao_fiscal        VARCHAR(255) NOT NULL, 
   numero_de_seguranca_social            VARCHAR(255) NOT NULL, 
   numero_de_telemovel                   VARCHAR(255) NOT NULL, 
-  obito                                 BOOLEAN NOT NULL, 
+  obito                                 BOOLEAN NOT NULL,
+  documento_validade 				    VARCHAR(255) NOT NULL,
   id_entidade_responsavel               BIGINT NOT NULL UNIQUE, 
   PRIMARY KEY (id_utente)
 );
@@ -138,7 +138,7 @@ CREATE TABLE EntidadeResponsavel (
   pais                    VARCHAR(255) NOT NULL, 
   PRIMARY KEY (id_entidade_responsavel));
   
-ALTER TABLE Utente ADD COLUMN documento_validade DATE;
+
 ALTER TABLE PreAvaliacao ADD CONSTRAINT FKPreAvaliac576859 FOREIGN KEY (id_requerimento_junta_medica) REFERENCES RequerimentoJuntaMedica (id_requerimento_junta_medica);
 ALTER TABLE Agendamento_JuntaMedica ADD CONSTRAINT FKAgendament432865 FOREIGN KEY (id_pre_avaliacao) REFERENCES PreAvaliacao (id_pre_avaliacao);
 ALTER TABLE Utilizador ADD CONSTRAINT FKUtilizador366594 FOREIGN KEY (id_cargo) REFERENCES Cargo (id_cargo);

@@ -8,3 +8,10 @@ BEGIN
     RETURN exists;
 END;
 $$ LANGUAGE plpgsql;
+
+	--SELECT email_exists('bruno.bx04@gmail.com')
+
+
+	--DELETE FROM Utente;
+	--DELETE FROM Utilizador;
+	--WHERE email = 'bruno.bx04@gmail.com';

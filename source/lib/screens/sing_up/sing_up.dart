@@ -1,3 +1,4 @@
+import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../main/components/Maps/distritos_concelhos.dart';
@@ -9,6 +10,8 @@ import '../main/components/password_field.dart';
 import '../main/components/codigo_postal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../controllers/API_Connection.dart';
+import '../../overlay/ErrorAlert.dart';
+import '../../overlay/SuccessAlert.dart';
 
 class Singup extends StatefulWidget {
   const Singup({Key? key}) : super(key: key);
@@ -18,26 +21,36 @@ class Singup extends StatefulWidget {
 }
 
 class _SingupState extends State<Singup> {
-  final TextEditingController _completeNameController = TextEditingController();
-  final TextEditingController _birthDateController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _doorNumberController = TextEditingController();
-  final TextEditingController _floorNumberController = TextEditingController();
-  final TextEditingController _zipCodeController = TextEditingController();
-
+  final TextEditingController _nomeCompletoController = TextEditingController();
+  final TextEditingController _dataDeNascimentoController =
+      TextEditingController();
+  final TextEditingController _telefoneController = TextEditingController();
   String _selectedGender = 'Masculino';
-  String _selectedIdentification = 'CC';
   String _selectedpaisNaturalidade = 'Portugal';
   String _selectedpaisNacionalidade = 'Portugal';
-  String? selectedDistrito;
-  String? selectedConcelho;
-  String? selectedFreguesia;
+  String _selectedIdentification = 'CC';
+  final TextEditingController _validadeIdentificacaoController =
+      TextEditingController();
+  final TextEditingController _nrIdentificacaoFiscalController =
+      TextEditingController();
+  final TextEditingController _nrIdentificacaoController =
+      TextEditingController();
+  final TextEditingController _nrSegunracaSocialController =
+      TextEditingController();
+  final TextEditingController _nrUtenteSaudeController =
+      TextEditingController();
+  final TextEditingController _moradaController = TextEditingController();
+  final TextEditingController _nrPortaController = TextEditingController();
+  final TextEditingController _nrAndarController = TextEditingController();
+  final TextEditingController _codigoPostalController = TextEditingController();
+  String? _selectedDistrito;
+  String? _selectedConcelho;
+  String? _selectedFreguesia;
   String? _selectedCentroSaude;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   List<String> centrosSaude = [];
-  var cds;
 
   @override
   void initState() {
@@ -47,27 +60,33 @@ class _SingupState extends State<Singup> {
 
   @override
   void dispose() {
-    _completeNameController.dispose();
-    _birthDateController.dispose();
+    super.dispose();
+    _nomeCompletoController.dispose();
+    _dataDeNascimentoController.dispose();
+    _telefoneController.dispose();
+    _validadeIdentificacaoController.dispose();
+    _nrIdentificacaoFiscalController.dispose();
+    _nrIdentificacaoController.dispose();
+    _nrSegunracaSocialController.dispose();
+    _nrUtenteSaudeController.dispose();
+    _moradaController.dispose();
+    _nrPortaController.dispose();
+    _nrAndarController.dispose();
+    _codigoPostalController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _phoneNumberController.dispose();
-    _addressController.dispose();
-    _doorNumberController.dispose();
-    _floorNumberController.dispose();
-    _zipCodeController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     List<String> distritos = concelhos.keys.toList();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       body: SingleChildScrollView(
         child: Center(
           child: Card(
             color: bgColor,
+            surfaceTintColor: bgColor,
             shape: RoundedRectangleBorder(
               side: BorderSide(color: Colors.black, width: 2.0),
               borderRadius: BorderRadius.circular(4.0),
@@ -100,7 +119,7 @@ class _SingupState extends State<Singup> {
                     children: [
                       Flexible(
                         child: TextField(
-                          controller: _completeNameController,
+                          controller: _nomeCompletoController,
                           decoration: InputDecoration(
                             labelText: 'Nome Completo',
                             hintText: 'Insira o seu Nome Completo',
@@ -111,13 +130,13 @@ class _SingupState extends State<Singup> {
                       const SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          controller: _birthDateController,
+                          controller: _dataDeNascimentoController,
                           decoration: InputDecoration(
                             labelText: 'Data de Nascimento',
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.calendar_today),
-                              onPressed: _presentDatePicker,
+                              onPressed: presentDatePickerDataNascimento,
                             ),
                           ),
                           keyboardType: TextInputType.datetime,
@@ -138,7 +157,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          controller: _phoneNumberController,
+                          controller: _telefoneController,
                           keyboardType: TextInputType.phone,
                           decoration: const InputDecoration(
                             labelText: 'Telefone',
@@ -271,13 +290,13 @@ class _SingupState extends State<Singup> {
                       const SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          //controller: _birthDateController,
+                          controller: _validadeIdentificacaoController,
                           decoration: InputDecoration(
                             labelText: 'Validade Identificação',
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.calendar_today),
-                              onPressed: _presentDatePicker,
+                              onPressed: presentDatePickerValidade,
                             ),
                           ),
                           keyboardType: TextInputType.datetime,
@@ -302,7 +321,7 @@ class _SingupState extends State<Singup> {
                     children: [
                       Flexible(
                         child: TextFormField(
-                          //controller: _phoneNumberController,
+                          controller: _nrIdentificacaoFiscalController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº Iden. Fiscal',
@@ -317,7 +336,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          //controller: _phoneNumberController,
+                          controller: _nrIdentificacaoController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº de Identificação',
@@ -332,7 +351,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          //controller: _phoneNumberController,
+                          controller: _nrSegunracaSocialController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Nº Segurança Social',
@@ -347,7 +366,7 @@ class _SingupState extends State<Singup> {
                       SizedBox(width: 20),
                       Flexible(
                         child: TextFormField(
-                          //controller: _phoneNumberController,
+                          controller: _nrUtenteSaudeController,
                           keyboardType: TextInputType.phone,
                           decoration: const InputDecoration(
                             labelText: 'Nº Utente Saúde',
@@ -365,7 +384,7 @@ class _SingupState extends State<Singup> {
                     children: [
                       Flexible(
                         child: TextField(
-                          controller: _addressController,
+                          controller: _moradaController,
                           decoration: InputDecoration(
                             labelText: 'Morada',
                             border: OutlineInputBorder(),
@@ -375,8 +394,10 @@ class _SingupState extends State<Singup> {
                       const SizedBox(width: 20),
                       Flexible(
                         child: TextField(
-                          keyboardType: TextInputType.number,
-                          controller: _doorNumberController,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          controller: _nrPortaController,
                           decoration: InputDecoration(
                             labelText: 'Número da Porta',
                             border: OutlineInputBorder(),
@@ -386,8 +407,10 @@ class _SingupState extends State<Singup> {
                       const SizedBox(width: 20),
                       Flexible(
                         child: TextField(
-                          keyboardType: TextInputType.number,
-                          controller: _floorNumberController,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          controller: _nrAndarController,
                           decoration: InputDecoration(
                             labelText: 'Andar',
                             border: OutlineInputBorder(),
@@ -402,7 +425,7 @@ class _SingupState extends State<Singup> {
                             children: [
                               PostalCodeFields(
                                   combinedPostalCodeController:
-                                      _zipCodeController),
+                                      _codigoPostalController),
                             ],
                           ),
                         ),
@@ -425,13 +448,13 @@ class _SingupState extends State<Singup> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               elevation: 0,
-                              value: selectedDistrito,
+                              value: _selectedDistrito,
                               hint: Text('Distrito'),
                               onChanged: (newValue) {
                                 setState(() {
-                                  selectedDistrito = newValue;
-                                  selectedConcelho = null;
-                                  selectedFreguesia = null;
+                                  _selectedDistrito = newValue;
+                                  _selectedConcelho = null;
+                                  _selectedFreguesia = null;
                                 });
                               },
                               items: distritos.map<DropdownMenuItem<String>>(
@@ -463,19 +486,19 @@ class _SingupState extends State<Singup> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               elevation: 0,
-                              value: selectedConcelho,
+                              value: _selectedConcelho,
                               hint: Text('Concelho'),
-                              onChanged: selectedDistrito == null
+                              onChanged: _selectedDistrito == null
                                   ? null
                                   : (newValue) {
                                       setState(() {
-                                        selectedConcelho = newValue;
-                                        selectedFreguesia = null;
+                                        _selectedConcelho = newValue;
+                                        _selectedFreguesia = null;
                                       });
                                     },
-                              items: selectedDistrito == null
+                              items: _selectedDistrito == null
                                   ? []
-                                  : concelhos[selectedDistrito]!
+                                  : concelhos[_selectedDistrito]!
                                       .map<DropdownMenuItem<String>>(
                                           (String value) {
                                       return DropdownMenuItem<String>(
@@ -505,18 +528,18 @@ class _SingupState extends State<Singup> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               elevation: 0,
-                              value: selectedFreguesia,
+                              value: _selectedFreguesia,
                               hint: Text('Freguesia'),
-                              onChanged: selectedConcelho == null
+                              onChanged: _selectedConcelho == null
                                   ? null
                                   : (newValue) {
                                       setState(() {
-                                        selectedFreguesia = newValue;
+                                        _selectedFreguesia = newValue;
                                       });
                                     },
-                              items: selectedConcelho == null
+                              items: _selectedConcelho == null
                                   ? []
-                                  : freguesias[selectedConcelho]!
+                                  : freguesias[_selectedConcelho]!
                                       .map<DropdownMenuItem<String>>(
                                           (String value) {
                                       return DropdownMenuItem<String>(
@@ -593,7 +616,7 @@ class _SingupState extends State<Singup> {
                   const SizedBox(height: 150),
                   ElevatedButton(
                     onPressed: () {
-                      // TODO Lógica para submeter o formulário
+                      registerSubmit();
                     },
                     style: ElevatedButton.styleFrom(
                       primary: buttonColor,
@@ -617,7 +640,11 @@ class _SingupState extends State<Singup> {
 
   Future<List<String>> loadCds() async {
     var cds = await getEntidadesResponsaveis();
-    List<String> centros = List<String>.from(cds.data['nomes_entidades']);
+    if (cds.success == false) {
+      ErrorAlert.show(context, cds.errorMessage.toString());
+      return [];
+    }
+    List<String> centros = List<String>.from(cds.data);
     if (mounted) {
       setState(() {
         centrosSaude = centros;
@@ -626,7 +653,7 @@ class _SingupState extends State<Singup> {
     return centros;
   }
 
-  void _presentDatePicker() async {
+  void presentDatePickerDataNascimento() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -636,7 +663,22 @@ class _SingupState extends State<Singup> {
     if (pickedDate != null) {
       String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
       setState(() {
-        _birthDateController.text = formattedDate;
+        _dataDeNascimentoController.text = formattedDate;
+      });
+    }
+  }
+
+  void presentDatePickerValidade() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+      setState(() {
+        _validadeIdentificacaoController.text = formattedDate;
       });
     }
   }
@@ -677,5 +719,72 @@ class _SingupState extends State<Singup> {
         selection: TextSelection.collapsed(offset: cursorIndex),
       );
     });
+  }
+
+  void registerSubmit() async {
+    Utente newUtente = Utente(
+        nomeCompleto: _nomeCompletoController.text.isNotEmpty
+            ? _nomeCompletoController.text
+            : null,
+        dataNascimento: _dataDeNascimentoController.text.isNotEmpty
+            ? _dataDeNascimentoController.text
+            : null,
+        numeroTelemovel: _telefoneController.text.isNotEmpty
+            ? _telefoneController.text
+            : null,
+        sexo: _selectedGender,
+        paisnaturalidade: _selectedpaisNaturalidade,
+        paisNacionalidade: _selectedpaisNacionalidade,
+        tipoDocumentoIdentificacao: _selectedIdentification,
+        documentoValidade: _validadeIdentificacaoController.text.isNotEmpty
+            ? _validadeIdentificacaoController.text
+            : null,
+        numeroIdentificacaoFiscal:
+            _nrIdentificacaoFiscalController.text.isNotEmpty
+                ? _nrIdentificacaoFiscalController.text
+                : null,
+        numeroDocumentoIdentificacao: _nrIdentificacaoController.text.isNotEmpty
+            ? _nrIdentificacaoController.text
+            : null,
+        numeroSegurancaSocial: _nrSegunracaSocialController.text.isNotEmpty
+            ? _nrSegunracaSocialController.text
+            : null,
+        numeroUtenteSaude: _nrUtenteSaudeController.text.isNotEmpty
+            ? _nrUtenteSaudeController.text
+            : null,
+        morada:
+            _moradaController.text.isNotEmpty ? _moradaController.text : null,
+        nrPorta:
+            _nrPortaController.text.isNotEmpty ? _nrPortaController.text : null,
+        nrAndar:
+            _nrAndarController.text.isNotEmpty ? _nrAndarController.text : null,
+        codigoPostal: _codigoPostalController.text.isNotEmpty
+            ? _codigoPostalController.text
+            : null,
+        distrito: _selectedDistrito != null ? _selectedDistrito : null,
+        concelho: _selectedConcelho != null ? _selectedConcelho : null,
+        freguesia: _selectedFreguesia != null ? _selectedFreguesia : null,
+        idEntidadeResponsavel:
+            _selectedCentroSaude != null ? _selectedCentroSaude : null,
+        email: _emailController.text.isNotEmpty ? _emailController.text : null,
+        password: _passwordController.text.isNotEmpty
+            ? _passwordController.text
+            : null,
+        justvalidateInputs: false);
+
+    var response = await validationCreateUser(newUtente);
+    if (response.success) {
+      response = await singin(_emailController.text, _passwordController.text);
+      if (response.success) {
+        newUtente.justvalidateInputs = true;
+        response = await validationCreateUser(newUtente);
+        SuccessAlert.show(context, 'Conta Criada com Sucesso');
+        Navigator.of(context).pushNamed('/');
+      } else {
+        ErrorAlert.show(context, response.errorMessage.toString());
+      }
+    } else {
+      ErrorAlert.show(context, response.errorMessage.toString());
+    }
   }
 }

@@ -5,6 +5,7 @@ import '../main/components/constants.dart';
 import '../main/main_screen.dart';
 import '../../controllers/API_Connection.dart';
 import '../../overlay/SuccessAlert.dart';
+import '../../overlay/ErrorAlert.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,6 +17,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreen extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    _emailController.text = '';
+    _passwordController.text = '';
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +111,7 @@ class _LoginScreen extends State<LoginScreen> {
                 SizedBox(height: 30),
                 TextButton(
                   onPressed: () {
-                    checkConnection();
-                    // TODOImplementar esqueceu a senha
-                    SuccessAlert.show(context, 'Ocorreu um erro:');
+                    _showForgotPasswordDialog(context);
                   },
                   child: const Text(
                     'Esqueceu-se da sua Palavra passe',
@@ -121,5 +134,92 @@ class _LoginScreen extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _showForgotPasswordDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          surfaceTintColor: bgColor,
+          backgroundColor: bgColor,
+          iconColor: bgColor,
+          shadowColor: bgColor,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Esqueceu-se da sua Palavra passe?'),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+              ),
+            ],
+          ),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: 600,
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              minHeight: 80,
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      hintText: 'Insira o seu Email de Registro',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Enviar Pedido',
+                style: TextStyle(color: buttonTextColor),
+              ),
+              style: TextButton.styleFrom(
+                primary: buttonColor,
+                backgroundColor: buttonColor,
+              ),
+              onPressed: () async {
+                var response = await submit();
+                if (response) {
+                  Navigator.of(dialogContext).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> submit() async {
+    var response = await verifyEmailExist(_emailController.text);
+    if (response.success && response.data == false) {
+      ErrorAlert.show(context, 'Este email não está registado no sistema');
+      return false;
+    } else if (response.success && response.data == true) {
+      response = await resetPassword(_emailController.text);
+      if (response.success) {
+        SuccessAlert.show(
+            context, 'Email para recuperação da password enviado');
+        return true;
+      } else {
+        ErrorAlert.show(context, 'Ocorreu um erro ao enviar o pedido');
+        return false;
+      }
+    } else {
+      ErrorAlert.show(context, 'Ocorreu um erro ao enviar o pedido');
+      return false;
+    }
   }
 }

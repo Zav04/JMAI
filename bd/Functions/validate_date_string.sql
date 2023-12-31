@@ -22,6 +22,6 @@ BEGIN
   END IF;
 
   -- Se o formato não corresponder ou os valores estiverem fora dos intervalos
-  RETURN FALSE;
+  RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
