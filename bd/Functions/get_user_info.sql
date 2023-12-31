@@ -8,3 +8,5 @@ BEGIN
     WHERE u.email = user_email;
 END;
 $$ LANGUAGE plpgsql;
+
+--SELECT get_user_info('bruno.bx04@gmail.com')

@@ -8,14 +8,19 @@ import 'components/side_menu.dart';
 import 'components/constants.dart';
 
 class MainScreen extends StatefulWidget {
+  final String? hashedId;
+  final String? acountType;
+  final String? token;
+
+  const MainScreen({Key? key, this.token, this.hashedId, this.acountType})
+      : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0; // Índice da página atual
+  int _selectedIndex = 0;
 
-  // Lista de widgets para as páginas
   final List<Widget> _pages = [
     DashboardScreen(),
     Requerimentos(),
@@ -38,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
       key: context.read<MenuAppController>().scaffoldKey,
       drawer: SideMenu(
         onItemSelected: _onItemTapped,
+        role: widget.acountType!,
       ),
       body: SafeArea(
         child: Row(
@@ -47,6 +53,7 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: SideMenu(
                   onItemSelected: _onItemTapped,
+                  role: widget.acountType!,
                 ),
               ),
             Expanded(

@@ -17,11 +17,17 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreen extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String? hashedId;
+  String? role;
+  String? token;
 
   @override
   void initState() {
     _emailController.text = '';
     _passwordController.text = '';
+    hashedId = '';
+    role = '';
+    token = '';
     super.initState();
   }
 
@@ -92,11 +98,17 @@ class _LoginScreen extends State<LoginScreen> {
                 ConstrainedBox(
                   constraints: BoxConstraints.tightFor(width: 200, height: 50),
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO Implementar login
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => MainScreen()),
-                      );
+                    onPressed: () async {
+                      bool response = await submitlogin();
+                      if (response)
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => MainScreen(
+                                    token: token,
+                                    hashedId: hashedId,
+                                    acountType: role,
+                                  )),
+                        );
                     },
                     style: ElevatedButton.styleFrom(
                       onPrimary: buttonTextColor,
@@ -190,7 +202,7 @@ class _LoginScreen extends State<LoginScreen> {
                 backgroundColor: buttonColor,
               ),
               onPressed: () async {
-                var response = await submit();
+                var response = await submitResetPassword();
                 if (response) {
                   Navigator.of(dialogContext).pop();
                 }
@@ -202,7 +214,7 @@ class _LoginScreen extends State<LoginScreen> {
     );
   }
 
-  Future<bool> submit() async {
+  Future<bool> submitResetPassword() async {
     var response = await verifyEmailExist(_emailController.text);
     if (response.success && response.data == false) {
       ErrorAlert.show(context, 'Este email não está registado no sistema');
@@ -221,5 +233,18 @@ class _LoginScreen extends State<LoginScreen> {
       ErrorAlert.show(context, 'Ocorreu um erro ao enviar o pedido');
       return false;
     }
+  }
+
+  Future<bool> submitlogin() async {
+    var response = await login(_emailController.text, _passwordController.text);
+    if (response.success == true) {
+      token = response.data['idToken'];
+      var get_user = await getUserInfo(_emailController.text);
+      hashedId = get_user.data['hashed_id'];
+      role = get_user.data['cargo_name'];
+      return false;
+    } else
+      ErrorAlert.show(context, response.errorMessage.toString());
+    return false;
   }
 }

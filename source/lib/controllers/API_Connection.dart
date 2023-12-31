@@ -190,3 +190,65 @@ Future<CreateAPIResponse> resetPassword(String email) async {
     return CreateAPIResponse(success: false, errorMessage: e.toString());
   }
 }
+
+Future<CreateAPIResponse> login(String email, String password) async {
+  String URL =
+      dotenv.env['API_URL'].toString() + dotenv.env['FULL_LOGIN'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(URL),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> getUserInfo(String email) async {
+  String URL =
+      dotenv.env['API_URL'].toString() + dotenv.env['GETUSERINFO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(URL),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}

@@ -4,8 +4,11 @@ import 'package:JMAI/screens/main/components/constants.dart';
 
 class SideMenu extends StatelessWidget {
   final Function(int) onItemSelected;
+  final String role;
+
   const SideMenu({
     required this.onItemSelected,
+    required this.role,
     Key? key,
   }) : super(key: key);
 

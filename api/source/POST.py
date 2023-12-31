@@ -67,10 +67,12 @@ async def create_user(user:UserSignup):
         return {"error": str(e)}
 
 
-@post_router.post("/login/")
-async def login(user:UserSignup):
+@post_router.post("/full_login/")
+async def full_login(user:UserSignup):
     try:
         user=login(user.email,user.password)
+        if(user=="Credenciais Invalidas"):
+            return {"error": user}
         return {"response": user}
     except Exception as e:
         return {"error": str(e)}
@@ -104,4 +106,26 @@ async def verify_email_exist(user:UserSignup, db: SessionLocal = Depends(get_db)
         return {"error": error_messages}
 
 
+@post_router.post("/get_user_info/")
+async def get_user_info(user:UserSignup, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM get_user_info(:email);")
+        result = db.execute(query, {"email": user.email})
+        user_info = result.fetchone()
+        if user_info:
+            hashed_id = user_info[0]
+            cargo_name = user_info[1]
+            response = {
+                "hashed_id": hashed_id,
+                "cargo_name": cargo_name
+            }
+        return {"response": response}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        error_messages = [str(arg) for arg in e.args]
+        return {"error": error_messages}
 
