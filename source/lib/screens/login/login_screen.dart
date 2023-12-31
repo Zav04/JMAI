@@ -239,10 +239,10 @@ class _LoginScreen extends State<LoginScreen> {
     var response = await login(_emailController.text, _passwordController.text);
     if (response.success == true) {
       token = response.data['idToken'];
-      var get_user = await getUserInfo(_emailController.text);
-      hashedId = get_user.data['hashed_id'];
-      role = get_user.data['cargo_name'];
-      return false;
+      var getUser = await getUserInfo(_emailController.text);
+      hashedId = getUser.data['hashed_id'];
+      role = getUser.data['cargo_name'];
+      return true;
     } else
       ErrorAlert.show(context, response.errorMessage.toString());
     return false;
