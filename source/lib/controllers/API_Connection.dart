@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:JMAI/Class/CreateAPIResponse.dart';
 import 'package:JMAI/Class/ClassesForData.dart';
+import 'package:JMAI/Class/Utente.dart';
+import 'package:JMAI/Class/Medico.dart';
+import 'package:JMAI/Class/SecretarioClinico.dart';
 
 Future<CreateAPIResponse> checkConnection() async {
   String URL =
@@ -65,7 +68,7 @@ Future<CreateAPIResponse> getEntidadesResponsaveis() async {
   }
 }
 
-Future<CreateAPIResponse> validationCreateUser(Utente utente) async {
+Future<CreateAPIResponse> validationCreateUser(UtenteRegister utente) async {
   String URL = dotenv.env['API_URL'].toString() +
       dotenv.env['VALIDATION_CREATE_USER'].toString();
   try {
@@ -222,9 +225,133 @@ Future<CreateAPIResponse> login(String email, String password) async {
   }
 }
 
-Future<CreateAPIResponse> getUserInfo(String email) async {
+Future<CreateAPIResponse> getUserRole(String email) async {
   String URL =
       dotenv.env['API_URL'].toString() + dotenv.env['GETUSERINFO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(URL),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> getUtenteInfo(String hashedId) async {
+  String URL = dotenv.env['API_URL'].toString() +
+      dotenv.env['GET_UTENTE_INFO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(URL),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashedId}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> getMedicoInfo(String hashedId) async {
+  String URL = dotenv.env['API_URL'].toString() +
+      dotenv.env['GET_MEDIC_INFO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(URL),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashedId}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> getSecretarioClinicoInfo(String hashedId) async {
+  String URL = dotenv.env['API_URL'].toString() +
+      dotenv.env['GET_SECRETARIA_CLINICO_INFO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(URL),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashedId}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> logout(String email) async {
+  String URL =
+      dotenv.env['API_URL'].toString() + dotenv.env['LOGOUT'].toString();
   try {
     final response = await http.post(
       Uri.parse(URL),

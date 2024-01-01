@@ -3,37 +3,64 @@ import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:JMAI/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:JMAI/screens/dashboard/requerimentos.dart';
+import 'package:JMAI/screens/Utente/requerimentos.dart';
 import 'components/side_menu.dart';
 import 'components/constants.dart';
+import '../../Class/Utilizador.dart';
+import '../../Class/Utente.dart';
+import '../../Class/Medico.dart';
+import '../../Class/SecretarioClinico.dart';
 
 class MainScreen extends StatefulWidget {
-  final String? hashedId;
-  final String? acountType;
-  final String? token;
+  final Utilizador? user;
+  final String? uid;
 
-  const MainScreen({Key? key, this.token, this.hashedId, this.acountType})
-      : super(key: key);
+  const MainScreen({Key? key, this.uid, this.user}) : super(key: key);
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  List<Widget> _pages = [];
 
-  final List<Widget> _pages = [
-    DashboardScreen(),
-    Requerimentos(),
-    DashboardScreen(),
-    DashboardScreen(),
-    DashboardScreen(),
-    DashboardScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _setupPages();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _setupPages() {
+    // Limpa as páginas existentes
+    _pages.clear();
+
+    // Adiciona a Dashboard para todos os usuários
+    _pages.add(DashboardScreen(user: widget.user));
+
+    verificarTipoUsuario(widget.user!);
+  }
+
+  void verificarTipoUsuario(Utilizador user) {
+    if (user is Utente) {
+      _pages.addAll([
+        Requerimentos(user: user),
+      ]);
+    } else if (user is Medico) {
+      _pages.addAll([
+        // Páginas específicas para Medico
+      ]);
+    } else if (user is SecretarioClinico) {
+      _pages.addAll([
+        // Páginas específicas para SecretarioClinico
+      ]);
+    }
   }
 
   @override
@@ -43,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
       key: context.read<MenuAppController>().scaffoldKey,
       drawer: SideMenu(
         onItemSelected: _onItemTapped,
-        role: widget.acountType!,
+        user: widget.user!,
       ),
       body: SafeArea(
         child: Row(
@@ -53,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: SideMenu(
                   onItemSelected: _onItemTapped,
-                  role: widget.acountType!,
+                  user: widget.user!,
                 ),
               ),
             Expanded(

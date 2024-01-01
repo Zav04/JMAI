@@ -1,4 +1,4 @@
-class Utente {
+class UtenteRegister {
   String? nomeCompleto;
   String? dataNascimento;
   String? numeroTelemovel;
@@ -22,7 +22,7 @@ class Utente {
   String? email;
   String? password;
   bool justvalidateInputs;
-  Utente({
+  UtenteRegister({
     required this.nomeCompleto,
     required this.dataNascimento,
     required this.numeroTelemovel,

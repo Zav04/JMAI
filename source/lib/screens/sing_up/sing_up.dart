@@ -722,7 +722,7 @@ class _SingupState extends State<Singup> {
   }
 
   void registerSubmit() async {
-    Utente newUtente = Utente(
+    UtenteRegister newUtente = UtenteRegister(
         nomeCompleto: _nomeCompletoController.text.isNotEmpty
             ? _nomeCompletoController.text
             : null,

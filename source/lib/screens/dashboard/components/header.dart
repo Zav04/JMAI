@@ -1,13 +1,20 @@
+import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/controllers/MenuAppController.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:JMAI/Class/Utente.dart';
+import 'package:JMAI/Class/SecretarioClinico.dart';
+import 'package:JMAI/Class/Medico.dart';
+import 'package:JMAI/controllers/API_Connection.dart';
 
 import '../../main/components/constants.dart';
 
 class Header extends StatelessWidget {
+  final Utilizador? user;
   const Header({
     Key? key,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -30,7 +37,7 @@ class Header extends StatelessWidget {
               onPressed: context.read<MenuAppController>().controlMenu,
             ),
           if (!isMobile) Spacer(),
-          ProfileCard(),
+          ProfileCard(user: user),
         ],
       ),
     );
@@ -38,24 +45,47 @@ class Header extends StatelessWidget {
 }
 
 class ProfileCard extends StatelessWidget {
+  final Utilizador? user;
   const ProfileCard({
     Key? key,
+    required this.user,
   }) : super(key: key);
 
-  void onSelected(BuildContext context, String value) {
+  void onSelected(BuildContext context, String value, String? email) {
     switch (value) {
       case 'logout':
-        // Implementar lógica de logout
+        _logout(context, email!);
         print('Logout pressed');
         break;
-      // Adicionar mais casos para outros itens do menu, se necessário
       default:
-        print('Unknown value: $value');
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    String nomeCompleto;
+    String imagePath;
+    String? email;
+
+    if (user is Utente) {
+      nomeCompleto = (user as Utente).nomeCompleto;
+      imagePath = "assets/images/utente.png";
+      email = user!.email;
+    } else if (user is Medico) {
+      nomeCompleto = (user as Medico).nomeCompleto;
+      imagePath = "assets/images/medico.png";
+      email = user!.email;
+    } else if (user is SecretarioClinico) {
+      nomeCompleto = (user as SecretarioClinico).nomeCompleto;
+      imagePath = "assets/images/secretario_clinico.png";
+      email = user!.email;
+    } else {
+      nomeCompleto = "Administrador";
+      imagePath = "assets/images/admin.png";
+      email = user!.email;
+    }
+
     return Container(
       margin: EdgeInsets.only(left: defaultPadding),
       padding: EdgeInsets.symmetric(
@@ -84,14 +114,14 @@ class ProfileCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundImage: AssetImage("assets/images/profile_pic.png"),
+            backgroundImage: AssetImage(imagePath),
           ),
           SizedBox(width: defaultPadding / 2),
-          Text("Angelina Jolie"),
+          Text(nomeCompleto),
           SizedBox(width: defaultPadding / 2),
           PopupMenuButton<String>(
             offset: Offset(0, 50),
-            onSelected: (value) => onSelected(context, value),
+            onSelected: (value) => onSelected(context, value, email),
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'logout',
@@ -114,12 +144,20 @@ class ProfileCard extends StatelessWidget {
               minWidth: 50,
               minHeight: 32,
             ),
-            // Aplicar a mesma cor de fundo ao PopupMenuButton
-            color:
-                bgColor, // Defina a cor de fundo aqui para que ela se aplique ao menu inteiro
+            color: bgColor,
           ),
         ],
       ),
     );
+  }
+
+  void _logout(BuildContext context, String email) async {
+    var response = await logout(email);
+    if (response.success == true) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/login',
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 }

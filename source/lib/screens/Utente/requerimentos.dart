@@ -1,11 +1,17 @@
+import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
 import 'requerimento_form.dart';
 import '../main/components/constants.dart';
-import 'components/header.dart';
-import '../../screens/dashboard/components/tabela.dart';
+import '../dashboard/components/header.dart';
+import 'tabela_Requerimentos.dart';
 
 class Requerimentos extends StatelessWidget {
+  final Utilizador? user;
+  const Requerimentos({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -14,7 +20,7 @@ class Requerimentos extends StatelessWidget {
         padding: EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
-            Header(),
+            Header(user: user),
             SizedBox(height: defaultPadding),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

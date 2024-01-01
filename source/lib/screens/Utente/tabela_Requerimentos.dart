@@ -3,7 +3,7 @@ import 'package:JMAI/models/RecentFile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../main/components/constants.dart';
+import '../main/components/constants.dart';
 
 class Tabela extends StatelessWidget {
   const Tabela({

@@ -1,3 +1,4 @@
+import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:JMAI/screens/dashboard/components/my_fields.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,12 @@ import 'components/recent_files.dart';
 import 'components/storage_details.dart';
 
 class DashboardScreen extends StatelessWidget {
+  final Utilizador? user;
+  const DashboardScreen({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,7 +24,7 @@ class DashboardScreen extends StatelessWidget {
         padding: EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
-            Header(),
+            Header(user: user),
             SizedBox(height: defaultPadding),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

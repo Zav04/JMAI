@@ -4,8 +4,10 @@ from database import SessionLocal
 from dependencies import get_db
 from Models.Utente import UtenteRequest
 from FireBase import singup, login, resetpassword
+from FireBase_Logout import logout
 from sqlalchemy.exc import SQLAlchemyError
 from Models.UserSignup import UserSignup
+from Models.Search import Search
 
 
 post_router = APIRouter()
@@ -128,4 +130,68 @@ async def get_user_info(user:UserSignup, db: SessionLocal = Depends(get_db)):
         db.rollback()
         error_messages = [str(arg) for arg in e.args]
         return {"error": error_messages}
+    
+#NOT TESTED MISSING JSON TO RESPONSE
+@post_router.post("/get_utente_info/")
+async def get_utente_info(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM get_utente_info(:p_hashed_id);")
+        result = db.execute(query, {"p_hashed_id": hashedid.hashed_id})
+        user_info = result.fetchone()
+        if user_info:
+            # Desempacotar os valores retornados
+            response = dict(zip(result.keys(), user_info))
+        return {"response": response}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
 
+
+#NOT TESTED MISSING JSON TO RESPONSE
+@post_router.post("/get_secretario_clinico_info/")
+async def get_secretario_clinico_info(hashed_id: str, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM get_secretario_clinico_info(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashed_id})
+        user_info = result.fetchone()
+        if user_info:
+            response = dict(zip(result.keys(), user_info))
+        return {"response": response}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+
+
+@post_router.post("/get_medico_info/")
+async def get_medico_info(hashed_id: str, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM get_medico_info(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashed_id})
+        user_info = result.fetchone()
+        if user_info:
+            response = dict(zip(result.keys(), user_info))
+        return {"response": response}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+
+@post_router.post("/logout/")
+def handle_logout(user:UserSignup):
+    try:
+        result = logout(user.email)
+        if result["success"]:
+            return result
+    except Exception as e:
+        return {"error": str(e)}

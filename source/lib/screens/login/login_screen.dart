@@ -6,6 +6,10 @@ import '../main/main_screen.dart';
 import '../../controllers/API_Connection.dart';
 import '../../overlay/SuccessAlert.dart';
 import '../../overlay/ErrorAlert.dart';
+import '../../Class/Utilizador.dart';
+import '../../Class/Utente.dart';
+import '../../Class/Medico.dart';
+import '../../Class/SecretarioClinico.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,7 +23,8 @@ class _LoginScreen extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   String? hashedId;
   String? role;
-  String? token;
+  String? uid;
+  Utilizador? utilizador;
 
   @override
   void initState() {
@@ -27,7 +32,7 @@ class _LoginScreen extends State<LoginScreen> {
     _passwordController.text = '';
     hashedId = '';
     role = '';
-    token = '';
+    uid = '';
     super.initState();
   }
 
@@ -104,9 +109,8 @@ class _LoginScreen extends State<LoginScreen> {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                               builder: (context) => MainScreen(
-                                    token: token,
-                                    hashedId: hashedId,
-                                    acountType: role,
+                                    uid: uid,
+                                    user: utilizador,
                                   )),
                         );
                     },
@@ -238,10 +242,37 @@ class _LoginScreen extends State<LoginScreen> {
   Future<bool> submitlogin() async {
     var response = await login(_emailController.text, _passwordController.text);
     if (response.success == true) {
-      token = response.data['idToken'];
-      var getUser = await getUserInfo(_emailController.text);
+      uid = response.data['idToken'];
+      var getUser = await getUserRole(_emailController.text);
       hashedId = getUser.data['hashed_id'];
       role = getUser.data['cargo_name'];
+      switch (role) {
+        case 'Utente':
+          var response = await getUtenteInfo(hashedId!);
+          if (response.success == false) {
+            ErrorAlert.show(context, response.errorMessage.toString());
+            return false;
+          }
+          utilizador = Utente.fromJson(response.data);
+          break;
+        case 'Secretario Clinico':
+          var response = await getMedicoInfo(hashedId!);
+          if (response.success == false) {
+            ErrorAlert.show(context, response.errorMessage.toString());
+            return false;
+          }
+          utilizador = SecretarioClinico.fromJson(response.data);
+          break;
+        case 'Medico':
+          var response = await getSecretarioClinicoInfo(hashedId!);
+          if (response.success == false) {
+            ErrorAlert.show(context, response.errorMessage.toString());
+            return false;
+          }
+          utilizador = Medico.fromJson(response.data);
+          break;
+        default:
+      }
       return true;
     } else
       ErrorAlert.show(context, response.errorMessage.toString());
