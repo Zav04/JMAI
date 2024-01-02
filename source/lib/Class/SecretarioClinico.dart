@@ -23,7 +23,7 @@ class SecretarioClinico extends Utilizador {
     required this.freguesia,
     required this.paisNacionalidade,
     required this.contacto,
-  }) : super(hashedId: hashedId, email: email, role: 'Secretario Clinico');
+  }) : super(hashedId: hashedId, email: email, role: 'SecretarioClinico');
 
   factory SecretarioClinico.fromJson(Map<String, dynamic> json) {
     return SecretarioClinico(

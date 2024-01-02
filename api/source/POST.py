@@ -4,10 +4,12 @@ from database import SessionLocal
 from dependencies import get_db
 from Models.Utente import UtenteRequest
 from FireBase import singup, login, resetpassword
-from FireBase_Logout import logout
+#from FireBase_Logout import logout
 from sqlalchemy.exc import SQLAlchemyError
 from Models.UserSignup import UserSignup
 from Models.Search import Search
+from Models.SecretarioClinico import SecretarioClinicoRequest
+from Models.Medico import MedicoRequest
 
 
 post_router = APIRouter()
@@ -55,8 +57,77 @@ async def validation_create_user(utente: UtenteRequest, db: SessionLocal = Depen
         db.rollback()
         error_messages = [str(arg) for arg in e.args]
         return {"error": error_messages}
+    
+    
+@post_router.post("/validation_create_secretario_clinico/")
+async def validation_create_secretario_clinico(secretario_clinico: SecretarioClinicoRequest, db: SessionLocal = Depends(get_db)):
+    try:
+        # Converter os dados do modelo Pydantic para dicionário
+        secretario_clinico_data = secretario_clinico.dict()
+        query = text("""
+        SELECT register_secretario_clinico(
+            :nome_completo,
+            :data_nascimento,
+            :numero_telemovel,
+            :sexo,
+            :pais_nacionalidade,
+            :distrito,
+            :concelho,
+            :freguesia,
+            :email,
+            :password,
+            :justvalidate_input
+        );
+        """)
+        result = db.execute(query, secretario_clinico_data)
+        db.commit()
+        return {"response": result} 
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        error_messages = [str(arg) for arg in e.args]
+        return {"error": error_messages}
 
 
+@post_router.post("/validation_create_medico/")
+async def validation_create_medico(medico: MedicoRequest, db: SessionLocal = Depends(get_db)):
+    try:
+        # Converter os dados do modelo Pydantic para dicionário
+        medico_data = medico.dict()
+        query = text("""
+        SELECT register_medico(
+            :nome_completo,
+            :data_nascimento,
+            :numero_telemovel,
+            :sexo,
+            :pais_nacionalidade,
+            :distrito,
+            :concelho,
+            :freguesia,
+            :especialidade,
+            :num_cedula,
+            :num_ordem,
+            :email,
+            :password,
+            :justvalidate_inputs
+        );
+        """)
+        result = db.execute(query, medico_data)
+        db.commit()
+        return {"response": result} 
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        error_messages = [str(arg) for arg in e.args]
+        return {"error": error_messages}
+    
+    
 
 @post_router.post("/firebase_signup/")
 async def create_user(user:UserSignup):
@@ -187,11 +258,11 @@ async def get_medico_info(hashed_id: str, db: SessionLocal = Depends(get_db)):
         db.rollback()
         return {"error": str(e)}
 
-@post_router.post("/logout/")
-def handle_logout(user:UserSignup):
-    try:
-        result = logout(user.email)
-        if result["success"]:
-            return result
-    except Exception as e:
-        return {"error": str(e)}
+# @post_router.post("/logout/")
+# def handle_logout(user:UserSignup):
+#     try:
+#         result = logout(user.email)
+#         if result["success"]:
+#             return result
+#     except Exception as e:
+#         return {"error": str(e)}

@@ -28,22 +28,17 @@ class SideMenu extends StatelessWidget {
     ];
 
     switch (user.role) {
-      case 'Administador':
+      case 'Admin':
         menuItems.addAll([
           DrawerListTile(
-            title: "Requerimentos",
-            svgSrc: "assets/icons/menu_tran.svg",
+            title: "Registar Secretario Clinico",
+            svgSrc: "assets/icons/menu_profile.svg",
             press: () => onItemSelected(1),
           ),
           DrawerListTile(
-            title: "Criar Conta Médico",
-            svgSrc: "assets/icons/menu_task.svg",
+            title: "Registar Médico",
+            svgSrc: "assets/icons/menu_profile.svg",
             press: () => onItemSelected(2),
-          ),
-          DrawerListTile(
-            title: "Criar Conta Secretario Clinico",
-            svgSrc: "assets/icons/menu_doc.svg",
-            press: () => onItemSelected(3),
           ),
         ]);
         break;
@@ -61,7 +56,7 @@ class SideMenu extends StatelessWidget {
           ),
         ]);
         break;
-      case 'Secretario Clinico':
+      case 'SecretarioClinico':
         menuItems.addAll([
           DrawerListTile(
             title: "Validação de Requerimentos",

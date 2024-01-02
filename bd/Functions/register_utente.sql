@@ -163,7 +163,7 @@ v_morada_completa := CONCAT_WS(' ',
         RAISE EXCEPTION 'Password é um campo obrigatorio.';
     END IF;
 	
-	IF  LENGTH(p_password) <> 6 THEN
+	IF  LENGTH(p_password) < 6 THEN
         RAISE EXCEPTION 'Password tem de ter no minimo 6 carateres.';
     END IF;
 	

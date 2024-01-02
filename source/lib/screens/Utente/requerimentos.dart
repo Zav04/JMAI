@@ -2,8 +2,8 @@ import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
 import 'requerimento_form.dart';
-import '../main/components/constants.dart';
-import '../dashboard/components/header.dart';
+import 'package:JMAI/screens/main/components/constants.dart';
+import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'tabela_Requerimentos.dart';
 
 class Requerimentos extends StatelessWidget {

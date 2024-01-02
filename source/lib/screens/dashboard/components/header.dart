@@ -6,8 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/Class/SecretarioClinico.dart';
 import 'package:JMAI/Class/Medico.dart';
-import 'package:JMAI/controllers/API_Connection.dart';
-
 import '../../main/components/constants.dart';
 
 class Header extends StatelessWidget {
@@ -54,7 +52,10 @@ class ProfileCard extends StatelessWidget {
   void onSelected(BuildContext context, String value, String? email) {
     switch (value) {
       case 'logout':
-        _logout(context, email!);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/',
+          (Route<dynamic> route) => false,
+        );
         print('Logout pressed');
         break;
       default:
@@ -149,15 +150,5 @@ class ProfileCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _logout(BuildContext context, String email) async {
-    var response = await logout(email);
-    if (response.success == true) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        '/login',
-        (Route<dynamic> route) => false,
-      );
-    }
   }
 }

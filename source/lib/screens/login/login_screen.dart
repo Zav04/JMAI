@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../main/components/password_field.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../main/components/constants.dart';
-import '../main/main_screen.dart';
-import '../../controllers/API_Connection.dart';
-import '../../overlay/SuccessAlert.dart';
-import '../../overlay/ErrorAlert.dart';
-import '../../Class/Utilizador.dart';
-import '../../Class/Utente.dart';
-import '../../Class/Medico.dart';
-import '../../Class/SecretarioClinico.dart';
+import 'package:JMAI/screens/main/components/constants.dart';
+import 'package:JMAI/screens/main/main_screen.dart';
+import 'package:JMAI/controllers/API_Connection.dart';
+import 'package:JMAI/overlay/SuccessAlert.dart';
+import 'package:JMAI/overlay/ErrorAlert.dart';
+import 'package:JMAI/Class/Utilizador.dart';
+import 'package:JMAI/Class/Utente.dart';
+import 'package:JMAI/Class/Medico.dart';
+import 'package:JMAI/Class/SecretarioClinico.dart';
+import 'package:JMAI/Class/Admin.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -255,7 +256,7 @@ class _LoginScreen extends State<LoginScreen> {
           }
           utilizador = Utente.fromJson(response.data);
           break;
-        case 'Secretario Clinico':
+        case 'SecretarioClinico':
           var response = await getMedicoInfo(hashedId!);
           if (response.success == false) {
             ErrorAlert.show(context, response.errorMessage.toString());
@@ -270,6 +271,9 @@ class _LoginScreen extends State<LoginScreen> {
             return false;
           }
           utilizador = Medico.fromJson(response.data);
+          break;
+        case 'Admin':
+          utilizador = Admin.fromJson(response.data);
           break;
         default:
       }

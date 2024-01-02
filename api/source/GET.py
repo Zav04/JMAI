@@ -36,5 +36,15 @@ async def get_entidades_responsaveis(db: SessionLocal = Depends(get_db)):
     except Exception as e:
         return {"error": str(e)}
     
-    
-    
+@get_router.get("/load_especialidade/")
+async def load_especialidade(db: SessionLocal = Depends(get_db)):
+    try:
+        result = db.execute(text("SELECT get_all_especialidades();"))
+        nomes_entidades = [row[0] for row in result.fetchall()]
+        return {"response": nomes_entidades}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        return {"error": str(e)}

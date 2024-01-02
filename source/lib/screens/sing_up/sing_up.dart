@@ -1,17 +1,17 @@
 import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../main/components/Maps/distritos_concelhos.dart';
-import '../main/components/Maps/concelhos_freguesias.dart';
-import '../main/components/Maps/paises.dart';
-import '../main/components/constants.dart';
+import 'package:JMAI/screens/main/components/Maps/distritos_concelhos.dart';
+import 'package:JMAI/screens/main/components/Maps/concelhos_freguesias.dart';
+import 'package:JMAI/screens/main/components/Maps/paises.dart';
+import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/services.dart';
-import '../main/components/password_field.dart';
-import '../main/components/codigo_postal.dart';
+import 'package:JMAI/screens/main/components/password_field.dart';
+import 'package:JMAI/screens/main/components/codigo_postal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../controllers/API_Connection.dart';
-import '../../overlay/ErrorAlert.dart';
-import '../../overlay/SuccessAlert.dart';
+import 'package:JMAI/controllers/API_Connection.dart';
+import 'package:JMAI/overlay/ErrorAlert.dart';
+import 'package:JMAI/overlay/SuccessAlert.dart';
 
 class Singup extends StatefulWidget {
   const Singup({Key? key}) : super(key: key);

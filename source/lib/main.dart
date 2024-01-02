@@ -2,10 +2,10 @@ import 'package:JMAI/controllers/MenuAppController.dart';
 import 'package:JMAI/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './screens/sing_up/sing_up.dart';
+import 'package:JMAI/screens/sing_up/sing_up.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import './screens/main/main_screen.dart';
+import 'package:JMAI/screens/main/main_screen.dart';
 
 void main() async {
   setPathUrlStrategy();

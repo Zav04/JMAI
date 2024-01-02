@@ -17,7 +17,7 @@ abstract class Utilizador {
     switch (json['role']) {
       case 'Utente':
         return Utente.fromJson(json);
-      case 'Secretario Clinico':
+      case 'SecretarioClinico':
         return SecretarioClinico.fromJson(json);
       case 'Medico':
         return Medico.fromJson(json);

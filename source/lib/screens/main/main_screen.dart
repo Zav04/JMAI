@@ -6,10 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:JMAI/screens/Utente/requerimentos.dart';
 import 'components/side_menu.dart';
 import 'components/constants.dart';
-import '../../Class/Utilizador.dart';
-import '../../Class/Utente.dart';
-import '../../Class/Medico.dart';
-import '../../Class/SecretarioClinico.dart';
+import 'package:JMAI/Class/Utilizador.dart';
+import 'package:JMAI/Class/Utente.dart';
+import 'package:JMAI/Class/Medico.dart';
+import 'package:JMAI/class/SecretarioClinico.dart';
+import 'package:JMAI/screens/Admin/SignupMedico.dart';
+import 'package:JMAI/screens/Admin/SignupSecretarioClinico.dart';
 
 class MainScreen extends StatefulWidget {
   final Utilizador? user;
@@ -59,6 +61,11 @@ class _MainScreenState extends State<MainScreen> {
     } else if (user is SecretarioClinico) {
       _pages.addAll([
         // Páginas específicas para SecretarioClinico
+      ]);
+    } else {
+      _pages.addAll([
+        SignupSecretarioClinico(user: widget.user),
+        SignupMedico(user: widget.user),
       ]);
     }
   }
