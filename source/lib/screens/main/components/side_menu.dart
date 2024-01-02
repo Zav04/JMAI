@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 
-class SideMenu extends StatelessWidget {
+class SideMenu extends StatefulWidget {
   final Function(int) onItemSelected;
   final Utilizador user;
 
@@ -14,6 +14,12 @@ class SideMenu extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SideMenuState createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
+  int selectedItemIndex = 0;
+  @override
   Widget build(BuildContext context) {
     List<Widget> menuItems = [
       DrawerHeader(
@@ -23,22 +29,41 @@ class SideMenu extends StatelessWidget {
       DrawerListTile(
         title: "Dashboard",
         svgSrc: "assets/icons/menu_dashboard.svg",
-        press: () => onItemSelected(0),
+        press: () {
+          setState(() {
+            selectedItemIndex = 0; // Atualize o índice do item selecionado
+          });
+          widget.onItemSelected(0); // Chame a função callback
+        },
+        isSelected:
+            selectedItemIndex == 0, // Verifique se o item está selecionado
       ),
     ];
 
-    switch (user.role) {
+    switch (widget.user.role) {
       case 'Admin':
         menuItems.addAll([
           DrawerListTile(
             title: "Registar Secretario Clinico",
             svgSrc: "assets/icons/menu_profile.svg",
-            press: () => onItemSelected(1),
+            press: () {
+              setState(() {
+                selectedItemIndex = 1;
+              });
+              widget.onItemSelected(1);
+            },
+            isSelected: selectedItemIndex == 1,
           ),
           DrawerListTile(
             title: "Registar Médico",
             svgSrc: "assets/icons/menu_profile.svg",
-            press: () => onItemSelected(2),
+            press: () {
+              setState(() {
+                selectedItemIndex = 2;
+              });
+              widget.onItemSelected(2);
+            },
+            isSelected: selectedItemIndex == 2,
           ),
         ]);
         break;
@@ -47,12 +72,24 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Requerimentos",
             svgSrc: "assets/icons/menu_tran.svg",
-            press: () => onItemSelected(1),
+            press: () {
+              setState(() {
+                selectedItemIndex = 1;
+              });
+              widget.onItemSelected(1);
+            },
+            isSelected: selectedItemIndex == 1,
           ),
           DrawerListTile(
             title: "Editar Perfil",
             svgSrc: "assets/icons/menu_tran.svg",
-            press: () => onItemSelected(2),
+            press: () {
+              setState(() {
+                selectedItemIndex = 2;
+              });
+              widget.onItemSelected(2);
+            },
+            isSelected: selectedItemIndex == 2,
           ),
         ]);
         break;
@@ -61,7 +98,13 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Validação de Requerimentos",
             svgSrc: "assets/icons/menu_tran.svg",
-            press: () => onItemSelected(1),
+            press: () {
+              setState(() {
+                selectedItemIndex = 1;
+              });
+              widget.onItemSelected(1);
+            },
+            isSelected: selectedItemIndex == 1,
           ),
         ]);
 
@@ -71,7 +114,13 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Pre-Avaliação de Requerimentos",
             svgSrc: "assets/icons/menu_tran.svg",
-            press: () => onItemSelected(1),
+            press: () {
+              setState(() {
+                selectedItemIndex = 1;
+              });
+              widget.onItemSelected(1);
+            },
+            isSelected: selectedItemIndex == 1,
           ),
         ]);
         break;
@@ -90,15 +139,17 @@ class SideMenu extends StatelessWidget {
 }
 
 class DrawerListTile extends StatefulWidget {
+  final String title, svgSrc;
+  final VoidCallback press;
+  final bool isSelected;
+
   const DrawerListTile({
     Key? key,
     required this.title,
     required this.svgSrc,
     required this.press,
+    required this.isSelected,
   }) : super(key: key);
-
-  final String title, svgSrc;
-  final VoidCallback press;
 
   @override
   _DrawerListTileState createState() => _DrawerListTileState();
@@ -109,23 +160,28 @@ class _DrawerListTileState extends State<DrawerListTile> {
 
   @override
   Widget build(BuildContext context) {
+    // Atualize a cor de fundo baseada no estado de hover e seleção
+    Color backgroundColor = widget.isSelected
+        ? selectedColor // Cor quando selecionado
+        : (_isHovered ? secondaryColor : bgColor);
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
-        color: _isHovered ? secondaryColor : bgColor,
+        color: backgroundColor,
         child: ListTile(
           onTap: widget.press,
           horizontalTitleGap: 0.0,
           leading: SvgPicture.asset(
             widget.svgSrc,
-            color: _isHovered ? Colors.grey[700] : Colors.black,
+            color: _isHovered ? Colors.blue : Colors.black,
             height: 16,
           ),
           title: Text(
             widget.title,
             style: TextStyle(
-              color: _isHovered ? Colors.white : Colors.black,
+              color: _isHovered ? Colors.blueAccent : Colors.black,
             ),
           ),
         ),
