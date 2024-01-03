@@ -1,37 +1,32 @@
-CREATE OR REPLACE FUNCTION register_utente(
-p_email VARCHAR(255),
-p_password VARCHAR(255),
-p_nome_completo VARCHAR(255),
-p_sexo VARCHAR(255),
-p_morada VARCHAR(255),
-p_nr_porta VARCHAR(255),
-p_nr_andar VARCHAR(255),
-p_codigo_postal VARCHAR(255),
-p_data_nascimento VARCHAR(255),
-p_distrito VARCHAR(255),
-p_concelho VARCHAR(255),
-p_freguesia VARCHAR(255),
-p_naturalidade VARCHAR(255),
-p_pais_nacionalidade VARCHAR(255),
-p_tipo_documento_identificacao VARCHAR(255),
-p_numero_de_documento_de_identificacao VARCHAR(255),
-p_numero_utente_saude VARCHAR(255),
-p_numero_de_identificacao_fiscal VARCHAR(255),
-p_numero_de_seguranca_social VARCHAR(255),
-p_numero_de_telemovel VARCHAR(255),
-p_id_entidade_responsavel VARCHAR(255),
-p_documento_validade VARCHAR(255),
-p_justvalidate_inputs BOOL
+CREATE OR REPLACE FUNCTION edit_utente(
+    p_hashed_id VARCHAR(255),
+    p_nome_completo VARCHAR(255),
+    p_sexo VARCHAR(255),
+    p_morada VARCHAR(255),
+    p_nr_porta VARCHAR(255),
+    p_nr_andar VARCHAR(255),
+    p_codigo_postal VARCHAR(255),
+    p_data_nascimento VARCHAR(255),
+    p_distrito VARCHAR(255),
+    p_concelho VARCHAR(255),
+    p_freguesia VARCHAR(255),
+    p_pais_naturalidade VARCHAR(255),
+    p_pais_nacionalidade VARCHAR(255),
+    p_tipo_documento_identificacao VARCHAR(255),
+    p_numero_documento_identificacao VARCHAR(255),
+    p_numero_utente_saude VARCHAR(255),
+    p_numero_identificacao_fiscal VARCHAR(255),
+    p_numero_seguranca_social VARCHAR(255),
+    p_numero_telemovel VARCHAR(255),
+    p_id_entidade_responsavel VARCHAR(255),
+    p_documento_validade VARCHAR(255),
+    p_justvalidate_inputs BOOL
 ) RETURNS BOOL AS $$
 DECLARE
-  v_id_utilizador BIGINT;
-  v_morada_completa TEXT;
-  v_id_entidade_responsavel BIGINT;
-  v_tipo_documento_identificacao BIGINT;
+    v_id_entidade_responsavel BIGINT;
+    v_tipo_documento_identificacao BIGINT;
 BEGIN
-
-
-	IF p_nome_completo IS NULL OR p_nome_completo = '' THEN
+    IF p_nome_completo IS NULL OR p_nome_completo = '' THEN
         RAISE EXCEPTION 'Nome Completo é um campo obrigatorio.';
     END IF;
 	
@@ -43,11 +38,11 @@ BEGIN
         RAISE EXCEPTION 'Data de Nascimento inválida.';
     END IF;
 	
-	IF p_numero_de_telemovel IS NULL or p_numero_de_telemovel='' THEN
+	IF p_numero_telemovel IS NULL or p_numero_telemovel='' THEN
         RAISE EXCEPTION 'Número de telemovel é um campo obrigatorio.';
     END IF;
 	
-	IF LENGTH(p_numero_de_telemovel) <> 9 THEN
+	IF LENGTH(p_numero_telemovel) <> 9 THEN
     RAISE EXCEPTION 'O Número de Telemovel deve conter exatamente 9 dígitos.';
 	END IF;
 	
@@ -61,29 +56,29 @@ BEGIN
     END IF;
 	
 	
-	IF p_numero_de_identificacao_fiscal IS NULL or p_numero_de_identificacao_fiscal='' THEN
+	IF p_numero_identificacao_fiscal IS NULL or p_numero_identificacao_fiscal='' THEN
         RAISE EXCEPTION 'O Número de Identificação Fiscal é um campo obrigatorio.';
     END IF;
 	
-	IF LENGTH(p_numero_de_identificacao_fiscal) <> 9 THEN
+	IF LENGTH(p_numero_identificacao_fiscal) <> 9 THEN
     RAISE EXCEPTION 'O Número de Identificação Fiscal deve conter exatamente 9 dígitos.';
 	END IF;
 	
 	
-	IF p_numero_de_documento_de_identificacao IS NULL or p_numero_de_documento_de_identificacao='' THEN
+	IF p_numero_documento_identificacao IS NULL or p_numero_documento_identificacao='' THEN
         RAISE EXCEPTION 'O Número do Documento de Identificação é um campo obrigatorio.';
     END IF;
 	
-	IF LENGTH(p_numero_de_documento_de_identificacao) <> 9 THEN
+	IF LENGTH(p_numero_documento_identificacao) <> 9 THEN
     RAISE EXCEPTION 'O Número do Documento de Identificação deve conter exatamente 9 dígitos.';
 	END IF;
 	
 	
-	IF p_numero_de_seguranca_social IS NULL or p_numero_de_seguranca_social='' THEN
+	IF p_numero_seguranca_social IS NULL or p_numero_seguranca_social='' THEN
         RAISE EXCEPTION 'O Número da Segurança Social é um campo obrigatorio.';
     END IF;
 	
-	IF LENGTH(p_numero_de_seguranca_social) <> 11 THEN
+	IF LENGTH(p_numero_seguranca_social) <> 11 THEN
     RAISE EXCEPTION 'O Número da Segurança Social deve conter exatamente 11 dígitos.';
 	END IF;
 	
@@ -139,25 +134,6 @@ BEGIN
         RAISE EXCEPTION 'Centro de Saúde é um campo obrigatorio.';
     END IF;
 
-	
-	IF is_email_valid(p_email) IS FALSE THEN
-        RAISE EXCEPTION 'Email não é valido';
-    END IF;
-	
-	    -- Verifica se os email é valido
-    IF email_exists(p_email) IS TRUE THEN
-        RAISE EXCEPTION 'Email já está registado';
-    END IF;
-
-    IF p_password IS NULL OR p_password = '' THEN
-        RAISE EXCEPTION 'Password é um campo obrigatorio.';
-    END IF;
-	
-	IF  LENGTH(p_password) < 6 THEN
-        RAISE EXCEPTION 'Password tem de ter no minimo 6 carateres.';
-    END IF;
-	
-	
  	IF p_tipo_documento_identificacao = 'CC' THEN
         v_tipo_documento_identificacao := 1;
     ELSIF p_tipo_documento_identificacao = 'Bilhete Indentidade' THEN
@@ -168,70 +144,39 @@ BEGIN
         RAISE EXCEPTION 'Tipo de Documento de Identificação inválido.';
     END IF;
 	
+	
+	 IF p_justvalidate_inputs IS TRUE THEN
+	
+    SELECT id_entidade_responsavel INTO v_id_entidade_responsavel
+    FROM EntidadeResponsavel
+    WHERE nome = p_id_entidade_responsavel;
 
+    -- Atualizar informações do Utente
+    UPDATE Utente
+    SET nome_completo = p_nome_completo,
+        Sexo = p_sexo,
+        morada = p_morada,
+        nr_porta = p_nr_porta,
+        nr_andar = p_nr_andar,
+        codigo_postal = p_codigo_postal,
+        data_nascimento = p_data_nascimento,
+        distrito = p_distrito,
+        concelho = p_concelho,
+        freguesia = p_freguesia,
+        naturalidade = p_pais_naturalidade,
+        pais_nacionalidade = p_pais_nacionalidade,
+        tipo_documento_identificacao = v_tipo_documento_identificacao,
+        numero_de_documento_de_identificacao = p_numero_documento_identificacao,
+        numero_utente_saude = p_numero_utente_saude,
+        numero_de_identificacao_fiscal = p_numero_identificacao_fiscal,
+        numero_de_seguranca_social = p_numero_seguranca_social,
+        numero_de_telemovel = p_numero_telemovel,
+        id_entidade_responsavel = v_id_entidade_responsavel,
+        documento_validade = p_documento_validade
+    WHERE hashed_id = p_hashed_id;
+	
+	END IF;
 
-  IF p_justvalidate_inputs IS TRUE THEN
-  
-  INSERT INTO Utilizador(email, id_cargo)
-  VALUES (p_email, 1) 
-  RETURNING id_utilizador INTO v_id_utilizador;
-  
-  
-  -- Procurar o id da entidade responsável pelo nome
-  SELECT id_entidade_responsavel INTO v_id_entidade_responsavel
-  FROM EntidadeResponsavel
-  WHERE nome = p_id_entidade_responsavel;
-  
-    INSERT INTO Utente(
-    id_utilizador,
-    nome_completo,
-    Sexo,
-    morada,
-    data_nascimento,
-    distrito,
-    concelho,
-    freguesia,
-    naturalidade,
-    pais_nacionalidade,
-    tipo_documento_identificacao,
-    numero_de_documento_de_identificacao,
-    numero_utente_saude,
-    numero_de_identificacao_fiscal,
-    numero_de_seguranca_social,
-    numero_de_telemovel,
-    id_entidade_responsavel,
-    obito,
-    documento_validade,
-    nr_porta,               
-    nr_andar,               
-    codigo_postal           
-  ) VALUES (
-    v_id_utilizador,
-    p_nome_completo,
-    p_sexo,
-    p_morada,
-    p_data_nascimento,
-    p_distrito,
-    p_concelho,
-    p_freguesia,
-    p_naturalidade,
-    p_pais_nacionalidade,
-    v_tipo_documento_identificacao,
-    p_numero_de_documento_de_identificacao,
-    p_numero_utente_saude,
-    p_numero_de_identificacao_fiscal,
-    p_numero_de_seguranca_social,
-    p_numero_de_telemovel,
-    v_id_entidade_responsavel,
-    FALSE, 
-    p_documento_validade,
-    p_nr_porta,            
-    p_nr_andar,            
-    p_codigo_postal        
-  );
- END IF;
-
-RETURN TRUE;
+    RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
-

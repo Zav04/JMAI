@@ -5,10 +5,10 @@ import 'package:JMAI/Class/CreateAPIResponse.dart';
 import 'package:JMAI/Class/ClassesForData.dart';
 
 Future<CreateAPIResponse> checkConnection() async {
-  String URL =
+  String url =
       dotenv.env['API_URL'].toString() + dotenv.env['CONNECTED'].toString();
   try {
-    final response = await http.get(Uri.parse(URL));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       var responseBody = utf8.decode(response.bodyBytes);
@@ -30,15 +30,14 @@ Future<CreateAPIResponse> checkConnection() async {
     }
   } catch (e) {
     return CreateAPIResponse(success: false, errorMessage: e.toString());
-    // Falha, com exceção capturada
   }
 }
 
 Future<CreateAPIResponse> getEntidadesResponsaveis() async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['G_ENTIDADES_RESPONSAVEIS'].toString();
   try {
-    final response = await http.get(Uri.parse(URL));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       var responseBody = utf8.decode(response.bodyBytes);
@@ -61,16 +60,48 @@ Future<CreateAPIResponse> getEntidadesResponsaveis() async {
   } catch (e) {
     return CreateAPIResponse(
         success: false, errorMessage: 'Erro ao Carregar os Centros de Saúde');
-    // Falha, com exceção capturada
   }
 }
 
 Future<CreateAPIResponse> validationCreateUser(UtenteRegister utente) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['VALIDATION_CREATE_USER'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(utente.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(
+          success: false,
+          errorMessage: 'Erro no servidor: ${response.statusCode}');
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> validationEditUser(UtenteRegister utente) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['VALIDATION_EDIT_USER'].toString();
+  try {
+    final response = await http.put(
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(utente.toJson()),
     );
@@ -100,11 +131,11 @@ Future<CreateAPIResponse> validationCreateUser(UtenteRegister utente) async {
 
 Future<CreateAPIResponse> validationCreateSecretarioClinico(
     SecretarioClinicoRegister secretarioClinico) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['VALIDATION_CREATE_SECRETARIO_CLINICO'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(secretarioClinico.toJson()),
     );
@@ -133,11 +164,11 @@ Future<CreateAPIResponse> validationCreateSecretarioClinico(
 }
 
 Future<CreateAPIResponse> validationCreateMedico(MedicoRegister medico) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['VALIDATION_CREATE_MEDICO'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medico.toJson()),
     );
@@ -166,10 +197,10 @@ Future<CreateAPIResponse> validationCreateMedico(MedicoRegister medico) async {
 }
 
 Future<CreateAPIResponse> loadEspecialidades() async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['LOAD_ESPECIALIDADE'].toString();
   try {
-    final response = await http.get(Uri.parse(URL));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       var responseBody = utf8.decode(response.bodyBytes);
@@ -192,16 +223,15 @@ Future<CreateAPIResponse> loadEspecialidades() async {
   } catch (e) {
     return CreateAPIResponse(
         success: false, errorMessage: 'Erro ao Carregar os Centros de Saúde');
-    // Falha, com exceção capturada
   }
 }
 
 Future<CreateAPIResponse> singin(String email, String password) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['FIREBASE_SIGIN'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -228,11 +258,11 @@ Future<CreateAPIResponse> singin(String email, String password) async {
 }
 
 Future<CreateAPIResponse> verifyEmailExist(String email) async {
-  String URL =
+  String url =
       dotenv.env['API_URL'].toString() + dotenv.env['V_EMAIL_EXIST'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -259,11 +289,11 @@ Future<CreateAPIResponse> verifyEmailExist(String email) async {
 }
 
 Future<CreateAPIResponse> resetPassword(String email) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['FIREBASE_FORGOTPASSWORD'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -290,11 +320,11 @@ Future<CreateAPIResponse> resetPassword(String email) async {
 }
 
 Future<CreateAPIResponse> login(String email, String password) async {
-  String URL =
+  String url =
       dotenv.env['API_URL'].toString() + dotenv.env['FULL_LOGIN'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -321,11 +351,11 @@ Future<CreateAPIResponse> login(String email, String password) async {
 }
 
 Future<CreateAPIResponse> getUserRole(String email) async {
-  String URL =
+  String url =
       dotenv.env['API_URL'].toString() + dotenv.env['GETUSERINFO'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -351,14 +381,14 @@ Future<CreateAPIResponse> getUserRole(String email) async {
   }
 }
 
-Future<CreateAPIResponse> getUtenteInfo(String hashedId) async {
-  String URL = dotenv.env['API_URL'].toString() +
+Future<CreateAPIResponse> getUtenteInfo(String hashedid) async {
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_UTENTE_INFO'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedId}),
+      body: jsonEncode({'hashed_id': hashedid}),
     );
 
     if (response.statusCode == 200) {
@@ -383,11 +413,11 @@ Future<CreateAPIResponse> getUtenteInfo(String hashedId) async {
 }
 
 Future<CreateAPIResponse> getMedicoInfo(String hashedId) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_MEDIC_INFO'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'hashed_id': hashedId}),
     );
@@ -414,11 +444,74 @@ Future<CreateAPIResponse> getMedicoInfo(String hashedId) async {
 }
 
 Future<CreateAPIResponse> getSecretarioClinicoInfo(String hashedId) async {
-  String URL = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_SECRETARIA_CLINICO_INFO'].toString();
   try {
     final response = await http.post(
-      Uri.parse(URL),
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashedId}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> insertRequerimento(
+    RequerimentoRegister requerimento) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['INSERT_REQUIREMENT'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requerimento.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> fetchRequerimentos(String hashedId) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['FETCH_REQUIREMENT'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'hashed_id': hashedId}),
     );

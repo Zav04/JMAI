@@ -30,7 +30,6 @@ firebase =pyrebase.initialize_app(firebaseConfig)
 auth_manual = firebase.auth()
 
 
-
 def login(email, password):
     try:
         login= auth_manual.sign_in_with_email_and_password(email,password)
@@ -44,7 +43,7 @@ def singup(email, password):
         auth_manual.create_user_with_email_and_password(email, password)
         return True
     except:
-        return 'Email ja esta regisatdo'
+        return 'Email ja esta registado'
 
 
 def resetpassword(email):

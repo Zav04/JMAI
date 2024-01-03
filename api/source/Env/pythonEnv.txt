@@ -9,11 +9,14 @@ pip install sqlalchemy
 pip install psycopg2-binary
 pip install uvicorn
 pip install python-dotenv
-
-pip install fastapi sqlalchemy psycopg2-binary uvicorn python-dotenv
-
 pip install pyrebase
 pip install firebase-admin
+pip install certbot
+pip install pydantic
+
+pip install fastapi sqlalchemy psycopg2-binary uvicorn python-dotenv pyrebase admin
+
+
 
 
 Instalar no cmd do windows

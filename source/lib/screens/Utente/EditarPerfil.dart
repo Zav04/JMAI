@@ -5,19 +5,19 @@ import 'package:JMAI/screens/main/components/Maps/distritos_concelhos.dart';
 import 'package:JMAI/screens/main/components/Maps/concelhos_freguesias.dart';
 import 'package:JMAI/screens/main/components/Maps/paises.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
-import 'package:JMAI/screens/dashboard/components/sleep.dart';
 import 'package:flutter/services.dart';
-import 'package:JMAI/screens/main/components/password_field.dart';
+import 'package:JMAI/screens/main/components/codigo_postal.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'package:JMAI/Class/Utilizador.dart';
+import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 
-class SignupMedico extends StatelessWidget {
-  final Utilizador? user;
-  const SignupMedico({
+class EditarPerfilUtente extends StatelessWidget {
+  final Utilizador user;
+  const EditarPerfilUtente({
     Key? key,
     required this.user,
   }) : super(key: key);
@@ -39,7 +39,7 @@ class SignupMedico extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: defaultPadding),
-                      SignupMedicoForm(),
+                      EditarPerfilUtenteForm(user: user),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
                     ],
@@ -56,33 +56,51 @@ class SignupMedico extends StatelessWidget {
   }
 }
 
-class SignupMedicoForm extends StatefulWidget {
-  const SignupMedicoForm({Key? key}) : super(key: key);
+class EditarPerfilUtenteForm extends StatefulWidget {
+  final Utilizador user;
+  const EditarPerfilUtenteForm({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
-  _SignupMedicoFormState createState() => _SignupMedicoFormState();
+  _EditarPerfilUtenteFormState createState() => _EditarPerfilUtenteFormState();
 }
 
-class _SignupMedicoFormState extends State<SignupMedicoForm> {
-  TextEditingController _nomeCompletoController = TextEditingController();
-  TextEditingController _dataDeNascimentoController = TextEditingController();
-  TextEditingController _telefoneController = TextEditingController();
+class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
+  final TextEditingController _nomeCompletoController = TextEditingController();
+  final TextEditingController _dataDeNascimentoController =
+      TextEditingController();
+  final TextEditingController _telefoneController = TextEditingController();
   String _selectedGender = 'Masculino';
-  TextEditingController _nrCedula = TextEditingController();
-  TextEditingController _nrOrdem = TextEditingController();
-  String? _selectedEspecialidade;
+  String _selectedpaisNaturalidade = 'Portugal';
   String _selectedpaisNacionalidade = 'Portugal';
+  String _selectedIdentification = 'CC';
+  final TextEditingController _validadeIdentificacaoController =
+      TextEditingController();
+  final TextEditingController _nrIdentificacaoFiscalController =
+      TextEditingController();
+  final TextEditingController _nrIdentificacaoController =
+      TextEditingController();
+  final TextEditingController _nrSegunracaSocialController =
+      TextEditingController();
+  final TextEditingController _nrUtenteSaudeController =
+      TextEditingController();
+  final TextEditingController _moradaController = TextEditingController();
+  final TextEditingController _nrPortaController = TextEditingController();
+  final TextEditingController _nrAndarController = TextEditingController();
+  final TextEditingController _codigoPostalController = TextEditingController();
   String? _selectedDistrito;
   String? _selectedConcelho;
   String? _selectedFreguesia;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  List<String> especialidade = [];
+  String? _selectedCentroSaude;
+  List<String> centrosSaude = [];
 
   @override
   void initState() {
     super.initState();
-    loadEspecialidade();
+    loadCds();
+    loadAllFromUser(widget.user);
   }
 
   @override
@@ -91,8 +109,15 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
     _nomeCompletoController.dispose();
     _dataDeNascimentoController.dispose();
     _telefoneController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
+    _validadeIdentificacaoController.dispose();
+    _nrIdentificacaoFiscalController.dispose();
+    _nrIdentificacaoController.dispose();
+    _nrSegunracaSocialController.dispose();
+    _nrUtenteSaudeController.dispose();
+    _moradaController.dispose();
+    _nrPortaController.dispose();
+    _nrAndarController.dispose();
+    _codigoPostalController.dispose();
   }
 
   @override
@@ -113,8 +138,9 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Registro Médico',
+            'Alterar Perfil Utente',
             style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           Row(
@@ -150,7 +176,6 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                     if (value == null || value.isEmpty) {
                       return 'Insira a sua Data de Nascimento';
                     }
-
                     return null;
                   },
                 ),
@@ -204,11 +229,120 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
           Row(
             children: [
               Flexible(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedpaisNaturalidade,
+                  items: naturalidade
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedpaisNaturalidade = newValue!;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Naturalidade',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  ),
+                  isExpanded: true,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Flexible(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedpaisNacionalidade,
+                  items: paises.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedpaisNacionalidade = newValue!;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Nacionalidade',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  ),
+                  isExpanded: true,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Flexible(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedIdentification,
+                  items: <String>['CC', 'Bilhete Identidade', 'Cedula Militar']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedIdentification = newValue!;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Identificação',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  ),
+                  isExpanded: true,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Flexible(
                 child: TextFormField(
-                  controller: _nrCedula,
+                  controller: _validadeIdentificacaoController,
+                  decoration: InputDecoration(
+                    labelText: 'Validade Identificação',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: presentDatePickerValidade,
+                    ),
+                  ),
+                  keyboardType: TextInputType.datetime,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]')),
+                    createAutoHyphenDateFormatter(),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Insira a Validade da Identificação';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Flexible(
+                child: TextFormField(
+                  controller: _nrIdentificacaoFiscalController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Nº Cedula Medico',
+                    labelText: 'Nº Iden. Fiscal',
                     border: OutlineInputBorder(),
                   ),
                   inputFormatters: [
@@ -220,51 +354,97 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
               SizedBox(width: 20),
               Flexible(
                 child: TextFormField(
-                  controller: _nrOrdem,
+                  controller: _nrIdentificacaoController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Nº Ordem Médicos',
+                    labelText: 'Nº de Identificação',
                     border: OutlineInputBorder(),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(5),
+                    LengthLimitingTextInputFormatter(9),
                   ],
                 ),
               ),
               SizedBox(width: 20),
               Flexible(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Especialidade',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: TextFormField(
+                  controller: _nrSegunracaSocialController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Nº Segurança Social',
+                    border: OutlineInputBorder(),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      elevation: 0,
-                      value: _selectedEspecialidade,
-                      hint: Text('Especialidade'),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedEspecialidade = newValue;
-                        });
-                      },
-                      items: especialidade
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList(),
-                      isExpanded: true,
-                    ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                ),
+              ),
+              SizedBox(width: 20),
+              Flexible(
+                child: TextFormField(
+                  controller: _nrUtenteSaudeController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Nº Utente Saúde',
+                    border: OutlineInputBorder(),
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(9),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Flexible(
+                child: TextField(
+                  controller: _moradaController,
+                  decoration: InputDecoration(
+                    labelText: 'Morada',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              Flexible(
+                child: TextField(
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  controller: _nrPortaController,
+                  decoration: InputDecoration(
+                    labelText: 'Número da Porta',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              Flexible(
+                child: TextField(
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  controller: _nrAndarController,
+                  decoration: InputDecoration(
+                    labelText: 'Andar',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      PostalCodeFields(
+                          combinedPostalCodeController:
+                              _codigoPostalController),
+                    ],
                   ),
                 ),
               ),
@@ -393,54 +573,43 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
               ),
               const SizedBox(width: 20),
               Flexible(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedpaisNacionalidade,
-                  items: naturalidade
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedpaisNacionalidade = newValue!;
-                    });
-                  },
+                child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Nacionalidade',
+                    labelText: 'Centro de Saúde',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                     contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   ),
-                  isExpanded: true,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      elevation: 0,
+                      value: _selectedCentroSaude,
+                      hint: Text('Centro de Saúde'),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedCentroSaude = newValue;
+                        });
+                      },
+                      items: centrosSaude
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                      isExpanded: true,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Flexible(
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Insira o seu Email para o Registro',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: PasswordField(controller: _passwordController),
-              ),
-            ],
-          ),
-          const SizedBox(height: 150),
+          const SizedBox(height: 100),
           ElevatedButton(
             onPressed: () {
               registerSubmit();
@@ -452,13 +621,29 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                 borderRadius: BorderRadius.circular(20),
               ),
               fixedSize: const Size(200, 50),
+              alignment: Alignment.center,
             ),
-            child: Text('Registar', style: TextStyle(fontSize: 20)),
+            child: Text('Editar', style: TextStyle(fontSize: 20)),
           ),
           const SizedBox(height: 20),
         ],
       ),
     );
+  }
+
+  Future<List<String>> loadCds() async {
+    var cds = await getEntidadesResponsaveis();
+    if (cds.success == false) {
+      ErrorAlert.show(context, cds.errorMessage.toString());
+      return [];
+    }
+    List<String> centros = List<String>.from(cds.data);
+    if (mounted) {
+      setState(() {
+        centrosSaude = centros;
+      });
+    }
+    return centros;
   }
 
   void presentDatePickerDataNascimento() async {
@@ -472,6 +657,21 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
       String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
       setState(() {
         _dataDeNascimentoController.text = formattedDate;
+      });
+    }
+  }
+
+  void presentDatePickerValidade() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+      setState(() {
+        _validadeIdentificacaoController.text = formattedDate;
       });
     }
   }
@@ -512,7 +712,8 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
   }
 
   void registerSubmit() async {
-    MedicoRegister newmedico = MedicoRegister(
+    UtenteRegister newUtente = UtenteRegister(
+        hashed_id: widget.user.hashedId,
         nomeCompleto: _nomeCompletoController.text.isNotEmpty
             ? _nomeCompletoController.text
             : null,
@@ -522,64 +723,79 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
         numeroTelemovel: _telefoneController.text.isNotEmpty
             ? _telefoneController.text
             : null,
-        numCedula: _nrCedula.text.isNotEmpty ? _nrCedula.text.toString() : null,
-        especialidade:
-            _selectedEspecialidade != null ? _selectedEspecialidade : null,
-        numOrdem: _nrOrdem.text.isNotEmpty ? _nrOrdem.text.toString() : null,
         sexo: _selectedGender,
+        paisnaturalidade: _selectedpaisNaturalidade,
+        paisNacionalidade: _selectedpaisNacionalidade,
+        tipoDocumentoIdentificacao: _selectedIdentification,
+        documentoValidade: _validadeIdentificacaoController.text.isNotEmpty
+            ? _validadeIdentificacaoController.text
+            : null,
+        numeroIdentificacaoFiscal:
+            _nrIdentificacaoFiscalController.text.isNotEmpty
+                ? _nrIdentificacaoFiscalController.text
+                : null,
+        numeroDocumentoIdentificacao: _nrIdentificacaoController.text.isNotEmpty
+            ? _nrIdentificacaoController.text
+            : null,
+        numeroSegurancaSocial: _nrSegunracaSocialController.text.isNotEmpty
+            ? _nrSegunracaSocialController.text
+            : null,
+        numeroUtenteSaude: _nrUtenteSaudeController.text.isNotEmpty
+            ? _nrUtenteSaudeController.text
+            : null,
+        morada:
+            _moradaController.text.isNotEmpty ? _moradaController.text : null,
+        nrPorta:
+            _nrPortaController.text.isNotEmpty ? _nrPortaController.text : null,
+        nrAndar:
+            _nrAndarController.text.isNotEmpty ? _nrAndarController.text : null,
+        codigoPostal: _codigoPostalController.text.isNotEmpty
+            ? _codigoPostalController.text
+            : null,
         distrito: _selectedDistrito != null ? _selectedDistrito : null,
         concelho: _selectedConcelho != null ? _selectedConcelho : null,
         freguesia: _selectedFreguesia != null ? _selectedFreguesia : null,
-        paisNacionalidade: _selectedpaisNacionalidade,
-        email: _emailController.text.isNotEmpty ? _emailController.text : null,
-        password: _passwordController.text.isNotEmpty
-            ? _passwordController.text
-            : null,
-        justvalidateInputs: false);
+        idEntidadeResponsavel:
+            _selectedCentroSaude != null ? _selectedCentroSaude : null,
+        justvalidateInputs: true);
 
-    var response = await validationCreateMedico(newmedico);
+    var response = await validationEditUser(newUtente);
     if (response.success) {
-      response = await singin(_emailController.text, _passwordController.text);
-      if (response.success) {
-        newmedico.justvalidateInputs = true;
-        response = await validationCreateMedico(newmedico);
-        SuccessAlert.show(context, 'Conta Criada com Sucesso');
-        await fazerPausaAssincrona();
-        setState(() {
-          _nomeCompletoController.text = '';
-          _dataDeNascimentoController.text = '';
-          _telefoneController.text = '';
-          _nrCedula.text = '';
-          _nrOrdem.text = '';
-          _emailController.text = '';
-          _passwordController.text = '';
-          _selectedEspecialidade = null;
-          _selectedDistrito = null;
-          _selectedConcelho = null;
-          _selectedFreguesia = null;
-          _selectedGender = 'Masculino';
-          _selectedpaisNacionalidade = 'Portugal';
-        });
-      } else {
-        ErrorAlert.show(context, response.errorMessage.toString());
-      }
+      SuccessAlert.show(context, 'Conta Alterada com Sucesso');
     } else {
       ErrorAlert.show(context, response.errorMessage.toString());
     }
   }
 
-  Future<List<String>> loadEspecialidade() async {
-    var esp = await loadEspecialidades();
-    if (esp.success == false) {
-      ErrorAlert.show(context, esp.errorMessage.toString());
-      return [];
-    }
-    List<String> especialidades = List<String>.from(esp.data);
-    if (mounted) {
+  void loadAllFromUser(Utilizador user) async {
+    if (user is Utente) {
       setState(() {
-        especialidade = especialidades;
+        _nomeCompletoController.text = user.nomeCompleto;
+        _dataDeNascimentoController.text = user.dataNascimento;
+        _telefoneController.text = user.numeroTelemovel;
+        _selectedGender = user.sexo;
+        _selectedpaisNaturalidade = user.naturalidade;
+        _selectedpaisNacionalidade = user.paisNacionalidade;
+        if (user.tipoDocumentoIdentificacao == 1)
+          _selectedIdentification = 'CC';
+        else if (user.tipoDocumentoIdentificacao == 2)
+          _selectedIdentification = 'Bilhete Identidade';
+        else if (user.tipoDocumentoIdentificacao == 3)
+          _selectedIdentification = 'Cedula Militar';
+        _validadeIdentificacaoController.text = user.documentoValidade;
+        _nrIdentificacaoFiscalController.text = user.numeroIdentificacaoFiscal;
+        _nrIdentificacaoController.text = user.numeroDocumentoIdentificacao;
+        _nrSegunracaSocialController.text = user.numeroSegurancaSocial;
+        _nrUtenteSaudeController.text = user.numeroUtenteSaude;
+        _moradaController.text = user.morada;
+        _nrPortaController.text = user.nr_porta;
+        _nrAndarController.text = user.nr_andar;
+        _codigoPostalController.text = user.nr_codigo_postal;
+        _selectedDistrito = user.distrito;
+        _selectedConcelho = user.concelho;
+        _selectedFreguesia = user.freguesia;
+        _selectedCentroSaude = user.nomeEntidadeResponsavel;
       });
     }
-    return especialidades;
   }
 }

@@ -4,7 +4,8 @@ import 'package:JMAI/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:JMAI/screens/Utente/requerimentos.dart';
-import 'components/side_menu.dart';
+import 'package:JMAI/screens/Utente/EditarPerfil.dart';
+import 'side_menu.dart';
 import 'components/constants.dart';
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/Class/Utente.dart';
@@ -40,28 +41,23 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _setupPages() {
-    // Limpa as páginas existentes
     _pages.clear();
 
-    // Adiciona a Dashboard para todos os usuários
     _pages.add(DashboardScreen(user: widget.user));
 
-    verificarTipoUsuario(widget.user!);
+    verificarTipoUtilizador(widget.user!);
   }
 
-  void verificarTipoUsuario(Utilizador user) {
+  void verificarTipoUtilizador(Utilizador user) {
     if (user is Utente) {
       _pages.addAll([
         Requerimentos(user: user),
+        EditarPerfilUtente(user: user),
       ]);
     } else if (user is Medico) {
-      _pages.addAll([
-        // Páginas específicas para Medico
-      ]);
+      _pages.addAll([]);
     } else if (user is SecretarioClinico) {
-      _pages.addAll([
-        // Páginas específicas para SecretarioClinico
-      ]);
+      _pages.addAll([]);
     } else {
       _pages.addAll([
         SignupSecretarioClinico(user: widget.user),

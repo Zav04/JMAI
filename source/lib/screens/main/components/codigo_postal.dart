@@ -3,24 +3,34 @@ import 'package:flutter/services.dart';
 
 class PostalCodeFields extends StatelessWidget {
   final TextEditingController combinedPostalCodeController;
+  final TextEditingController postalCode1Controller = TextEditingController();
+  final TextEditingController postalCode2Controller = TextEditingController();
 
-  const PostalCodeFields({Key? key, required this.combinedPostalCodeController})
-      : super(key: key);
+  PostalCodeFields({Key? key, required this.combinedPostalCodeController})
+      : super(key: key) {
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    if (combinedPostalCodeController.text.isNotEmpty) {
+      final parts = combinedPostalCodeController.text.split('-');
+      if (parts.length == 2) {
+        postalCode1Controller.text = parts[0];
+        postalCode2Controller.text = parts[1];
+      }
+    }
+
+    postalCode1Controller.addListener(_updateCombinedPostalCode);
+    postalCode2Controller.addListener(_updateCombinedPostalCode);
+  }
+
+  void _updateCombinedPostalCode() {
+    combinedPostalCodeController.text =
+        '${postalCode1Controller.text}-${postalCode2Controller.text}';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController postalCode1Controller = TextEditingController();
-    final TextEditingController postalCode2Controller = TextEditingController();
-
-    // Atualiza o combinedPostalCodeController sempre que houver uma mudança
-    void updateCombinedPostalCode() {
-      combinedPostalCodeController.text =
-          '${postalCode1Controller.text}-${postalCode2Controller.text}';
-    }
-
-    postalCode1Controller.addListener(updateCombinedPostalCode);
-    postalCode2Controller.addListener(updateCombinedPostalCode);
-
     return Row(
       children: <Widget>[
         Expanded(
@@ -36,7 +46,7 @@ class PostalCodeFields extends StatelessWidget {
               hintText: 'Insira os primeiros 4 digitos do Código Postal',
             ),
             onChanged: (value) {
-              updateCombinedPostalCode();
+              _updateCombinedPostalCode();
             },
           ),
         ),
@@ -56,7 +66,7 @@ class PostalCodeFields extends StatelessWidget {
               hintText: 'Insira os ultimos 3 digitos do Código Postal',
             ),
             onChanged: (value) {
-              updateCombinedPostalCode();
+              _updateCombinedPostalCode();
             },
           ),
         ),

@@ -4,6 +4,9 @@ class Utente extends Utilizador {
   final String nomeCompleto;
   final String sexo;
   final String morada;
+  final String nr_porta;
+  final String nr_andar;
+  final String nr_codigo_postal;
   final String dataNascimento;
   final String distrito;
   final String concelho;
@@ -25,6 +28,9 @@ class Utente extends Utilizador {
     required this.nomeCompleto,
     required this.sexo,
     required this.morada,
+    required this.nr_porta,
+    required this.nr_andar,
+    required this.nr_codigo_postal,
     required this.dataNascimento,
     required this.distrito,
     required this.concelho,
@@ -48,6 +54,9 @@ class Utente extends Utilizador {
       nomeCompleto: json['nome_completo'] ?? '',
       sexo: json['sexo'] ?? '',
       morada: json['morada'] ?? '',
+      nr_porta: json['nr_porta'] ?? '',
+      nr_andar: json['nr_andar'] ?? '',
+      nr_codigo_postal: json['codigo_postal'] ?? '',
       dataNascimento: json['data_nascimento'] ?? '',
       distrito: json['distrito'] ?? '',
       concelho: json['concelho'] ?? '',

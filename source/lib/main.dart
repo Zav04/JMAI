@@ -6,10 +6,23 @@ import 'package:JMAI/screens/sing_up/sing_up.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:JMAI/screens/main/main_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+final FirebaseOptions firebaseOptions = FirebaseOptions(
+  apiKey: dotenv.env['FIRE_APIKEY'].toString(),
+  authDomain: dotenv.env['FIRE_AUTHDOMAIN'].toString(),
+  databaseURL: dotenv.env['FIRE_DATABASE_URL'].toString(),
+  projectId: dotenv.env['FIRE_PROJECTID'].toString(),
+  storageBucket: dotenv.env['FIRE_STORAGEBUCKET'].toString(),
+  messagingSenderId: dotenv.env['FIRE_MESSAGINGSENDERID'].toString(),
+  appId: dotenv.env['FIRE_APPID'].toString(),
+);
 
 void main() async {
   setPathUrlStrategy();
   await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: firebaseOptions);
   runApp(MyApp());
 }
 

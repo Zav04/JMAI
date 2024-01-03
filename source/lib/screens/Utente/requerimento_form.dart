@@ -1,25 +1,40 @@
+import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'dart:html' as html;
-import 'dart:typed_data';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:JMAI/controllers/Firebase_File.dart';
+import 'package:JMAI/overlay/ErrorAlert.dart';
+import 'package:JMAI/overlay/SuccessAlert.dart';
+import 'package:JMAI/Class/ClassesForData.dart';
+import 'package:JMAI/Class/Utente.dart';
+import 'package:JMAI/controllers/API_Connection.dart';
 
 class RequerimentoForm extends StatefulWidget {
-  const RequerimentoForm({Key? key}) : super(key: key);
+  final Utilizador utilizador;
+  const RequerimentoForm({
+    Key? key,
+    required this.utilizador,
+  }) : super(key: key);
 
   @override
   _RequerimentoFormState createState() => _RequerimentoFormState();
 }
 
 class _RequerimentoFormState extends State<RequerimentoForm> {
-  List<File> uploadedFiles = [];
-  List<String> webUploadedFileNames = [];
-  List<Uint8List> webUploadedFiles = [];
+  List<html.File> uploadedFiles = [];
+  List<String> uploadedFilesUrls = [];
+  final TextEditingController _observacoesController = TextEditingController();
 
   bool _aceitaTermos = false;
   bool _ipveiculo = false;
   bool _multioso = false;
+  RequerimentoRegister requerimento = new RequerimentoRegister(
+    hashed_id: '',
+    documentos: [],
+    observacoes: '',
+    type: 0,
+  );
 
   @override
   void initState() {
@@ -31,113 +46,146 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
+    return Container(
+      color: bgColor,
+      padding: EdgeInsets.all(10),
+      child: Center(
+        child: Container(
+          color: bgColor,
+          width: double.infinity,
+          child: Card(
+            shadowColor: bgColor,
+            surfaceTintColor: bgColor,
             color: bgColor,
-            width: double.infinity,
-            child: Card(
-              color: bgColor, // Use a cor desejada
-              margin: const EdgeInsets.all(10),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
+            margin: const EdgeInsets.all(5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  Text(
+                    'Formulário para Junta Médica',
+                    style: TextStyle(
+                      fontSize: 34,
+                      color: selectedColor,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  CheckboxListTile(
+                    title: Text(
+                      'Multioso (Decreto Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto Lei nº 147/978 de 19 de julho)',
+                    ),
+                    value: _multioso,
+                    onChanged: _ipveiculo
+                        ? null
+                        : (bool? valor) {
+                            setState(() {
+                              _multioso = valor!;
+                              if (_multioso) _ipveiculo = false;
+                            });
+                          },
+                  ),
+                  CheckboxListTile(
+                    title: Text(
+                      'Importação de veículo automóvel e outros (Lei nº 22-A/2007, de 29 de Junho)',
+                    ),
+                    value: _ipveiculo,
+                    onChanged: _multioso
+                        ? null
+                        : (bool? valor) {
+                            setState(() {
+                              _ipveiculo = valor!;
+                              if (_ipveiculo) _multioso = false;
+                            });
+                          },
+                  ),
+                  TextButton.icon(
+                    icon: Icon(Icons.upload_file, color: Colors.white),
+                    label: Text('Carregar ficheiro'),
+                    onPressed: _pickFile,
+                    style: TextButton.styleFrom(
+                      backgroundColor: buttonColor,
+                      primary: buttonTextColor,
+                    ),
+                  ),
+                  buildFileList(),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextFormField(
+                      controller: _observacoesController,
+                      maxLines: 3, // Permite várias linhas de texto
+                      decoration: InputDecoration(
+                        labelText: 'Observações',
+                        border:
+                            OutlineInputBorder(), // Adiciona uma borda ao redor do campo de texto
+                        hintText: 'Digite suas observações aqui',
                       ),
                     ),
-                    Text(
-                      'Formulário de Junta Médica',
-                      style: Theme.of(context).textTheme.headline6,
+                  ),
+                  const SizedBox(height: 100),
+                  CheckboxListTile(
+                    title: Text(
+                      'Aceito os termos de funcionamento e garanto que os dados de utente estão corretos.',
                     ),
-                    CheckboxListTile(
-                      title: Text(
-                        'Multioso (Decreto Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto Lei nº 147/978 de 19 de julho)',
-                      ),
-                      value: _multioso,
-                      onChanged: _ipveiculo
-                          ? null
-                          : (bool? valor) {
-                              setState(() {
-                                _multioso = valor!;
-                                if (_multioso) _ipveiculo = false;
-                              });
-                            },
-                    ),
-                    CheckboxListTile(
-                      title: Text(
-                        'Importação de veículo automóvel e outros (Lei nº 22-A/2007, de 29 de Junho)',
-                      ),
-                      value: _ipveiculo,
-                      onChanged: _multioso
-                          ? null
-                          : (bool? valor) {
-                              setState(() {
-                                _ipveiculo = valor!;
-                                if (_ipveiculo) _multioso = false;
-                              });
-                            },
-                    ),
-                    TextButton.icon(
-                      icon: Icon(Icons.upload_file),
-                      label: Text('Carregar ficheiro'),
-                      onPressed: _pickFile,
-                    ),
-                    buildFileList(),
-                    const SizedBox(height: 100),
-                    CheckboxListTile(
-                      title: Text(
-                        'Aceito os termos de funcionamento e garanto que os dados de utente estão corretos.',
-                      ),
-                      value: _aceitaTermos,
-                      onChanged: (bool? valor) {
-                        setState(() {
-                          _aceitaTermos = valor!;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 100),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Flexible(
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(
-                              'Cancelar',
-                              style: TextStyle(color: buttonTextColor),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: cancelButtonColor,
-                            ),
+                    value: _aceitaTermos,
+                    onChanged: (bool? valor) {
+                      setState(() {
+                        _aceitaTermos = valor!;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 100),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Flexible(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(
+                            'Cancelar',
+                            style: TextStyle(color: buttonTextColor),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: cancelButtonColor,
                           ),
                         ),
-                        SizedBox(width: 20),
-                        Flexible(
-                          child: ElevatedButton(
-                            onPressed: _isFormValid() ? _submitForm : null,
-                            child: Text(
-                              'Submeter Requerimento',
-                              style: TextStyle(color: buttonTextColor),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: buttonColor,
-                            ),
+                      ),
+                      SizedBox(width: 20),
+                      Flexible(
+                        child: ElevatedButton(
+                          onPressed: _isFormValid(context) ? _submitForm : null,
+                          child: Text(
+                            'Submeter Requerimento',
+                            style: TextStyle(color: buttonTextColor),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: buttonColor,
                           ),
                         ),
-                      ],
-                    )
-                  ],
-                ),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
           ),
@@ -154,22 +202,9 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
     input.onChange.listen((e) {
       final files = input.files;
       if (files != null && files.isNotEmpty) {
-        final file = files[0];
-        final reader = html.FileReader();
-        reader.onLoad.listen((e) {
-          final result = reader.result;
-          if (result is Uint8List) {
-            setState(() {
-              webUploadedFiles.add(result);
-              webUploadedFileNames.add(file.name);
-            });
-          } else {
-            // Tratar erro de leitura do ficheiro
-          }
+        setState(() {
+          uploadedFiles.addAll(files);
         });
-        reader.readAsArrayBuffer(file);
-      } else {
-        // Nenhum ficheiro selecionado
       }
     });
   }
@@ -206,9 +241,10 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   Widget buildFileList() {
     return SingleChildScrollView(
       child: Column(
-        children: webUploadedFileNames.asMap().entries.map((entry) {
+        children: uploadedFiles.asMap().entries.map((entry) {
           final index = entry.key;
-          final fileName = entry.value;
+          final file = entry.value;
+          final fileName = file.name;
           final fileExtension = fileName.split('.').last.toLowerCase();
 
           String assetName;
@@ -237,38 +273,39 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    assetName,
-                    width: 40,
-                    height: 40,
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                      ),
-                      child: Text(
-                        fileName,
-                        style: TextStyle(fontSize: 14),
-                        overflow: TextOverflow.ellipsis,
+              child: Container(
+                width: MediaQuery.of(context).size.width *
+                    0.4, // 40% da largura da tela
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      assetName,
+                      width: 40,
+                      height: 40,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          fileName,
+                          style: TextStyle(fontSize: 14),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      setState(() {
-                        webUploadedFiles.removeAt(index);
-                        webUploadedFileNames.removeAt(index);
-                      });
-                    },
-                  ),
-                ],
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        setState(() {
+                          uploadedFiles.removeAt(index);
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -277,12 +314,41 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
     );
   }
 
-  bool _isFormValid() {
+  bool _isFormValid(BuildContext context) {
     return _aceitaTermos && (_multioso || _ipveiculo);
   }
 
-  void _submitForm() {
-    // Lógica para submeter o formulário
-    // Você pode implementar a lógica de envio do formulário aqui
+  void _submitForm() async {
+    for (var file in uploadedFiles) {
+      String? fileUrl = await uploadFileToFirebase(file);
+      if (fileUrl != null) {
+        uploadedFilesUrls.add(fileUrl);
+      } else {
+        ErrorAlert.show(context, "Falha ao carregar o arquivo");
+      }
+    }
+    verificarTipoUtilizador(widget.utilizador);
+    Navigator.of(context).pop();
+  }
+
+  void verificarTipoUtilizador(Utilizador user) async {
+    if (user is Utente) {
+      requerimento = RequerimentoRegister(
+        hashed_id: user.hashedId,
+        documentos: uploadedFilesUrls,
+        observacoes: _observacoesController.text,
+        type: _multioso ? 1 : (_ipveiculo ? 2 : 0),
+      );
+      var response = await insertRequerimento(requerimento);
+      if (response.success == true) {
+        SuccessAlert.show(context, 'Requrimento submetido com sucesso');
+      } else {
+        ErrorAlert.show(context, 'response.errorMessage.toString()');
+      }
+      setState(() {
+        uploadedFiles.clear();
+        uploadedFilesUrls.clear();
+      });
+    }
   }
 }

@@ -21,11 +21,9 @@ class _PasswordFieldState extends State<PasswordField> {
         hintText: 'Insira a sua Palavra passe',
         suffixIcon: IconButton(
           icon: Icon(
-            // Alterna os ícones de olho aberto/fechado
             _obscureText ? Icons.visibility_off : Icons.visibility,
           ),
           onPressed: () {
-            // Atualiza o estado para mostrar ou esconder
             setState(() {
               _obscureText = !_obscureText;
             });

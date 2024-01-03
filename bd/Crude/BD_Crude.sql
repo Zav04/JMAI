@@ -6,9 +6,12 @@
   Sexo                                  VARCHAR(255) NOT NULL, 
   morada                                VARCHAR(255) NOT NULL, 
   data_nascimento                       VARCHAR(255) NOT NULL, 
-  distrito                             VARCHAR(255) NOT NULL UNIQUE, 
-  concelho                             VARCHAR(255) NOT NULL UNIQUE, 
-  freguesia                            VARCHAR(255) NOT NULL UNIQUE, 
+  nr_porta 								VARCHAR(255) NOT NULL,
+	nr_andar 								VARCHAR(255),
+	 codigo_postal 					VARCHAR(255) NOT NULL,
+  distrito                             VARCHAR(255) NOT NULL, 
+  concelho                             VARCHAR(255) NOT NULL, 
+  freguesia                            VARCHAR(255) NOT NULL, 
   naturalidade                          VARCHAR(255) NOT NULL, 
   pais_nacionalidade                    VARCHAR(255) NOT NULL, 
   tipo_documento_identificacao          BIGINT NOT NULL, 
@@ -19,7 +22,7 @@
   numero_de_telemovel                   VARCHAR(255) NOT NULL, 
   obito                                 BOOLEAN NOT NULL,
   documento_validade 				    VARCHAR(255) NOT NULL,
-  id_entidade_responsavel               BIGINT NOT NULL UNIQUE, 
+  id_entidade_responsavel               BIGINT NOT NULL, 
   PRIMARY KEY (id_utente)
 );
   
@@ -51,7 +54,7 @@ CREATE TABLE Secretarios_Clinicos (
 CREATE TABLE Agendamento_JuntaMedica (
   id_agendamento_junta_medica BIGSERIAL NOT NULL, 
   hashed_id                   VARCHAR(255) UNIQUE, 
-  id_pre_avaliacao            BIGINT NOT NULL UNIQUE, 
+  id_pre_avaliacao            BIGINT NOT NULL, 
   data                        date NOT NULL, 
   status                      BIGINT NOT NULL, 
   PRIMARY KEY (id_agendamento_junta_medica));
@@ -62,7 +65,7 @@ CREATE TABLE RequerimentoJuntaMedica (
   hashed_id                    VARCHAR(255) UNIQUE, 
   id_utente                    BIGINT NOT NULL UNIQUE, 
   data_submissao               date NOT NULL, 
-  documentos                   VARCHAR(255), 
+  documentos                   JSON, 
   status                       BIGINT NOT NULL, 
   observacoes                  VARCHAR(255), 
   type                         BIGINT NOT NULL, 
@@ -117,7 +120,7 @@ CREATE TABLE Medico (
   nome_medico        VARCHAR(255) NOT NULL, 
   num_cedula         BIGINT NOT NULL, 
   num_ordem          BIGINT NOT NULL, 
-  id_especialidade   BIGINT NOT NULL UNIQUE, 
+  id_especialidade   BIGINT NOT NULL, 
   contacto           VARCHAR(255) NOT NULL, 
   data_nascimento    VARCHAR(255) NOT NULL, 
   sexo               VARCHAR(255) NOT NULL, 
@@ -137,6 +140,8 @@ CREATE TABLE EntidadeResponsavel (
   descricao               VARCHAR(255), 
   pais                    VARCHAR(255) NOT NULL, 
   PRIMARY KEY (id_entidade_responsavel));
+
+  
   
 
 ALTER TABLE PreAvaliacao ADD CONSTRAINT FKPreAvaliac576859 FOREIGN KEY (id_requerimento_junta_medica) REFERENCES RequerimentoJuntaMedica (id_requerimento_junta_medica);

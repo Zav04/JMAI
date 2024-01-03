@@ -27,7 +27,7 @@ class Header extends StatelessWidget {
         vertical: defaultPadding / 2,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ajuste aqui
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (!isDesktop)
             IconButton(
@@ -94,20 +94,18 @@ class ProfileCard extends StatelessWidget {
         vertical: defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: bgColor, // Cor de fundo do cartão
-        borderRadius:
-            BorderRadius.all(Radius.circular(10)), // Bordas arredondadas
+        color: bgColor,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
         border: Border.all(
-          color: Colors.white, // Cor do rebordo
-          width: 2, // Largura do rebordo
+          color: Colors.white,
+          width: 2,
         ),
         boxShadow: [
-          // Sombra para dar um efeito elevado ao cartão
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 1,
-            offset: Offset(0, 1), // Posição da sombra
+            offset: Offset(0, 1),
           ),
         ],
       ),

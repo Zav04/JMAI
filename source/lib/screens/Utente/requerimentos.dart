@@ -7,11 +7,12 @@ import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'tabela_Requerimentos.dart';
 
 class Requerimentos extends StatelessWidget {
-  final Utilizador? user;
+  final Utilizador user;
   const Requerimentos({
     Key? key,
     required this.user,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -44,7 +45,7 @@ class Requerimentos extends StatelessWidget {
                         label: Text('Iniciar Requerimento'),
                       ),
                       SizedBox(height: defaultPadding),
-                      Tabela(),
+                      RequerimentosTable(user: user),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
                     ],
@@ -69,14 +70,15 @@ class Requerimentos extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Container(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight,
-                child: RequerimentoForm(),
-              );
-            },
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+            ),
+            child: SingleChildScrollView(
+              child: RequerimentoForm(
+                utilizador: user,
+              ),
+            ),
           ),
         );
       },

@@ -1,4 +1,5 @@
 class UtenteRegister {
+  String? hashed_id;
   String? nomeCompleto;
   String? dataNascimento;
   String? numeroTelemovel;
@@ -23,6 +24,7 @@ class UtenteRegister {
   String? password;
   bool justvalidateInputs;
   UtenteRegister({
+    this.hashed_id,
     required this.nomeCompleto,
     required this.dataNascimento,
     required this.numeroTelemovel,
@@ -43,13 +45,14 @@ class UtenteRegister {
     required this.concelho,
     required this.freguesia,
     required this.idEntidadeResponsavel,
-    required this.email,
-    required this.password,
+    this.email,
+    this.password,
     required this.justvalidateInputs,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      'hashed_id': hashed_id,
       'nome_completo': nomeCompleto,
       'data_nascimento': dataNascimento,
       'numero_telemovel': numeroTelemovel,
@@ -169,6 +172,29 @@ class MedicoRegister {
       'email': email,
       'password': password,
       'justvalidate_inputs': justvalidateInputs,
+    };
+  }
+}
+
+class RequerimentoRegister {
+  String? hashed_id;
+  List<String>? documentos;
+  String? observacoes;
+  int? type;
+
+  RequerimentoRegister({
+    required this.hashed_id,
+    required this.documentos,
+    required this.observacoes,
+    required this.type,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'hashed_id': hashed_id,
+      'documentos': documentos,
+      'observacoes': observacoes,
+      'type': type,
     };
   }
 }

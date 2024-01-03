@@ -143,13 +143,12 @@ class _SingupState extends State<Singup> {
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
                                 RegExp(r'[0-9\-]')),
-                            createAutoHyphenDateFormatter(), // Adiciona o formatador personalizado
+                            createAutoHyphenDateFormatter(),
                           ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Insira a sua Data de Nascimento';
                             }
-                            // Adicione mais validação conforme necessário
                             return null;
                           },
                         ),
@@ -193,7 +192,6 @@ class _SingupState extends State<Singup> {
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 10),
-                            // Removido suffixIcon: const Icon(Icons.arrow_drop_down),
                           ),
                           isExpanded: true,
                         ),
@@ -282,7 +280,6 @@ class _SingupState extends State<Singup> {
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 5),
-                            // Removido suffixIcon: const Icon(Icons.arrow_drop_down),
                           ),
                           isExpanded: true,
                         ),
@@ -303,13 +300,12 @@ class _SingupState extends State<Singup> {
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
                                 RegExp(r'[0-9\-]')),
-                            createAutoHyphenDateFormatter(), // Adiciona o formatador personalizado
+                            createAutoHyphenDateFormatter(),
                           ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Insira a Validade da Identificação';
                             }
-                            // Adicione mais validação conforme necessário
                             return null;
                           },
                         ),
@@ -687,7 +683,6 @@ class _SingupState extends State<Singup> {
     return TextInputFormatter.withFunction((oldValue, newValue) {
       final newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-      // Determinar se está adicionando ou removendo caracteres
       bool isRemoving = newText.length <
           oldValue.text.replaceAll(RegExp(r'[^0-9]'), '').length;
 
@@ -704,12 +699,10 @@ class _SingupState extends State<Singup> {
         formattedText += newText[i];
       }
 
-      // Limitar o texto a 10 caracteres
       if (formattedText.length > 10) {
         formattedText = formattedText.substring(0, 10);
       }
 
-      // Ajustar a posição do cursor se estiver à frente do texto formatado
       if (cursorIndex > formattedText.length) {
         cursorIndex = formattedText.length;
       }
@@ -774,12 +767,17 @@ class _SingupState extends State<Singup> {
 
     var response = await validationCreateUser(newUtente);
     if (response.success) {
-      response = await singin(_emailController.text, _passwordController.text);
+      newUtente.justvalidateInputs = true;
+      response = await validationCreateUser(newUtente);
       if (response.success) {
-        newUtente.justvalidateInputs = true;
-        response = await validationCreateUser(newUtente);
-        SuccessAlert.show(context, 'Conta Criada com Sucesso');
-        Navigator.of(context).pushNamed('/');
+        response =
+            await singin(_emailController.text, _passwordController.text);
+        if (response.success) {
+          SuccessAlert.show(context, 'Conta Criada com Sucesso');
+          Navigator.of(context).pushNamed('/');
+        } else {
+          ErrorAlert.show(context, response.errorMessage.toString());
+        }
       } else {
         ErrorAlert.show(context, response.errorMessage.toString());
       }

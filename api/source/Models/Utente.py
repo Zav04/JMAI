@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class UtenteRequest(BaseModel):
+    hashed_id: Optional[str] = ''
     nome_completo: Optional[str] = ''
     data_nascimento: Optional[str] = ''
     numero_telemovel: Optional[str] = ''

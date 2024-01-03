@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class SuccessAlert extends StatefulWidget {
   final String message;
-  final VoidCallback onClose; // Callback para fechar o overlay
+  final VoidCallback onClose;
 
   SuccessAlert({Key? key, required this.message, required this.onClose})
       : super(key: key);
@@ -77,30 +77,25 @@ class _SuccessAlertState extends State<SuccessAlert> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       decoration: BoxDecoration(
-        color: Colors.green.shade100, // Cor de fundo verde para sucesso
-        borderRadius: BorderRadius.circular(4.0),
-        border:
-            Border.all(color: Colors.green.shade600), // Borda verde mais escura
+        color: Colors.green.shade100,
+        border: Border.all(color: Colors.green.shade600),
       ),
       child: IntrinsicWidth(
         child: Row(
           children: [
-            Icon(Icons.check_circle,
-                color: Colors.green.shade800), // Ícone de sucesso
+            Icon(Icons.check_circle, color: Colors.green.shade800),
             SizedBox(width: 8.0),
             Flexible(
               child: Text(
                 widget.message,
-                style: TextStyle(
-                    color: Colors.green.shade800), // Texto verde escuro
+                style: TextStyle(color: Colors.green.shade800),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             SizedBox(width: 8.0),
             IconButton(
-              icon: Icon(Icons.close,
-                  color: Colors.green.shade800), // Botão fechar verde
-              onPressed: widget.onClose, // Usa o callback para fechar o overlay
+              icon: Icon(Icons.close, color: Colors.green.shade800),
+              onPressed: widget.onClose,
             ),
           ],
         ),

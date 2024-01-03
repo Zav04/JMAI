@@ -35,7 +35,7 @@ async def get_entidades_responsaveis(db: SessionLocal = Depends(get_db)):
         return {"error": error_msg}
     except Exception as e:
         return {"error": str(e)}
-    
+
 @get_router.get("/load_especialidade/")
 async def load_especialidade(db: SessionLocal = Depends(get_db)):
     try:

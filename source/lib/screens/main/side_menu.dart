@@ -25,18 +25,16 @@ class _SideMenuState extends State<SideMenu> {
       DrawerHeader(
         child: SvgPicture.asset("assets/images/logo-no-background.svg"),
       ),
-      // Itens comuns a todas as roles
       DrawerListTile(
         title: "Dashboard",
         svgSrc: "assets/icons/menu_dashboard.svg",
         press: () {
           setState(() {
-            selectedItemIndex = 0; // Atualize o índice do item selecionado
+            selectedItemIndex = 0;
           });
-          widget.onItemSelected(0); // Chame a função callback
+          widget.onItemSelected(0);
         },
-        isSelected:
-            selectedItemIndex == 0, // Verifique se o item está selecionado
+        isSelected: selectedItemIndex == 0,
       ),
     ];
 
@@ -82,7 +80,7 @@ class _SideMenuState extends State<SideMenu> {
           ),
           DrawerListTile(
             title: "Editar Perfil",
-            svgSrc: "assets/icons/menu_tran.svg",
+            svgSrc: "assets/icons/menu_profile.svg",
             press: () {
               setState(() {
                 selectedItemIndex = 2;
@@ -160,9 +158,8 @@ class _DrawerListTileState extends State<DrawerListTile> {
 
   @override
   Widget build(BuildContext context) {
-    // Atualize a cor de fundo baseada no estado de hover e seleção
     Color backgroundColor = widget.isSelected
-        ? selectedColor // Cor quando selecionado
+        ? selectedColor
         : (_isHovered ? secondaryColor : bgColor);
 
     return MouseRegion(
