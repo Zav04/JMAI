@@ -8,7 +8,7 @@ RETURNS TABLE(
     nr_porta VARCHAR,
     nr_andar VARCHAR, 
     codigo_postal VARCHAR,
-    data_nascimento VARCHAR,
+    data_nascimento DATE,
     distrito VARCHAR, 
     concelho VARCHAR, 
     freguesia VARCHAR, 
@@ -19,7 +19,7 @@ RETURNS TABLE(
     numero_utente_saude VARCHAR, 
     numero_identificacao_fiscal VARCHAR, 
     numero_seguranca_social VARCHAR, 
-    documento_validade VARCHAR, 
+    documento_validade DATE, 
     numero_telemovel VARCHAR, 
     nome_entidade_responsavel VARCHAR
 ) AS $$
@@ -36,3 +36,5 @@ BEGIN
     WHERE u.hashed_id = p_hashed_id;
 END;
 $$ LANGUAGE plpgsql;
+
+

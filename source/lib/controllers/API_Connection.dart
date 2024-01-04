@@ -536,3 +536,95 @@ Future<CreateAPIResponse> fetchRequerimentos(String hashedId) async {
     return CreateAPIResponse(success: false, errorMessage: e.toString());
   }
 }
+
+Future<CreateAPIResponse> getRequerimentosUtenteStatusZero() async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['GET_REQUERIMENTOS_UTENTE_STATUS_ZERO'].toString();
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(
+          success: false,
+          errorMessage: 'Erro no servidor: ${response.statusCode}');
+    }
+  } catch (e) {
+    return CreateAPIResponse(
+        success: false, errorMessage: 'Erro ao Carregar os Centros de Saúde');
+  }
+}
+
+Future<CreateAPIResponse> validarRequerimento(String hashedid) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['VALIDAR_REQUERIMENTO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashedid}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> recusarRequerimento(String hashedid) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['RECUSAR_REQUERIMENTO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashedid}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}

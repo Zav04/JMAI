@@ -4,8 +4,7 @@ import 'dart:convert';
 
 Future<String?> uploadFileToFirebase(html.File file) async {
   try {
-    String filePath =
-        'docs/${file.name}'; // Defina o caminho no Firebase Storage
+    String filePath = 'docs/${file.name}';
     firebase_storage.Reference ref =
         firebase_storage.FirebaseStorage.instance.ref(filePath);
 

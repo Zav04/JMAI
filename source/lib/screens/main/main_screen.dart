@@ -13,6 +13,8 @@ import 'package:JMAI/Class/Medico.dart';
 import 'package:JMAI/class/SecretarioClinico.dart';
 import 'package:JMAI/screens/Admin/SignupMedico.dart';
 import 'package:JMAI/screens/Admin/SignupSecretarioClinico.dart';
+import 'package:JMAI/screens/SecretarioClinico/requerimentos_SC.dart';
+import 'package:JMAI/Class/Admin.dart';
 
 class MainScreen extends StatefulWidget {
   final Utilizador? user;
@@ -56,12 +58,16 @@ class _MainScreenState extends State<MainScreen> {
       ]);
     } else if (user is Medico) {
       _pages.addAll([]);
-    } else if (user is SecretarioClinico) {
-      _pages.addAll([]);
-    } else {
+    } else if (user.role == 'SecretarioClinico') {
       _pages.addAll([
-        SignupSecretarioClinico(user: widget.user),
-        SignupMedico(user: widget.user),
+        RequerimentosSC(user: user),
+      ]);
+    } else {
+      print(user.role);
+      print(user.email);
+      _pages.addAll([
+        SignupSecretarioClinico(user: user),
+        SignupMedico(user: user),
       ]);
     }
   }

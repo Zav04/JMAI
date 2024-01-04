@@ -13,6 +13,7 @@ import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/Class/Utente.dart';
+import 'package:JMAI/Class/DateTime.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 
 class EditarPerfilUtente extends StatelessWidget {
@@ -131,7 +132,6 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
         border: Border.all(
           color: Colors.black,
           width: 2.0,
-          // style: BorderStyle.solid,
         ),
       ),
       child: Column(
@@ -771,7 +771,8 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
     if (user is Utente) {
       setState(() {
         _nomeCompletoController.text = user.nomeCompleto;
-        _dataDeNascimentoController.text = user.dataNascimento;
+        _dataDeNascimentoController.text =
+            formatDateString(user.dataNascimento);
         _telefoneController.text = user.numeroTelemovel;
         _selectedGender = user.sexo;
         _selectedpaisNaturalidade = user.naturalidade;
@@ -782,7 +783,8 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
           _selectedIdentification = 'Bilhete Identidade';
         else if (user.tipoDocumentoIdentificacao == 3)
           _selectedIdentification = 'Cedula Militar';
-        _validadeIdentificacaoController.text = user.documentoValidade;
+        _validadeIdentificacaoController.text =
+            formatDateString(user.documentoValidade);
         _nrIdentificacaoFiscalController.text = user.numeroIdentificacaoFiscal;
         _nrIdentificacaoController.text = user.numeroDocumentoIdentificacao;
         _nrSegunracaSocialController.text = user.numeroSegurancaSocial;

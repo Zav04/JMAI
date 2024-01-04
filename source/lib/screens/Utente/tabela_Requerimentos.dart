@@ -1,18 +1,20 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento.dart';
 import 'package:JMAI/Class/Utilizador.dart';
-import 'package:JMAI/controllers/API_Connection.dart';
-import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:JMAI/Class/Utente.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tuple/tuple.dart';
+import 'package:JMAI/screens/main/components/Etiquetas.dart';
 
 class RequerimentosTable extends StatefulWidget {
   final Utilizador user;
-
+  final List<Requerimento> requerimentos;
   const RequerimentosTable({
     Key? key,
     required this.user,
+    required this.requerimentos,
   }) : super(key: key);
 
   @override
@@ -20,7 +22,6 @@ class RequerimentosTable extends StatefulWidget {
 }
 
 class _RequerimentosTableState extends State<RequerimentosTable> {
-  List<Requerimento> requerimentos = [];
   Utente utente = Utente(
     hashedId: '',
     email: '',
@@ -50,32 +51,46 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
   void initState() {
     super.initState();
     verifyisUtente(widget.user);
-    fetchRequerimentostoTable(widget.user);
   }
 
-  String getTypeDescription(int type) {
-    switch (type) {
+  Tuple2<String, Color> getTypeDescription(int status) {
+    switch (status) {
       case 1:
-        return 'Mutioso';
+        return Tuple2('Multiuso', Colors.lime);
       case 2:
-        return 'Importação de Veículo Automóvel';
+        return Tuple2('Importação de Veículo Automóvel', Colors.purple);
       default:
-        return 'Tipo Desconhecido';
+        return Tuple2('Status Desconhecido', Colors.grey);
     }
   }
 
-  String getStatusDescription(int status) {
+  Tuple2<String, Color> getStatusDescription(int status) {
     switch (status) {
       case 0:
-        return 'Em espera de Aprovação';
+        return Tuple2('Em espera de Aprovação', Colors.grey);
       case 1:
-        return 'Aprovado a espera de Pre-Avaliação';
+        return Tuple2('Aprovado a espera de Pre-Avaliação', Colors.orange);
       case 2:
-        return 'Pré-Avaliação concluída';
+        return Tuple2('Pré-Avaliação Concluída', Colors.yellow);
       case 3:
-        return 'Agendado';
+        return Tuple2('Agendado', Colors.blue);
       case 4:
-        return 'Finalizado';
+        return Tuple2('Finalizado', Colors.green);
+      case 5:
+        return Tuple2('Cancelado', Colors.red);
+      default:
+        return Tuple2('Status Desconhecido', Colors.grey);
+    }
+  }
+
+  String getDocumentsDescription(int typeDocument) {
+    switch (typeDocument) {
+      case 1:
+        return 'CC';
+      case 2:
+        return 'Bilhete de Identidade';
+      case 3:
+        return 'Cedula Militar';
       default:
         return 'Status Desconhecido';
     }
@@ -90,39 +105,41 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Requerimentos",
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleLarge,
+            textAlign: TextAlign.center,
           ),
           SizedBox(
             width: double.infinity,
             child: DataTable(
               columnSpacing: defaultPadding,
               columns: const [
-                DataColumn(label: Text('Codigo')),
-                DataColumn(label: Text('Tipo Requerimento')),
-                DataColumn(label: Text('Data do Pedido')),
-                DataColumn(label: Text('Estado')),
-                DataColumn(label: Text('Ações')), // Nova coluna para ações
+                DataColumn(label: Text('CODIGO')),
+                DataColumn(label: Text('TIPO REQUERIMENTO')),
+                DataColumn(label: Text('DATA DO PEDIDO')),
+                DataColumn(label: Text('ESTADO')),
+                DataColumn(label: Text('AÇÕES')),
               ],
-              rows: requerimentos
+              rows: widget.requerimentos
                   .map((requerimento) => DataRow(
                         cells: [
-                          DataCell(Text('REQ/' + requerimento.id.toString(),
-                              textAlign: TextAlign.center)),
-                          DataCell(Text(getTypeDescription(requerimento.type),
-                              textAlign: TextAlign.center)),
-                          DataCell(Text(requerimento.data.toString(),
-                              textAlign: TextAlign.center)),
                           DataCell(Text(
-                              getStatusDescription(requerimento.status),
-                              textAlign: TextAlign.center)),
+                            'REQ/' + requerimento.id.toString(),
+                          )),
+                          DataCell(Blend(getTypeDescription(requerimento.type))
+                              .widget),
+                          DataCell(Text(
+                            requerimento.data.toString(),
+                          )),
+                          DataCell(
+                              Blend(getStatusDescription(requerimento.status))
+                                  .widget),
                           DataCell(
                             IconButton(
                               icon: Icon(Icons.visibility),
-                              color: Colors.blue, // O ícone de olho
+                              color: Colors.blue,
                               onPressed: () {
                                 showUtenteDetailsOverlay(
                                     context, utente, requerimento);
@@ -139,34 +156,40 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     );
   }
 
-  void fetchRequerimentostoTable(Utilizador user) async {
-    try {
-      var response = await fetchRequerimentos(user.hashedId);
-      if (response.success) {
-        var jsonData =
-            response.data; // A resposta é um mapa JSON (um único objeto)
-        Requerimento requerimento = Requerimento.fromJson(jsonData);
-
-        setState(() {
-          requerimentos = [requerimento]; // Colocando o objeto em uma lista
-        });
-      } else {
-        ErrorAlert.show(context, response.errorMessage.toString());
-      }
-    } catch (e) {
-      ErrorAlert.show(context, e.toString());
-    }
-  }
-
   void showUtenteDetailsOverlay(
       BuildContext context, Utente utente, Requerimento requerimento) {
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Detalhes do Requerimento',
-              style: TextStyle(color: Colors.blue)),
+          backgroundColor: bgColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'DETALHES DO REQUERIMENTO',
+                  style: TextStyle(color: selectedColor, fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              // Botão de fechar no canto superior direito
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(); // Fecha o AlertDialog
+                  },
+                ),
+              ),
+            ],
+          ),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -181,39 +204,145 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Informações do Utente:',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              Text('Nome Completo: ${utente.nomeCompleto}'),
-                              Text('Sexo: ${utente.sexo}'),
-                              Text('Morada: ${utente.morada}'),
-                              Text('Número da Porta: ${utente.nr_porta}'),
-                              Text('Andar: ${utente.nr_andar}'),
-                              Text('Código Postal: ${utente.nr_codigo_postal}'),
-                              Text(
-                                  'Data de Nascimento: ${utente.dataNascimento}'),
-                              Text('Distrito: ${utente.distrito}'),
-                              Text('Concelho: ${utente.concelho}'),
-                              Text('Freguesia: ${utente.freguesia}'),
-                              Text('Naturalidade: ${utente.naturalidade}'),
-                              Text(
-                                  'Nacionalidade: ${utente.paisNacionalidade}'),
-                              Text(
-                                  'Tipo de Documento: ${utente.tipoDocumentoIdentificacao}'),
-                              Text(
-                                  'Número de Documento: ${utente.numeroDocumentoIdentificacao}'),
-                              Text(
-                                  'Número de Utente de Saúde: ${utente.numeroUtenteSaude}'),
-                              Text(
-                                  'Número de Identificação Fiscal: ${utente.numeroIdentificacaoFiscal}'),
-                              Text(
-                                  'Número de Segurança Social: ${utente.numeroSegurancaSocial}'),
-                              Text(
-                                  'Validade do Documento: ${utente.documentoValidade}'),
-                              Text(
-                                  'Número de Telemóvel: ${utente.numeroTelemovel}'),
-                              Text(
-                                  'Entidade Responsável: ${utente.nomeEntidadeResponsavel}'),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 2,
+                              ),
+                              Center(
+                                child: Text(
+                                  'Informações do Utente',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 2,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  buildRichText(
+                                      'NOME COMPLETO: ', utente.nomeCompleto),
+                                  SizedBox(height: 2),
+                                  buildRichText('DATA DE NASCIMENTO: ',
+                                      utente.dataNascimento),
+                                  SizedBox(height: 2),
+                                  buildRichText('SEXO: ', utente.sexo),
+                                  SizedBox(height: 2),
+                                  buildRichText('EMAIL: ', utente.email),
+                                  SizedBox(height: 2),
+                                  buildRichText('NÚMERO DE TELEMÓVEL: ',
+                                      utente.numeroTelemovel),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  Center(
+                                    child: Text('INFORMAÇÕES DE LOCALIZAÇÃO',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  buildRichText('MORADA: ', utente.morada),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'NÚMERO DA PORTA: ', utente.nr_porta),
+                                  SizedBox(height: 2),
+                                  buildRichText('ANDAR: ', utente.nr_andar),
+                                  SizedBox(height: 2),
+                                  buildRichText('CÓDIGO POSTAL: ',
+                                      utente.nr_codigo_postal),
+                                  SizedBox(height: 2),
+                                  buildRichText('DISTRITO: ', utente.distrito),
+                                  SizedBox(height: 2),
+                                  buildRichText('CONCELHO: ', utente.concelho),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'FREGUESIA: ', utente.freguesia),
+                                  SizedBox(height: 2),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                        'INFORMAÇÕES DE NACIONALIDADE E NATURALIDADE',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  buildRichText(
+                                      'NATURALIDADE: ', utente.naturalidade),
+                                  SizedBox(height: 2),
+                                  buildRichText('NACIONALIDADE: ',
+                                      utente.paisNacionalidade),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  Center(
+                                    child: Text('INFORMAÇÕES DE IDENTIFICAÇÃO',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  buildRichText(
+                                      'TIPO DE DOCUMENTO: ',
+                                      getDocumentsDescription(
+                                          utente.tipoDocumentoIdentificacao)),
+                                  SizedBox(height: 2),
+                                  buildRichText('NÚMERO DE DOCUMENTO: ',
+                                      utente.numeroDocumentoIdentificacao),
+                                  SizedBox(height: 2),
+                                  buildRichText('NÚMERO DE UTENTE DE SAÚDE: ',
+                                      utente.numeroUtenteSaude),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'NÚMERO DE IDENTIFICAÇÃO FISCAL: ',
+                                      utente.numeroIdentificacaoFiscal),
+                                  SizedBox(height: 2),
+                                  buildRichText('NÚMERO DE SEGURANÇA SOCIAL: ',
+                                      utente.numeroSegurancaSocial),
+                                  SizedBox(height: 2),
+                                  buildRichText('VALIDADE DO DOCUMENTO: ',
+                                      utente.documentoValidade),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  Center(
+                                    child: Text('CENTRO DE SAÚDE REGISTADO',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Divider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                  ),
+                                  buildRichText('ENTIDADE RESPONSÁVEL: ',
+                                      utente.nomeEntidadeResponsavel),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -226,24 +355,55 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Informações do Requerimento:',
+                              Divider(
+                                color: Colors.black,
+                                thickness: 2,
+                              ),
+                              Center(
+                                child: Text(
+                                  'INFORMAÇÕES DO REQUERIMENTO',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.green)),
-                              SizedBox(height: 8),
-                              Text('Informações do Requerimento:',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              // Suponha que as informações do requerimento sejam semelhantes a estas
-                              Text(
-                                  'Código do Requerimento: REQ/${requerimento.id}'),
-                              Text(
-                                  'Tipo do Requerimento: ${getTypeDescription(requerimento.type)}'),
-                              Text(
-                                  'Data do Pedido: ${requerimento.data.toString()}'),
-                              Text(
-                                  'Estado do Requerimento: ${getStatusDescription(requerimento.status)}'),
-                              // ... Outros campos ...
+                                      color: Colors.green),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 2,
+                              ),
+                              buildRichText('CÓDIGO DO REQUERIMENTO: ',
+                                  'REQ/' + requerimento.id.toString()),
+                              SizedBox(height: 2),
+                              buildRichText('DATA DO PEDIDO: ',
+                                  requerimento.data.toString()),
+                              SizedBox(height: 2),
+                              buildRichText('TIPO DO REQUERIMENTO: ',
+                                  getTypeDescription(requerimento.type).item1),
+                              SizedBox(height: 2),
+                              buildRichText(
+                                  'ESTADO DO REQUERIMENTO: ',
+                                  getStatusDescription(requerimento.status)
+                                      .item1),
+                              SizedBox(height: 2),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 2,
+                              ),
+                              Center(
+                                child: Text(
+                                  'DOCUMENTOS ASSOCIADOS AO REQUERIMENTO',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 2,
+                              ),
+                              ...buildDocumentWidgets(requerimento.documentos),
                             ],
                           ),
                         ),
@@ -254,14 +414,6 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
               ],
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Fechar', style: TextStyle(color: Colors.blue)),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-          ],
         );
       },
     );
@@ -289,5 +441,99 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         utente = user;
       });
     }
+  }
+
+  Widget buildRichText(String label, String value) {
+    return RichText(
+      text: TextSpan(
+        style: DefaultTextStyle.of(context).style,
+        children: <TextSpan>[
+          TextSpan(text: label, style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: value),
+        ],
+      ),
+    );
+  }
+
+  Future<void> openDocument(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, webOnlyWindowName: '_blank');
+    } else {
+      print('Não foi possível abrir o documento');
+    }
+  }
+
+  String extractFileName(String url) {
+    var uri = Uri.parse(url);
+    String fileName = uri.pathSegments.last;
+
+    const String pathPrefix = 'docs/';
+    if (fileName.startsWith(pathPrefix)) {
+      fileName = fileName.substring(pathPrefix.length);
+    }
+
+    return fileName;
+  }
+
+  String getFileExtension(String fileName) {
+    return fileName.split('.').last;
+  }
+
+  List<Widget> buildDocumentWidgets(List<String> documentos) {
+    return documentos.map((documento) {
+      String fileName = extractFileName(documento);
+      String fileExtension = getFileExtension(fileName);
+
+      String assetName;
+      switch (fileExtension.toLowerCase()) {
+        case 'pdf':
+          assetName = 'assets/images/pdf_icon.svg';
+          break;
+        case 'doc':
+        case 'docx':
+          assetName = 'assets/images/docx_icon.svg';
+          break;
+        case 'xls':
+        case 'xlsx':
+          assetName = 'assets/images/excel_icon.svg';
+          break;
+        case 'png':
+        case 'jpg':
+        case 'jpeg':
+          assetName = 'assets/images/images_icon.svg';
+          break;
+        default:
+          assetName = 'assets/images/unknown_icon.svg';
+          break;
+      }
+
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SvgPicture.asset(assetName, width: 24, height: 24),
+              SizedBox(width: 5),
+              Expanded(
+                child: Text(fileName, overflow: TextOverflow.ellipsis),
+              ),
+              SizedBox(width: 20),
+              ElevatedButton(
+                  child: Text('Download'),
+                  onPressed: () => openDocument(documento),
+                  style: ElevatedButton.styleFrom(
+                    primary: buttonColor,
+                    onPrimary: buttonTextColor,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  )),
+            ],
+          ),
+          Divider(),
+        ],
+      );
+    }).toList();
   }
 }

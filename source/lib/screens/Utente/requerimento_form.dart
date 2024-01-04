@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +11,15 @@ import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
+import 'package:flutter_svg/svg.dart';
 
 class RequerimentoForm extends StatefulWidget {
   final Utilizador utilizador;
+  final VoidCallback onRequerimentoAdded;
   const RequerimentoForm({
     Key? key,
     required this.utilizador,
+    required this.onRequerimentoAdded,
   }) : super(key: key);
 
   @override
@@ -91,7 +96,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                   SizedBox(height: 20),
                   CheckboxListTile(
                     title: Text(
-                      'Multioso (Decreto Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto Lei nº 147/978 de 19 de julho)',
+                      'Multiuso (Decreto Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto Lei nº 147/978 de 19 de julho)',
                     ),
                     value: _multioso,
                     onChanged: _ipveiculo
@@ -132,11 +137,10 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
                       controller: _observacoesController,
-                      maxLines: 3, // Permite várias linhas de texto
+                      maxLines: 3,
                       decoration: InputDecoration(
                         labelText: 'Observações',
-                        border:
-                            OutlineInputBorder(), // Adiciona uma borda ao redor do campo de texto
+                        border: OutlineInputBorder(),
                         hintText: 'Digite suas observações aqui',
                       ),
                     ),
@@ -274,8 +278,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: IntrinsicHeight(
               child: Container(
-                width: MediaQuery.of(context).size.width *
-                    0.4, // 40% da largura da tela
+                width: MediaQuery.of(context).size.width * 0.4,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -329,6 +332,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
     }
     verificarTipoUtilizador(widget.utilizador);
     Navigator.of(context).pop();
+    widget.onRequerimentoAdded();
   }
 
   void verificarTipoUtilizador(Utilizador user) async {
@@ -341,9 +345,10 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
       );
       var response = await insertRequerimento(requerimento);
       if (response.success == true) {
+        sleep(Durations.medium3);
         SuccessAlert.show(context, 'Requrimento submetido com sucesso');
       } else {
-        ErrorAlert.show(context, 'response.errorMessage.toString()');
+        ErrorAlert.show(context, response.errorMessage.toString());
       }
       setState(() {
         uploadedFiles.clear();

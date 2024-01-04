@@ -9,6 +9,7 @@ class Medico extends Utilizador {
   final String distrito;
   final String concelho;
   final String freguesia;
+  final String pais;
   final String paisNacionalidade;
   final String contacto;
   final String especialidade;
@@ -24,6 +25,7 @@ class Medico extends Utilizador {
     required this.distrito,
     required this.concelho,
     required this.freguesia,
+    required this.pais,
     required this.paisNacionalidade,
     required this.contacto,
     required this.especialidade,
@@ -35,12 +37,13 @@ class Medico extends Utilizador {
     return Medico(
       hashedId: json['hashed_id'],
       email: json['email'],
-      nomeCompleto: json['nome_completo'],
+      nomeCompleto: json['nome_medico'],
       sexo: json['sexo'],
       dataNascimento: json['data_nascimento'],
       distrito: json['distrito'],
       concelho: json['concelho'],
       freguesia: json['freguesia'],
+      pais: json['pais'],
       paisNacionalidade: json['pais_nacionalidade'],
       contacto: json['contacto'],
       especialidade: json['especialidade'],

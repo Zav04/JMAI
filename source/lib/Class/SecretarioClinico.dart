@@ -9,6 +9,7 @@ class SecretarioClinico extends Utilizador {
   final String distrito;
   final String concelho;
   final String freguesia;
+  final String pais;
   final String paisNacionalidade;
   final String contacto;
 
@@ -21,6 +22,7 @@ class SecretarioClinico extends Utilizador {
     required this.distrito,
     required this.concelho,
     required this.freguesia,
+    required this.pais,
     required this.paisNacionalidade,
     required this.contacto,
   }) : super(hashedId: hashedId, email: email, role: 'SecretarioClinico');
@@ -29,12 +31,13 @@ class SecretarioClinico extends Utilizador {
     return SecretarioClinico(
       hashedId: json['hashed_id'],
       email: json['email'],
-      nomeCompleto: json['nome_completo'],
+      nomeCompleto: json['nome_secreatario_clinico'],
       sexo: json['sexo'],
       dataNascimento: json['data_nascimento'],
       distrito: json['distrito'],
       concelho: json['concelho'],
       freguesia: json['freguesia'],
+      pais: json['pais'],
       paisNacionalidade: json['pais_nacionalidade'],
       contacto: json['contacto'],
     );

@@ -257,7 +257,7 @@ class _LoginScreen extends State<LoginScreen> {
           utilizador = Utente.fromJson(response.data);
           break;
         case 'SecretarioClinico':
-          var response = await getMedicoInfo(hashedId!);
+          var response = await getSecretarioClinicoInfo(hashedId!);
           if (response.success == false) {
             ErrorAlert.show(context, response.errorMessage.toString());
             return false;
@@ -265,7 +265,7 @@ class _LoginScreen extends State<LoginScreen> {
           utilizador = SecretarioClinico.fromJson(response.data);
           break;
         case 'Medico':
-          var response = await getSecretarioClinicoInfo(hashedId!);
+          var response = await getMedicoInfo(hashedId!);
           if (response.success == false) {
             ErrorAlert.show(context, response.errorMessage.toString());
             return false;

@@ -1,3 +1,5 @@
+import 'DateTime.dart';
+
 class Requerimento {
   final int id;
   final String hashedId;
@@ -20,7 +22,7 @@ class Requerimento {
   factory Requerimento.fromJson(Map<String, dynamic> json) {
     return Requerimento(
       id: json['id_requerimento_junta_medica'],
-      data: json['data_submissao'],
+      data: formatDateString(json['data_submissao']),
       hashedId: json['hashed_id'],
       documentos: json['documentos'] != null
           ? List<String>.from(json['documentos'])

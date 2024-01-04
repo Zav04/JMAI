@@ -159,7 +159,7 @@ BEGIN
         nr_porta = p_nr_porta,
         nr_andar = p_nr_andar,
         codigo_postal = p_codigo_postal,
-        data_nascimento = p_data_nascimento,
+        data_nascimento = p_data_nascimento::DATE,
         distrito = p_distrito,
         concelho = p_concelho,
         freguesia = p_freguesia,

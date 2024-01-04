@@ -106,7 +106,6 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
         border: Border.all(
           color: Colors.black,
           width: 2.0,
-          // style: BorderStyle.solid,
         ),
       ),
       child: Column(

@@ -239,10 +239,11 @@ async def get_secretario_clinico_info(hashedid: Search, db: SessionLocal = Depen
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
-
-
-@post_router.post("/get_medico_info/")
-async def get_medico_info(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    
+    
+    
+@post_router.post("/get_medic_info/")
+async def get_medic_info(hashedid: Search, db: SessionLocal = Depends(get_db)):
     try:
         query = text("SELECT * FROM get_medico_info(:hashed_id);")
         result = db.execute(query, {"hashed_id": hashedid.hashed_id})
@@ -257,7 +258,8 @@ async def get_medico_info(hashedid: Search, db: SessionLocal = Depends(get_db)):
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
-    
+
+
     
 @post_router.post("/insert_requirement/")
 async def insert_requirement(requerimento: RequerimentoRequest, db: SessionLocal = Depends(get_db)):
@@ -290,10 +292,45 @@ async def fetch_requirement(hashedid: Search, db: SessionLocal = Depends(get_db)
     try:
         query = text("SELECT * FROM requerimentos_por_utente(:hashed_id);")
         result = db.execute(query, {"hashed_id": hashedid.hashed_id})
-        user_info = result.fetchone()
-        if user_info:
-            response = dict(zip(result.keys(), user_info))
-        return {"response": response}
+        user_info = result.fetchall()
+        colunas = result.keys()
+        requerimentos = [{coluna: valor for coluna, valor in zip(colunas, row)} for row in user_info]
+
+        return {"response": requerimentos}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+    
+    
+@post_router.post("/validar_requerimento/")
+async def validar_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM validar_requerimento(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        result = result.scalar()
+        db.commit()
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+    
+    
+@post_router.post("/recusar_requerimento/")
+async def recusar_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM recusar_requerimento(:p_hashed_id);")
+        result = db.execute(query, {"p_hashed_id": hashedid.hashed_id})
+        result = result.scalar()
+        db.commit()
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]

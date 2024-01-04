@@ -5,13 +5,34 @@ import 'requerimento_form.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'tabela_Requerimentos.dart';
+import 'package:JMAI/controllers/API_Connection.dart';
+import 'package:JMAI/overlay/ErrorAlert.dart';
+import 'package:JMAI/Class/Requerimento.dart';
 
-class Requerimentos extends StatelessWidget {
+class Requerimentos extends StatefulWidget {
   final Utilizador user;
   const Requerimentos({
     Key? key,
     required this.user,
   }) : super(key: key);
+
+  @override
+  _RequerimentosState createState() => _RequerimentosState();
+}
+
+class _RequerimentosState extends State<Requerimentos> {
+  List<Requerimento> requerimentos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchRequerimentostoTable(widget.user);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +42,7 @@ class Requerimentos extends StatelessWidget {
         padding: EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
-            Header(user: user),
+            Header(user: widget.user),
             SizedBox(height: defaultPadding),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,12 +61,15 @@ class Requerimentos extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        onPressed: () => _showRequerimentoFormDialog(context),
+                        onPressed: () => showRequerimentoFormDialog(context),
                         icon: Icon(Icons.add),
                         label: Text('Iniciar Requerimento'),
                       ),
                       SizedBox(height: defaultPadding),
-                      RequerimentosTable(user: user),
+                      RequerimentosTable(
+                        user: widget.user,
+                        requerimentos: requerimentos,
+                      ),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
                     ],
@@ -61,7 +85,7 @@ class Requerimentos extends StatelessWidget {
     );
   }
 
-  Future<void> _showRequerimentoFormDialog(BuildContext context) async {
+  Future<void> showRequerimentoFormDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -76,12 +100,38 @@ class Requerimentos extends StatelessWidget {
             ),
             child: SingleChildScrollView(
               child: RequerimentoForm(
-                utilizador: user,
-              ),
+                  utilizador: widget.user, onRequerimentoAdded: updateTable),
             ),
           ),
         );
       },
     );
+  }
+
+  void updateTable() async {
+    setState(() {
+      fetchRequerimentostoTable(widget.user);
+    });
+  }
+
+  void fetchRequerimentostoTable(Utilizador user) async {
+    try {
+      var response = await fetchRequerimentos(user.hashedId);
+      if (response.success) {
+        var jsonData = response.data;
+        List<Requerimento> listaRequerimentos = (jsonData as List)
+            .map((item) => Requerimento.fromJson(item))
+            .toList();
+
+        setState(() {
+          requerimentos = listaRequerimentos;
+        });
+      } else {
+        ErrorAlert.show(context, response.errorMessage.toString());
+      }
+    } catch (e) {
+      ErrorAlert.show(context, e.toString());
+      print(e.toString());
+    }
   }
 }
