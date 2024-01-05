@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:JMAI/Class/Requerimento_SecretarioClinico.dart';
+import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class RequerimentosSCTable extends StatefulWidget {
-  final List<RequerimentoSC> requerimentos;
+  final List<Requerimento_DadosUtente> requerimentos;
   VoidCallback updateTable;
 
   RequerimentosSCTable({
@@ -31,9 +31,10 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
     super.initState();
   }
 
-  List<RequerimentoSC> sortRequerimentos() {
-    List<RequerimentoSC> requerimentos = widget.requerimentos;
-    requerimentos.sort((RequerimentoSC a, RequerimentoSC b) {
+  List<Requerimento_DadosUtente> sortRequerimentos() {
+    List<Requerimento_DadosUtente> requerimentos = widget.requerimentos;
+    requerimentos
+        .sort((Requerimento_DadosUtente a, Requerimento_DadosUtente b) {
       DateTime dateA = DateFormat('dd-MM-yyyy').parse(a.dataSubmissao);
       DateTime dateB = DateFormat('dd-MM-yyyy').parse(b.dataSubmissao);
       return dateA.compareTo(dateB);
@@ -143,7 +144,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
   }
 
   void showUtenteDetailsOverlay(
-      BuildContext context, RequerimentoSC requerimento) {
+      BuildContext context, Requerimento_DadosUtente requerimento) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -405,7 +406,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                 color: Colors.white,
                                 thickness: 2,
                               ),
-                              ...buildDocumentWidgets(requerimento.documentos),
+                              ...buildDocumentWidgets(requerimento.documentos!),
                             ],
                           ),
                         ),

@@ -1,13 +1,16 @@
 import 'DateTime.dart';
 
-class RequerimentoSC {
+class Requerimento_DadosUtente {
   final int idRequerimento;
   final String hashedId;
   final String dataSubmissao;
-  final List<String> documentos;
+  final List<String>? documentos;
   final int statusRequerimento;
-  final String observacoesRequerimento;
+  final String? observacoesRequerimento;
   final int typeRequerimento;
+  final bool? submetido;
+  final bool? nuncaSubmetido;
+  final String? data_submetido;
   final String utenteHashedId;
   final String nomeCompleto;
   final String sexoUtente;
@@ -32,13 +35,16 @@ class RequerimentoSC {
   final String nomeEntidadeResponsavel;
   final String emailUtente;
 
-  RequerimentoSC({
+  Requerimento_DadosUtente({
     required this.idRequerimento,
     required this.hashedId,
     required this.dataSubmissao,
-    required this.documentos,
+    this.documentos,
     required this.statusRequerimento,
-    required this.observacoesRequerimento,
+    this.submetido,
+    this.nuncaSubmetido,
+    this.data_submetido,
+    this.observacoesRequerimento,
     required this.typeRequerimento,
     required this.utenteHashedId,
     required this.nomeCompleto,
@@ -65,15 +71,20 @@ class RequerimentoSC {
     required this.emailUtente,
   });
 
-  factory RequerimentoSC.fromJson(Map<String, dynamic> json) {
-    return RequerimentoSC(
+  factory Requerimento_DadosUtente.fromJson(Map<String, dynamic> json) {
+    return Requerimento_DadosUtente(
       idRequerimento: json['id_requerimento'],
       hashedId: json['hashed_id'],
       dataSubmissao: formatDateString(json['data_submissao']),
       documentos: List<String>.from(json['documentos']),
       statusRequerimento: json['status_requerimento'],
-      observacoesRequerimento: json['observacoes_requerimento'],
+      observacoesRequerimento: json['observacoes_requerimento'] as String?,
       typeRequerimento: json['type_requerimento'],
+      submetido: json['submetido'],
+      nuncaSubmetido: json['nunca_submetido'],
+      data_submetido: json['data_submetido'] != null
+          ? formatDateString(json['data_submetido'])
+          : "",
       utenteHashedId: json['utente_hashed_id'],
       nomeCompleto: json['nome_completo'],
       sexoUtente: json['sexo_utente'],

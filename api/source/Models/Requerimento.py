@@ -8,5 +8,5 @@ class RequerimentoRequest(BaseModel):
     type: int
     nunca_submetido : Optional[bool] = False
     submetido : Optional[bool] = False
-    data_submissao : Optional[str] = ''
+    data_submetido : Optional[str] = ''
 

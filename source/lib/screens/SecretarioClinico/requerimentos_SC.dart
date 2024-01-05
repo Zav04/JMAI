@@ -6,7 +6,7 @@ import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'tabela_RequerimentosSCTable.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
-import 'package:JMAI/Class/Requerimento_SecretarioClinico.dart';
+import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 
 class RequerimentosSC extends StatefulWidget {
   final Utilizador user;
@@ -20,7 +20,7 @@ class RequerimentosSC extends StatefulWidget {
 }
 
 class _RequerimentosSCState extends State<RequerimentosSC> {
-  List<RequerimentoSC> requerimentos = [];
+  List<Requerimento_DadosUtente> requerimentos = [];
 
   @override
   void initState() {
@@ -82,17 +82,16 @@ class _RequerimentosSCState extends State<RequerimentosSC> {
       if (response.success) {
         var jsonData = response.data;
         if (jsonData is List) {
-          List<RequerimentoSC> listaRequerimentos = jsonData.map((item) {
+          List<Requerimento_DadosUtente> listaRequerimentos =
+              jsonData.map((item) {
             var itemData = item['get_requerimentos_utente_status_zero'];
-            return RequerimentoSC.fromJson(itemData as Map<String, dynamic>);
+            return Requerimento_DadosUtente.fromJson(
+                itemData as Map<String, dynamic>);
           }).toList();
 
           setState(() {
             requerimentos = listaRequerimentos;
           });
-        } else {
-          ErrorAlert.show(
-              context, 'Dados recebidos não estão no formato de List');
         }
       } else {
         ErrorAlert.show(context, response.errorMessage.toString());

@@ -10,7 +10,7 @@ class Requerimento {
   final int status;
   final bool? submetido;
   final bool? nuncaSubmetido;
-  final String? dataSubmetido;
+  final String? data_submetido;
 
   Requerimento({
     required this.id,
@@ -22,7 +22,7 @@ class Requerimento {
     required this.status,
     this.submetido,
     this.nuncaSubmetido,
-    this.dataSubmetido,
+    this.data_submetido,
   });
 
   factory Requerimento.fromJson(Map<String, dynamic> json) {
@@ -38,7 +38,7 @@ class Requerimento {
       status: json['status'],
       submetido: json['submetido'],
       nuncaSubmetido: json['nunca_submetido'],
-      dataSubmetido: json['data_submissao'],
+      data_submetido: json['data_submetido'],
     );
   }
 }

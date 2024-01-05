@@ -278,7 +278,7 @@ async def insert_requirement(requerimento: RequerimentoRequest, db: SessionLocal
             :type,
             :nunca_submetido,
             :submetido,
-            :data_submissao
+            :data_submetido
         );
         """)
         result = db.execute(query, requerimento_data)

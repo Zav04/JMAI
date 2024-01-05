@@ -218,10 +218,13 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                                         suffixIcon: IconButton(
                                           icon:
                                               const Icon(Icons.calendar_today),
-                                          onPressed: () async {
-                                            await presentDatePicker(
-                                                context, _dataJuntaMedica);
-                                          },
+                                          onPressed: _jaSubmeti == false
+                                              ? null
+                                              : () async {
+                                                  await presentDatePicker(
+                                                      context,
+                                                      _dataJuntaMedica);
+                                                },
                                         ),
                                       ),
                                       keyboardType: TextInputType.datetime,
