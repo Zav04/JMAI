@@ -10,7 +10,6 @@ import 'components/constants.dart';
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/Class/Medico.dart';
-import 'package:JMAI/class/SecretarioClinico.dart';
 import 'package:JMAI/screens/Admin/SignupMedico.dart';
 import 'package:JMAI/screens/Admin/SignupSecretarioClinico.dart';
 import 'package:JMAI/screens/SecretarioClinico/requerimentos_SC.dart';
@@ -62,9 +61,7 @@ class _MainScreenState extends State<MainScreen> {
       _pages.addAll([
         RequerimentosSC(user: user),
       ]);
-    } else {
-      print(user.role);
-      print(user.email);
+    } else if (user is Admin) {
       _pages.addAll([
         SignupSecretarioClinico(user: user),
         SignupMedico(user: user),

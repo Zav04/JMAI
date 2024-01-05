@@ -2,11 +2,16 @@ CREATE OR REPLACE FUNCTION insert_requerimento_junta_medica(
     p_hashed_id VARCHAR, 
     p_documentos JSON, 
     p_observacoes VARCHAR, 
-    p_type BIGINT
+    p_type BIGINT,
+	p_nunca_submitido BOOL,
+	p_submetido BOOL,
+	p_data_submissao VARCHAR DEFAULT NULL
+	
 )
 RETURNS void AS $$
 DECLARE
     v_id_utente BIGINT;
+	v_data DATE DEFAULT NULL;
 BEGIN
     -- Buscar o id_utente com base no hashed_id
     SELECT id_utente INTO v_id_utente
@@ -18,6 +23,9 @@ BEGIN
         RAISE EXCEPTION 'Utente não encontrado com o hashed_id fornecido.';
     END IF;
 
+	IF p_data_submissao!='' THEN
+		v_data=p_data_submissao::DATE;
+	END IF;
     -- Insere o novo registro na tabela RequerimentoJuntaMedica
     INSERT INTO RequerimentoJuntaMedica (
         id_utente, 
@@ -25,7 +33,10 @@ BEGIN
         documentos, 
         status, 
         observacoes, 
-        type
+        type,
+		nunca_submetido,
+		submetido,
+		data_submetido
     )
     VALUES (
         v_id_utente, 
@@ -33,10 +44,15 @@ BEGIN
         p_documentos::JSON,
         0,
         p_observacoes, 
-        p_type
+        p_type,
+		p_nunca_submitido ,
+		p_submetido ,
+		v_data
     );
 END;
 $$ LANGUAGE plpgsql;
+
+
 
 
 -- SELECT insert_requerimento_junta_medica(

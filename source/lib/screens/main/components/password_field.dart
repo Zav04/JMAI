@@ -16,7 +16,13 @@ class _PasswordFieldState extends State<PasswordField> {
       controller: widget.controller,
       obscureText: _obscureText,
       decoration: InputDecoration(
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Colors.blue),
+        ),
         labelText: 'Password',
         hintText: 'Insira a sua Palavra passe',
         suffixIcon: IconButton(

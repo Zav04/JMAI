@@ -127,7 +127,7 @@ class _SideMenuState extends State<SideMenu> {
 
     return Drawer(
       child: Container(
-        color: bgColor,
+        color: secondaryColor,
         child: ListView(
           children: menuItems,
         ),
@@ -158,27 +158,28 @@ class _DrawerListTileState extends State<DrawerListTile> {
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor = widget.isSelected
-        ? selectedColor
-        : (_isHovered ? secondaryColor : bgColor);
+    Color backgroundColor =
+        widget.isSelected ? bgColor : (_isHovered ? bgColor : secondaryColor);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
-        color: backgroundColor,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+        ),
         child: ListTile(
           onTap: widget.press,
           horizontalTitleGap: 0.0,
           leading: SvgPicture.asset(
             widget.svgSrc,
-            color: _isHovered ? Colors.blue : Colors.black,
+            color: _isHovered ? Colors.blue : Colors.white,
             height: 16,
           ),
           title: Text(
             widget.title,
             style: TextStyle(
-              color: _isHovered ? Colors.blueAccent : Colors.black,
+              color: _isHovered ? Colors.blue : Colors.white,
             ),
           ),
         ),

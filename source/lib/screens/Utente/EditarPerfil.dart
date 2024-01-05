@@ -1,6 +1,5 @@
 import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:JMAI/screens/main/components/Maps/distritos_concelhos.dart';
 import 'package:JMAI/screens/main/components/Maps/concelhos_freguesias.dart';
 import 'package:JMAI/screens/main/components/Maps/paises.dart';
@@ -15,6 +14,7 @@ import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/Class/DateTime.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
+import 'package:JMAI/screens/main/components/Datepicker.dart';
 
 class EditarPerfilUtente extends StatelessWidget {
   final Utilizador user;
@@ -127,10 +127,10 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(
-          color: Colors.black,
+          color: Colors.white,
           width: 2.0,
         ),
       ),
@@ -138,11 +138,15 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Alterar Perfil Utente',
-            style: Theme.of(context).textTheme.headline6,
+            'Informação do Perfil',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Row(
             children: [
               Flexible(
@@ -151,7 +155,13 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Nome Completo',
                     hintText: 'Insira o seu Nome Completo',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
               ),
@@ -161,10 +171,19 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   controller: _dataDeNascimentoController,
                   decoration: InputDecoration(
                     labelText: 'Data de Nascimento',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
-                      onPressed: presentDatePickerDataNascimento,
+                      onPressed: () async {
+                        await presentDatePicker(
+                            context, _dataDeNascimentoController);
+                      },
                     ),
                   ),
                   keyboardType: TextInputType.datetime,
@@ -185,9 +204,15 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                 child: TextFormField(
                   controller: _telefoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Telefone',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                     prefixText: '+351 ',
                   ),
                   inputFormatters: [
@@ -215,7 +240,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Genero',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 10),
@@ -246,7 +275,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Naturalidade',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -272,7 +305,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Nacionalidade',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -299,7 +336,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Identificação',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -313,10 +354,19 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   controller: _validadeIdentificacaoController,
                   decoration: InputDecoration(
                     labelText: 'Validade Identificação',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
-                      onPressed: presentDatePickerValidade,
+                      onPressed: () async {
+                        await presentDatePicker(
+                            context, _validadeIdentificacaoController);
+                      },
                     ),
                   ),
                   keyboardType: TextInputType.datetime,
@@ -341,9 +391,15 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                 child: TextFormField(
                   controller: _nrIdentificacaoFiscalController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nº Iden. Fiscal',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -356,9 +412,15 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                 child: TextFormField(
                   controller: _nrIdentificacaoController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nº de Identificação',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -371,9 +433,15 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                 child: TextFormField(
                   controller: _nrSegunracaSocialController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nº Segurança Social',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -386,9 +454,15 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                 child: TextFormField(
                   controller: _nrUtenteSaudeController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nº Utente Saúde',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -405,7 +479,13 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   controller: _moradaController,
                   decoration: InputDecoration(
                     labelText: 'Morada',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
               ),
@@ -418,7 +498,13 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   controller: _nrPortaController,
                   decoration: InputDecoration(
                     labelText: 'Número da Porta',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
               ),
@@ -431,7 +517,13 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   controller: _nrAndarController,
                   decoration: InputDecoration(
                     labelText: 'Andar',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
               ),
@@ -458,7 +550,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Distrito',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -496,7 +592,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Concelho',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -537,7 +637,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Freguesia',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -577,7 +681,11 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
                   decoration: InputDecoration(
                     labelText: 'Centro de Saúde',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -644,71 +752,6 @@ class _EditarPerfilUtenteFormState extends State<EditarPerfilUtenteForm> {
       });
     }
     return centros;
-  }
-
-  void presentDatePickerDataNascimento() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (pickedDate != null) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-      setState(() {
-        _dataDeNascimentoController.text = formattedDate;
-      });
-    }
-  }
-
-  void presentDatePickerValidade() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (pickedDate != null) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-      setState(() {
-        _validadeIdentificacaoController.text = formattedDate;
-      });
-    }
-  }
-
-  TextInputFormatter createAutoHyphenDateFormatter() {
-    return TextInputFormatter.withFunction((oldValue, newValue) {
-      final newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-
-      bool isRemoving = newText.length <
-          oldValue.text.replaceAll(RegExp(r'[^0-9]'), '').length;
-
-      String formattedText = '';
-      int cursorIndex = newValue.selection.end;
-
-      for (int i = 0; i < newText.length; i++) {
-        if ((i == 2 || i == 4) && newText.length > i) {
-          formattedText += '-';
-          if (i < cursorIndex) {
-            cursorIndex += isRemoving ? 0 : 1;
-          }
-        }
-        formattedText += newText[i];
-      }
-
-      if (formattedText.length > 10) {
-        formattedText = formattedText.substring(0, 10);
-      }
-
-      if (cursorIndex > formattedText.length) {
-        cursorIndex = formattedText.length;
-      }
-
-      return TextEditingValue(
-        text: formattedText,
-        selection: TextSelection.collapsed(offset: cursorIndex),
-      );
-    });
   }
 
   void registerSubmit() async {

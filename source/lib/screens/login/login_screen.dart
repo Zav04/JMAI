@@ -49,7 +49,7 @@ class _LoginScreen extends State<LoginScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: secondaryColor,
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -78,7 +78,13 @@ class _LoginScreen extends State<LoginScreen> {
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
                             labelText: 'Email',
                             hintText:
                                 'Insira um e-mail válido como abc@gmail.com',
@@ -189,7 +195,13 @@ class _LoginScreen extends State<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: 'Email',
                       hintText: 'Insira o seu Email de Registro',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
                     ),
                   ),
                 ],

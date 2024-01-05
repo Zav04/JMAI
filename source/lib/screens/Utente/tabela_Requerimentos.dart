@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tuple/tuple.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
+import 'package:intl/intl.dart';
+import 'package:JMAI/screens/main/components/GeneratePdf.dart';
 
 class RequerimentosTable extends StatefulWidget {
   final Utilizador user;
@@ -51,6 +53,16 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
   void initState() {
     super.initState();
     verifyisUtente(widget.user);
+  }
+
+  List<Requerimento> sortRequerimentos() {
+    List<Requerimento> requerimentos = widget.requerimentos;
+    requerimentos.sort((Requerimento a, Requerimento b) {
+      DateTime dateA = DateFormat('dd-MM-yyyy').parse(a.data);
+      DateTime dateB = DateFormat('dd-MM-yyyy').parse(b.data);
+      return dateB.compareTo(dateA);
+    });
+    return requerimentos;
   }
 
   Tuple2<String, Color> getTypeDescription(int status) {
@@ -107,22 +119,54 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
       child: Column(
         children: [
           Text(
-            "Requerimentos",
-            style: Theme.of(context).textTheme.titleLarge,
+            "REQUERIMENTOS",
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
+          ),
+          Divider(
+            color: Colors.white,
+            thickness: 2,
           ),
           SizedBox(
             width: double.infinity,
             child: DataTable(
               columnSpacing: defaultPadding,
               columns: const [
-                DataColumn(label: Text('CODIGO')),
-                DataColumn(label: Text('TIPO REQUERIMENTO')),
-                DataColumn(label: Text('DATA DO PEDIDO')),
-                DataColumn(label: Text('ESTADO')),
-                DataColumn(label: Text('AÇÕES')),
+                DataColumn(
+                    label: Text(
+                  'CODIGO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                )),
+                DataColumn(
+                    label: Text(
+                  'TIPO REQUERIMENTO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                )),
+                DataColumn(
+                    label: Text(
+                  'DATA DO PEDIDO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                )),
+                DataColumn(
+                    label: Text(
+                  'ESTADO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                )),
+                DataColumn(
+                    label: Text(
+                  'AÇÕES',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                )),
               ],
-              rows: widget.requerimentos
+              rows: sortRequerimentos()
                   .map((requerimento) => DataRow(
                         cells: [
                           DataCell(Text(
@@ -132,20 +176,34 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                               .widget),
                           DataCell(Text(
                             requerimento.data.toString(),
+                            style: TextStyle(fontSize: 15, color: Colors.white),
+                            textAlign: TextAlign.center,
                           )),
                           DataCell(
                               Blend(getStatusDescription(requerimento.status))
                                   .widget),
                           DataCell(
-                            IconButton(
-                              icon: Icon(Icons.visibility),
-                              color: Colors.blue,
-                              onPressed: () {
-                                showUtenteDetailsOverlay(
-                                    context, utente, requerimento);
-                              },
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.visibility),
+                                  color: Colors.blue,
+                                  onPressed: () {
+                                    showUtenteDetailsOverlay(
+                                        context, utente, requerimento);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.download),
+                                  color: Colors.redAccent,
+                                  onPressed: () async {
+                                    await generatePdfForm(utente, requerimento);
+                                  },
+                                ),
+                              ],
                             ),
-                          ),
+                          )
                         ],
                       ))
                   .toList(),
@@ -174,17 +232,19 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                 alignment: Alignment.center,
                 child: Text(
                   'DETALHES DO REQUERIMENTO',
-                  style: TextStyle(color: selectedColor, fontSize: 20),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
-              // Botão de fechar no canto superior direito
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                   icon: Icon(Icons.close),
                   onPressed: () {
-                    Navigator.of(dialogContext).pop(); // Fecha o AlertDialog
+                    Navigator.of(dialogContext).pop();
                   },
                 ),
               ),
@@ -200,12 +260,12 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.all(8),
-                          color: Colors.lightBlue.shade50,
+                          color: secondaryColor,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Divider(
-                                color: Colors.black,
+                                color: Colors.white,
                                 thickness: 2,
                               ),
                               Center(
@@ -218,7 +278,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 ),
                               ),
                               Divider(
-                                color: Colors.black,
+                                color: Colors.white,
                                 thickness: 2,
                               ),
                               Column(
@@ -237,7 +297,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   buildRichText('NÚMERO DE TELEMÓVEL: ',
                                       utente.numeroTelemovel),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   Center(
@@ -248,7 +308,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                         textAlign: TextAlign.center),
                                   ),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   buildRichText('MORADA: ', utente.morada),
@@ -269,7 +329,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                       'FREGUESIA: ', utente.freguesia),
                                   SizedBox(height: 2),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   Center(
@@ -277,11 +337,11 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                         'INFORMAÇÕES DE NACIONALIDADE E NATURALIDADE',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.blue),
+                                            color: secondaryColor),
                                         textAlign: TextAlign.center),
                                   ),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   buildRichText(
@@ -290,7 +350,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   buildRichText('NACIONALIDADE: ',
                                       utente.paisNacionalidade),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   Center(
@@ -301,7 +361,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                         textAlign: TextAlign.center),
                                   ),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   buildRichText(
@@ -325,7 +385,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   buildRichText('VALIDADE DO DOCUMENTO: ',
                                       utente.documentoValidade),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   Center(
@@ -336,7 +396,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                         textAlign: TextAlign.center),
                                   ),
                                   Divider(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     thickness: 2,
                                   ),
                                   buildRichText('ENTIDADE RESPONSÁVEL: ',
@@ -351,12 +411,12 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.all(8),
-                          color: Colors.lightGreen.shade50,
+                          color: secondaryColor,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Divider(
-                                color: Colors.black,
+                                color: Colors.white,
                                 thickness: 2,
                               ),
                               Center(
@@ -369,7 +429,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 ),
                               ),
                               Divider(
-                                color: Colors.black,
+                                color: Colors.white,
                                 thickness: 2,
                               ),
                               buildRichText('CÓDIGO DO REQUERIMENTO: ',
@@ -387,7 +447,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                       .item1),
                               SizedBox(height: 2),
                               Divider(
-                                color: Colors.black,
+                                color: Colors.white,
                                 thickness: 2,
                               ),
                               Center(
@@ -400,7 +460,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 ),
                               ),
                               Divider(
-                                color: Colors.black,
+                                color: Colors.white,
                                 thickness: 2,
                               ),
                               ...buildDocumentWidgets(requerimento.documentos),
@@ -448,7 +508,10 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
       text: TextSpan(
         style: DefaultTextStyle.of(context).style,
         children: <TextSpan>[
-          TextSpan(text: label, style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(
+              text: label,
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
           TextSpan(text: value),
         ],
       ),

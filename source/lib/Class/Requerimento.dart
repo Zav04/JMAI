@@ -8,6 +8,9 @@ class Requerimento {
   final String observacoes;
   final int type;
   final int status;
+  final bool? submetido;
+  final bool? nuncaSubmetido;
+  final String? dataSubmetido;
 
   Requerimento({
     required this.id,
@@ -17,6 +20,9 @@ class Requerimento {
     required this.observacoes,
     required this.type,
     required this.status,
+    this.submetido,
+    this.nuncaSubmetido,
+    this.dataSubmetido,
   });
 
   factory Requerimento.fromJson(Map<String, dynamic> json) {
@@ -30,6 +36,9 @@ class Requerimento {
       observacoes: json['observacoes'],
       type: json['type'],
       status: json['status'],
+      submetido: json['submetido'],
+      nuncaSubmetido: json['nunca_submetido'],
+      dataSubmetido: json['data_submissao'],
     );
   }
 }

@@ -56,7 +56,6 @@ class ProfileCard extends StatelessWidget {
           '/',
           (Route<dynamic> route) => false,
         );
-        print('Logout pressed');
         break;
       default:
         break;
@@ -95,14 +94,14 @@ class ProfileCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
         border: Border.all(
-          color: Colors.white,
+          color: secondaryColor,
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.white.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 1,
             offset: Offset(0, 1),
@@ -127,7 +126,7 @@ class ProfileCard extends StatelessWidget {
                 child: Text(
                   'Logout',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 16,
                   ),
                 ),
@@ -141,7 +140,7 @@ class ProfileCard extends StatelessWidget {
             padding: EdgeInsets.zero,
             constraints: BoxConstraints(
               minWidth: 50,
-              minHeight: 32,
+              minHeight: 35,
             ),
             color: bgColor,
           ),

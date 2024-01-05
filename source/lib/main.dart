@@ -7,6 +7,8 @@ import 'package:url_strategy/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:JMAI/screens/main/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:JMAI/screens/main/components/constants.dart';
 
 final FirebaseOptions firebaseOptions = FirebaseOptions(
   apiKey: dotenv.env['FIRE_APIKEY'].toString(),
@@ -34,25 +36,23 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => MenuAppController()),
       ],
       child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          inputDecorationTheme: InputDecorationTheme(
-            labelStyle: TextStyle(color: Colors.grey),
-            border: OutlineInputBorder(),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark().copyWith(
+            scaffoldBackgroundColor: bgColor,
+            textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+                .apply(bodyColor: Colors.white),
+            canvasColor: secondaryColor,
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: Colors.blue,
+              selectionColor: Colors.blue.withOpacity(0.4),
+              selectionHandleColor: Colors.blue,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue),
-            ),
-            floatingLabelStyle: TextStyle(color: Colors.blue),
-          ),
-          textSelectionTheme: TextSelectionThemeData(
-            cursorColor: Colors.blue,
-            selectionColor: Colors.blue.withOpacity(0.5),
-            selectionHandleColor: Colors.blue,
-          ),
-        ),
+            inputDecorationTheme: InputDecorationTheme(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              floatingLabelStyle: TextStyle(color: Colors.blue),
+            )),
         initialRoute: '/',
         routes: {
           '/': (context) => LoginScreen(),

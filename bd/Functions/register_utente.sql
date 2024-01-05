@@ -210,7 +210,7 @@ BEGIN
     p_nome_completo,
     p_sexo,
     p_morada,
-    p_data_nascimento,
+    p_data_nascimento::DATE,
     p_distrito,
     p_concelho,
     p_freguesia,
@@ -224,7 +224,7 @@ BEGIN
     p_numero_de_telemovel,
     v_id_entidade_responsavel,
     FALSE, 
-    p_documento_validade,
+    p_documento_validade::DATE,
     p_nr_porta,            
     p_nr_andar,            
     p_codigo_postal        

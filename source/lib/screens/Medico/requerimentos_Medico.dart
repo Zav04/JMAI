@@ -3,14 +3,14 @@ import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:JMAI/screens/dashboard/components/header.dart';
-import 'tabela_RequerimentosSCTable.dart';
+import 'tabela_Requerimentos_Medico_Table.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/Class/Requerimento_SecretarioClinico.dart';
 
-class RequerimentosSC extends StatefulWidget {
+class RequerimentosMedico extends StatefulWidget {
   final Utilizador user;
-  const RequerimentosSC({
+  const RequerimentosMedico({
     Key? key,
     required this.user,
   }) : super(key: key);
@@ -19,7 +19,7 @@ class RequerimentosSC extends StatefulWidget {
   _RequerimentosSCState createState() => _RequerimentosSCState();
 }
 
-class _RequerimentosSCState extends State<RequerimentosSC> {
+class _RequerimentosSCState extends State<RequerimentosMedico> {
   List<RequerimentoSC> requerimentos = [];
 
   @override
@@ -91,14 +91,12 @@ class _RequerimentosSCState extends State<RequerimentosSC> {
             requerimentos = listaRequerimentos;
           });
         } else {
-          ErrorAlert.show(
-              context, 'Dados recebidos não estão no formato de List');
+          print('Dados recebidos não estão no formato de lista');
         }
       } else {
         ErrorAlert.show(context, response.errorMessage.toString());
       }
     } catch (e) {
-      print(e);
       ErrorAlert.show(context, 'Erro ao processar os dados');
     }
   }

@@ -172,7 +172,7 @@ BEGIN
         numero_de_seguranca_social = p_numero_seguranca_social,
         numero_de_telemovel = p_numero_telemovel,
         id_entidade_responsavel = v_id_entidade_responsavel,
-        documento_validade = p_documento_validade
+        documento_validade = p_documento_validade::DATE
     WHERE hashed_id = p_hashed_id;
 	
 	END IF;

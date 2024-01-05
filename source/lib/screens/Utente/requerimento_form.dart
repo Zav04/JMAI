@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,8 @@ import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:JMAI/screens/main/components/Datepicker.dart';
+import 'package:flutter/services.dart';
 
 class RequerimentoForm extends StatefulWidget {
   final Utilizador utilizador;
@@ -34,6 +35,10 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   bool _aceitaTermos = false;
   bool _ipveiculo = false;
   bool _multioso = false;
+  bool _jaSubmeti = false;
+  bool _nuncaSubmeti = false;
+  final TextEditingController _dataJuntaMedica = TextEditingController();
+
   RequerimentoRegister requerimento = new RequerimentoRegister(
     hashed_id: '',
     documentos: [],
@@ -51,17 +56,18 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
 
   @override
   Widget build(BuildContext context) {
+    _dataJuntaMedica.addListener(_onDataJuntaMedicaChanged);
     return Container(
+      width: 1150,
       color: bgColor,
       padding: EdgeInsets.all(10),
       child: Center(
         child: Container(
-          color: bgColor,
-          width: double.infinity,
+          color: secondaryColor,
+          width: 1100,
           child: Card(
-            shadowColor: bgColor,
-            surfaceTintColor: bgColor,
-            color: bgColor,
+            surfaceTintColor: secondaryColor,
+            color: secondaryColor,
             margin: const EdgeInsets.all(5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -87,68 +93,162 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                     'Formulário para Junta Médica',
                     style: TextStyle(
                       fontSize: 34,
-                      color: selectedColor,
+                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.normal,
                       letterSpacing: 1.2,
                     ),
                   ),
                   SizedBox(height: 20),
-                  CheckboxListTile(
-                    title: Text(
-                      'Multiuso (Decreto Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto Lei nº 147/978 de 19 de julho)',
-                    ),
-                    value: _multioso,
-                    onChanged: _ipveiculo
-                        ? null
-                        : (bool? valor) {
-                            setState(() {
-                              _multioso = valor!;
-                              if (_multioso) _ipveiculo = false;
-                            });
-                          },
-                  ),
-                  CheckboxListTile(
-                    title: Text(
-                      'Importação de veículo automóvel e outros (Lei nº 22-A/2007, de 29 de Junho)',
-                    ),
-                    value: _ipveiculo,
-                    onChanged: _multioso
-                        ? null
-                        : (bool? valor) {
-                            setState(() {
-                              _ipveiculo = valor!;
-                              if (_ipveiculo) _multioso = false;
-                            });
-                          },
-                  ),
-                  TextButton.icon(
-                    icon: Icon(Icons.upload_file, color: Colors.white),
-                    label: Text('Carregar ficheiro'),
-                    onPressed: _pickFile,
-                    style: TextButton.styleFrom(
-                      backgroundColor: buttonColor,
-                      primary: buttonTextColor,
-                    ),
-                  ),
-                  buildFileList(),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextFormField(
-                      controller: _observacoesController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'Observações',
-                        border: OutlineInputBorder(),
-                        hintText: 'Digite suas observações aqui',
+                  Column(
+                    children: [
+                      CheckboxListTile(
+                          title: Text(
+                            'Multiuso (Decreto Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto Lei nº 147/978 de 19 de julho)',
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                          value: _multioso,
+                          onChanged: _ipveiculo
+                              ? null
+                              : (bool? valor) {
+                                  setState(() {
+                                    _multioso = valor!;
+                                    if (_multioso) _ipveiculo = false;
+                                  });
+                                },
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.symmetric(vertical: 12.0)),
+                      CheckboxListTile(
+                          title: Text(
+                            'Importação de veículo automóvel e outros (Lei nº 22-A/2007, de 29 de Junho)',
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                          value: _ipveiculo,
+                          onChanged: _multioso
+                              ? null
+                              : (bool? valor) {
+                                  setState(() {
+                                    _ipveiculo = valor!;
+                                    if (_ipveiculo) _multioso = false;
+                                  });
+                                },
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.symmetric(vertical: 12.0)),
+                      TextButton.icon(
+                        icon: Icon(Icons.upload_file, color: Colors.white),
+                        label: Text('Carregar Documentos'),
+                        onPressed: _pickFile,
+                        style: TextButton.styleFrom(
+                          backgroundColor: buttonColor,
+                          primary: buttonTextColor,
+                        ),
                       ),
-                    ),
+                      buildFileList(),
+                      const SizedBox(height: 150),
+                      CheckboxListTile(
+                        title: Text(
+                          'Nunca foi submetido a Junta Médica de avaliação do Grau de Incapacidade',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                        value: _nuncaSubmeti,
+                        onChanged: _jaSubmeti
+                            ? null
+                            : (bool? valor) {
+                                setState(() {
+                                  _nuncaSubmeti = valor!;
+                                  if (_nuncaSubmeti)
+                                    _jaSubmeti =
+                                        false; // Atualiza _jaSubmeti com base em _nuncaSubmeti
+                                });
+                              },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                      ),
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _jaSubmeti = !_nuncaSubmeti;
+                                if (_jaSubmeti) _nuncaSubmeti = false;
+                              });
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Checkbox(
+                                    value: _jaSubmeti,
+                                    onChanged: _nuncaSubmeti
+                                        ? null
+                                        : (bool? valor) {
+                                            setState(() {
+                                              _jaSubmeti = valor!;
+                                              if (_jaSubmeti)
+                                                _nuncaSubmeti = false;
+                                            });
+                                          },
+                                  ),
+                                  Text(
+                                    'Ja foi submetido em',
+                                    style: TextStyle(fontSize: 16.0),
+                                  ),
+                                  Container(
+                                    width: 250,
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: _dataJuntaMedica,
+                                      decoration: InputDecoration(
+                                        labelText: 'Data da Junta Médica',
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 10.0, horizontal: 10.0),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                          borderSide:
+                                              BorderSide(color: Colors.blue),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon:
+                                              const Icon(Icons.calendar_today),
+                                          onPressed: () async {
+                                            await presentDatePicker(
+                                                context, _dataJuntaMedica);
+                                          },
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.datetime,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9\-]')),
+                                        createAutoHyphenDateFormatter(),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Text(', Pretendo uma Reavaliação',
+                                        style: TextStyle(fontSize: 16.0)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 100),
                   CheckboxListTile(
                     title: Text(
-                      'Aceito os termos de funcionamento e garanto que os dados de utente estão corretos.',
+                      'Aceito os termos de funcionamento e garanto que os  meus dados estão corretos.',
                     ),
                     value: _aceitaTermos,
                     onChanged: (bool? valor) {
@@ -156,8 +256,10 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                         _aceitaTermos = valor!;
                       });
                     },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.symmetric(vertical: 12.0),
                   ),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
@@ -177,7 +279,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                       SizedBox(width: 20),
                       Flexible(
                         child: ElevatedButton(
-                          onPressed: _isFormValid(context) ? _submitForm : null,
+                          onPressed: _isFormValid() ? _submitForm : null,
                           child: Text(
                             'Submeter Requerimento',
                             style: TextStyle(color: buttonTextColor),
@@ -317,8 +419,26 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
     );
   }
 
-  bool _isFormValid(BuildContext context) {
-    return _aceitaTermos && (_multioso || _ipveiculo);
+  bool _isFormValid() {
+    if (_aceitaTermos) if (_multioso || _ipveiculo) if (_jaSubmeti ||
+        _nuncaSubmeti) if (_jaSubmeti &&
+            _dataJuntaMedica.text == '' ||
+        _dataJuntaMedica.text == 'Data da Junta Médica')
+      return false;
+    else
+      return true;
+    else
+      return false;
+    else
+      return false;
+    else
+      return false;
+  }
+
+  void _onDataJuntaMedicaChanged() {
+    setState(() {
+      _isFormValid();
+    });
   }
 
   void _submitForm() async {
@@ -342,6 +462,9 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
         documentos: uploadedFilesUrls,
         observacoes: _observacoesController.text,
         type: _multioso ? 1 : (_ipveiculo ? 2 : 0),
+        submetido: _jaSubmeti,
+        nuncaSubmetido: _nuncaSubmeti,
+        dataSubmetido: _jaSubmeti ? _dataJuntaMedica.text : null,
       );
       var response = await insertRequerimento(requerimento);
       if (response.success == true) {

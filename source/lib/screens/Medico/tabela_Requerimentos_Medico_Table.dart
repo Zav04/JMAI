@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento_SecretarioClinico.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
@@ -12,6 +10,7 @@ import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class RequerimentosSCTable extends StatefulWidget {
   final List<RequerimentoSC> requerimentos;
   VoidCallback updateTable;
@@ -417,46 +416,6 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               ],
             ),
           ),
-          actions: <Widget>[
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () async {
-                      await _submitValidarRequerimento(requerimento.hashedId);
-                      widget.updateTable();
-                      Navigator.of(dialogContext).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      primary: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text('Validar Requerimento'),
-                  ),
-                  SizedBox(width: 20),
-                  TextButton(
-                    onPressed: () async {
-                      await _submitRecusarRequerimento(requerimento.hashedId);
-                      widget.updateTable();
-                      Navigator.of(dialogContext).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      primary: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text('Cancelar Requerimento'),
-                  ),
-                ],
-              ),
-            ),
-          ],
         );
       },
     );
@@ -588,5 +547,9 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
     } else {
       ErrorAlert.show(context, response.errorMessage.toString());
     }
+  }
+
+  DateTime parseDate(String dateString) {
+    return DateFormat('dd-MM-dd').parse(dateString);
   }
 }

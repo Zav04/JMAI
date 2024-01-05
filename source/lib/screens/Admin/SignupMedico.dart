@@ -1,6 +1,5 @@
 import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:JMAI/screens/main/components/Maps/distritos_concelhos.dart';
 import 'package:JMAI/screens/main/components/Maps/concelhos_freguesias.dart';
 import 'package:JMAI/screens/main/components/Maps/paises.dart';
@@ -14,6 +13,7 @@ import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:JMAI/screens/dashboard/components/header.dart';
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
+import 'package:JMAI/screens/main/components/Datepicker.dart';
 
 class SignupMedico extends StatelessWidget {
   final Utilizador? user;
@@ -101,7 +101,7 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(
           color: Colors.black,
@@ -124,7 +124,13 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Nome Completo',
                     hintText: 'Insira o seu Nome Completo',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
               ),
@@ -134,11 +140,19 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   controller: _dataDeNascimentoController,
                   decoration: InputDecoration(
                     labelText: 'Data de Nascimento',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: presentDatePickerDataNascimento,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                    suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () async {
+                          await presentDatePicker(
+                              context, _dataDeNascimentoController);
+                        }),
                   ),
                   keyboardType: TextInputType.datetime,
                   inputFormatters: [
@@ -159,9 +173,15 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                 child: TextFormField(
                   controller: _telefoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Telefone',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                     prefixText: '+351 ',
                   ),
                   inputFormatters: [
@@ -189,7 +209,11 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Genero',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 10),
@@ -206,9 +230,15 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                 child: TextFormField(
                   controller: _nrCedula,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nº Cedula Medico',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -221,9 +251,15 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                 child: TextFormField(
                   controller: _nrOrdem,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nº Ordem Médicos',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -237,7 +273,11 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Especialidade',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -277,7 +317,11 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Distrito',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -315,7 +359,11 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Concelho',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -356,7 +404,11 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Freguesia',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -409,7 +461,11 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Nacionalidade',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
                     ),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -429,7 +485,13 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     hintText: 'Insira o seu Email para o Registro',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
               ),
@@ -448,9 +510,10 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
               primary: buttonColor,
               onPrimary: buttonTextColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius:
+                    BorderRadius.circular(30), // Aqui também ajuste o raio
               ),
-              fixedSize: const Size(200, 50),
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
             ),
             child: Text('Registar', style: TextStyle(fontSize: 20)),
           ),
@@ -458,56 +521,6 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
         ],
       ),
     );
-  }
-
-  void presentDatePickerDataNascimento() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (pickedDate != null) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-      setState(() {
-        _dataDeNascimentoController.text = formattedDate;
-      });
-    }
-  }
-
-  TextInputFormatter createAutoHyphenDateFormatter() {
-    return TextInputFormatter.withFunction((oldValue, newValue) {
-      final newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-
-      bool isRemoving = newText.length <
-          oldValue.text.replaceAll(RegExp(r'[^0-9]'), '').length;
-
-      String formattedText = '';
-      int cursorIndex = newValue.selection.end;
-
-      for (int i = 0; i < newText.length; i++) {
-        if ((i == 2 || i == 4) && newText.length > i) {
-          formattedText += '-';
-          if (i < cursorIndex) {
-            cursorIndex += isRemoving ? 0 : 1;
-          }
-        }
-        formattedText += newText[i];
-      }
-
-      if (formattedText.length > 10) {
-        formattedText = formattedText.substring(0, 10);
-      }
-
-      if (cursorIndex > formattedText.length) {
-        cursorIndex = formattedText.length;
-      }
-
-      return TextEditingValue(
-        text: formattedText,
-        selection: TextSelection.collapsed(offset: cursorIndex),
-      );
-    });
   }
 
   void registerSubmit() async {

@@ -10,7 +10,11 @@ from Models.Search import Search
 from Models.SecretarioClinico import SecretarioClinicoRequest
 from Models.Medico import MedicoRequest
 from Models.Requerimento import RequerimentoRequest
+from Models.Email import SendEmail
+from SendEmail import enviarEmailRequerimentoAceite, enviarEmailRequerimentoRecusado , enviarEmailPreAvaliação
+from Models.SendPreAvalicao import SendEmailPreAvaliacao
 import json
+
 
 post_router = APIRouter()
 
@@ -271,7 +275,10 @@ async def insert_requirement(requerimento: RequerimentoRequest, db: SessionLocal
             :hashed_id,
             :documentos,
             :observacoes,
-            :type
+            :type,
+            :nunca_submetido,
+            :submetido,
+            :data_submissao
         );
         """)
         result = db.execute(query, requerimento_data)
@@ -338,7 +345,57 @@ async def recusar_requerimento(hashedid: Search, db: SessionLocal = Depends(get_
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
+    
 
 
+@post_router.post("/send_email_validar_requerimento/")
+async def send_email_validar_requerimento(sendEmail: SendEmail, db: SessionLocal = Depends(get_db)):
+    try:
+        enviarEmailRequerimentoAceite(sendEmail.email)
+        return {"response": True}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        return {"error": str(e)}
 
+
+@post_router.post("/send_email_recusar_requerimento/")
+async def send_email_recusar_requerimento(sendEmail: SendEmail, db: SessionLocal = Depends(get_db)):
+    try:
+        enviarEmailRequerimentoRecusado(sendEmail.email)
+        return {"response": True}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        return {"error": str(e)}
+    
+
+@post_router.post("/send_email_validar_requerimento/")
+async def send_email_validar_requerimento(sendEmail: SendEmail, db: SessionLocal = Depends(get_db)):
+    try:
+        enviarEmailRequerimentoAceite(sendEmail.email)
+        return {"response": True}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@post_router.post("/send_email_preavalicao/")
+async def send_email_preavalicao(preavalicao: SendEmailPreAvaliacao, db: SessionLocal = Depends(get_db)):
+    try:
+        enviarEmailPreAvaliação(preavalicao.email,preavalicao.preavalicao)
+        return {"response": True}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        return {"error": str(e)}
 

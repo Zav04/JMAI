@@ -6,4 +6,7 @@ class RequerimentoRequest(BaseModel):
     documentos: List[str]
     observacoes: str
     type: int
+    nunca_submetido : Optional[bool] = False
+    submetido : Optional[bool] = False
+    data_submissao : Optional[str] = ''
 

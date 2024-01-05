@@ -15,7 +15,11 @@ class Blend {
         color: _blend.item2,
         borderRadius: BorderRadius.circular(20.0),
       ),
-      child: Text(_blend.item1, style: const TextStyle(color: Colors.white)),
+      child: Text(
+        _blend.item1,
+        style: TextStyle(fontSize: 15, color: Colors.white),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }

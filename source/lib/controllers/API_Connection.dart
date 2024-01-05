@@ -628,3 +628,65 @@ Future<CreateAPIResponse> recusarRequerimento(String hashedid) async {
     return CreateAPIResponse(success: false, errorMessage: e.toString());
   }
 }
+
+Future<CreateAPIResponse> sendEmailRequerimentoAceite(String email) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['SEND_EMAIL_VALIDAR_REQUERIMENTO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> sendEmailRequerimentoRecusado(String email) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['SEND_EMAIL_RECUSAR_REQUERIMENTO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}

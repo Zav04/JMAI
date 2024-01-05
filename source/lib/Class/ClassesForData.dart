@@ -181,12 +181,18 @@ class RequerimentoRegister {
   List<String>? documentos;
   String? observacoes;
   int? type;
+  final bool? submetido;
+  final bool? nuncaSubmetido;
+  final String? dataSubmetido;
 
   RequerimentoRegister({
     required this.hashed_id,
     required this.documentos,
     required this.observacoes,
     required this.type,
+    this.submetido,
+    this.nuncaSubmetido,
+    this.dataSubmetido,
   });
 
   Map<String, dynamic> toJson() {
@@ -195,6 +201,9 @@ class RequerimentoRegister {
       'documentos': documentos,
       'observacoes': observacoes,
       'type': type,
+      'submetido': submetido,
+      'nunca_submetido': nuncaSubmetido,
+      'data_submissao': dataSubmetido,
     };
   }
 }
