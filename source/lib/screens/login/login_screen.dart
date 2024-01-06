@@ -11,6 +11,8 @@ import 'package:JMAI/Class/Utente.dart';
 import 'package:JMAI/Class/Medico.dart';
 import 'package:JMAI/Class/SecretarioClinico.dart';
 import 'package:JMAI/Class/Admin.dart';
+import 'package:flutter/services.dart';
+import 'package:JMAI/Class/ClassesForData.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,9 +24,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreen extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nssController = TextEditingController();
   String? hashedId;
   String? role;
-  String? uid;
   Utilizador? utilizador;
 
   @override
@@ -33,7 +35,6 @@ class _LoginScreen extends State<LoginScreen> {
     _passwordController.text = '';
     hashedId = '';
     role = '';
-    uid = '';
     super.initState();
   }
 
@@ -116,7 +117,6 @@ class _LoginScreen extends State<LoginScreen> {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                               builder: (context) => MainScreen(
-                                    uid: uid,
                                     user: utilizador,
                                   )),
                         );
@@ -144,7 +144,7 @@ class _LoginScreen extends State<LoginScreen> {
                 SizedBox(height: 90),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/signup');
+                    _showForgotRegisterDialog(context);
                   },
                   child: const Text(
                     'Novo Utilizador? Criar conta',
@@ -157,6 +157,159 @@ class _LoginScreen extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _showForgotRegisterDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          surfaceTintColor: bgColor,
+          backgroundColor: bgColor,
+          iconColor: bgColor,
+          shadowColor: bgColor,
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Registro na Aplicação',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(), // Adicione seu estilo aqui se necessário
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                alignment: Alignment.topRight,
+              ),
+            ],
+          ),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: 600,
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              minHeight: 150,
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _nssController,
+                    decoration: InputDecoration(
+                      labelText: 'Número de Saúde',
+                      hintText: 'Insira seu número de saúde (9 dígitos)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(9),
+                    ],
+                  ),
+                  SizedBox(height: 10), // Espaço entre os campos
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      hintText: 'Insira seu Email',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10), // Espaço entre os campos
+                  PasswordField(controller: _passwordController),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            Center(
+              child: TextButton(
+                  child: Text(
+                    'Registar',
+                    style: TextStyle(color: buttonTextColor),
+                    textAlign: TextAlign.center,
+                  ),
+                  style: TextButton.styleFrom(
+                    primary: buttonColor,
+                    backgroundColor: buttonColor,
+                  ),
+                  onPressed: () async {
+                    print(
+                        "Botão Registar pressionado"); // Remova isso após o teste
+                    var response = await _submmit(context);
+                    if (response) {
+                      Navigator.of(dialogContext).pop();
+                    }
+                  }),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> _submmit(BuildContext context) async {
+    int? nss;
+
+    try {
+      if (_nssController.text.isNotEmpty) {
+        nss = int.parse(_nssController.text);
+      } else {
+        ErrorAlert.show(
+            context, 'O campo Número de Saúde não pode estar vazio');
+        return false;
+      }
+    } catch (e) {}
+    var response = await validationNSSUser(nss!);
+    if (response.success && response.data == true) {
+      UtenteRegister newUtente = UtenteRegister(
+        numeroUtenteSaude: _nssController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+        justvalidateInputs: false,
+      );
+      response = await createUser(newUtente);
+      if (response.success) {
+        newUtente.justvalidateInputs = true;
+        response = await createUser(newUtente);
+        if (response.success) {
+          response =
+              await singin(_emailController.text, _passwordController.text);
+        } else {
+          ErrorAlert.show(context, response.errorMessage.toString());
+          return false;
+        }
+        if (response.success) {
+          SuccessAlert.show(context, 'Conta Criada com Sucesso');
+          return true;
+        } else {
+          ErrorAlert.show(context, response.errorMessage.toString());
+          return false;
+        }
+      } else {
+        ErrorAlert.show(context, response.errorMessage.toString());
+        return false;
+      }
+    } else {
+      ErrorAlert.show(
+          context, 'O Número de Saúde inserido não existe no sistema do RNU');
+      return false;
+    }
   }
 
   Future<void> _showForgotPasswordDialog(BuildContext context) async {
@@ -253,21 +406,37 @@ class _LoginScreen extends State<LoginScreen> {
   }
 
   Future<bool> submitlogin() async {
+    var dados;
+    var infos;
     var response = await login(_emailController.text, _passwordController.text);
     if (response.success == true) {
-      uid = response.data['idToken'];
       var getUser = await getUserRole(_emailController.text);
       hashedId = getUser.data['hashed_id'];
       role = getUser.data['cargo_name'];
       switch (role) {
         case 'Utente':
-          var response = await getUtenteInfo(hashedId!);
-          if (response.success == false) {
+          infos = await getUtenteInfo(hashedId!);
+          if (infos.success) {
+            int nss = infos.data['numero_utente_saude'];
+            print(nss);
+            response = await getDadosNSS(nss);
+            if (response.success) {
+              dados = response.data;
+              print(infos.data['hashed_id']);
+              print(infos.data['email']);
+              print(dados);
+              dados[0]['hashed_id'] = infos.data['hashed_id'];
+              dados[0]['email'] = infos.data['email'];
+              utilizador = Utente.fromJson(dados[0]);
+            } else {
+              ErrorAlert.show(context, response.errorMessage.toString());
+              return false;
+            }
+            break;
+          } else {
             ErrorAlert.show(context, response.errorMessage.toString());
             return false;
           }
-          utilizador = Utente.fromJson(response.data);
-          break;
         case 'SecretarioClinico':
           var response = await getSecretarioClinicoInfo(hashedId!);
           if (response.success == false) {

@@ -61,6 +61,7 @@ class _RequerimentosState extends State<Requerimentos> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
+                        //TODO VERIFICAR SE O UTENTE TEM REQUERIMENTOS EM CURSO
                         onPressed: () => showRequerimentoFormDialog(context),
                         icon: Icon(Icons.add),
                         label: Text('Iniciar Requerimento'),

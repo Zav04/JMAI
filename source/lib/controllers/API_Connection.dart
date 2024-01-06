@@ -63,9 +63,75 @@ Future<CreateAPIResponse> getEntidadesResponsaveis() async {
   }
 }
 
-Future<CreateAPIResponse> validationCreateUser(UtenteRegister utente) async {
+Future<CreateAPIResponse> validationNSSUser(int nss) async {
   String url = dotenv.env['API_URL'].toString() +
-      dotenv.env['VALIDATION_CREATE_USER'].toString();
+      dotenv.env['RNU_VERIFICAR_EXISTE_NSS'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"NNS": nss}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(
+          success: false,
+          errorMessage: 'Erro no servidor: ${response.statusCode}');
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> getDadosNSS(int nss) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['RNU_GET_DADOS_NNS'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"NNS": nss}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(
+          success: false,
+          errorMessage: 'Erro no servidor: ${response.statusCode}');
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> createUser(UtenteRegister utente) async {
+  String url =
+      dotenv.env['API_URL'].toString() + dotenv.env['CREATE_USER'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -540,6 +606,36 @@ Future<CreateAPIResponse> fetchRequerimentos(String hashedId) async {
 Future<CreateAPIResponse> getRequerimentosUtenteStatusZero() async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_REQUERIMENTOS_UTENTE_STATUS_ZERO'].toString();
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(
+          success: false,
+          errorMessage: 'Erro no servidor: ${response.statusCode}');
+    }
+  } catch (e) {
+    return CreateAPIResponse(
+        success: false, errorMessage: 'Erro ao Carregar os Centros de Saúde');
+  }
+}
+
+Future<CreateAPIResponse> getRequerimentosUtenteStatusONE() async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['GET_REQUERIMENTOS_UTENTE_STATUS_ONE'].toString();
   try {
     final response = await http.get(Uri.parse(url));
 

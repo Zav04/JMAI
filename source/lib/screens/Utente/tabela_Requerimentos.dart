@@ -37,15 +37,14 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     distrito: '',
     concelho: '',
     freguesia: '',
-    naturalidade: '',
-    paisNacionalidade: '',
+    pais: '',
     tipoDocumentoIdentificacao: 0,
-    numeroDocumentoIdentificacao: '',
-    numeroUtenteSaude: '',
-    numeroIdentificacaoFiscal: '',
-    numeroSegurancaSocial: '',
+    numeroDocumentoIdentificacao: 0,
+    numeroUtenteSaude: 0,
+    numeroIdentificacaoFiscal: 0,
+    numeroSegurancaSocial: 0,
     documentoValidade: '',
-    numeroTelemovel: '',
+    numeroTelemovel: 0,
     nomeEntidadeResponsavel: '',
   );
 
@@ -190,7 +189,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   icon: Icon(Icons.visibility),
                                   color: Colors.blue,
                                   onPressed: () {
-                                    showUtenteDetailsOverlay(
+                                    showDetailsOverlay(
                                         context, utente, requerimento);
                                   },
                                 ),
@@ -214,12 +213,18 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     );
   }
 
-  void showUtenteDetailsOverlay(
+  void showDetailsOverlay(
       BuildContext context, Utente utente, Requerimento requerimento) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
+        Blend tipoRequerimentoBlend = Blend(
+          getTypeDescription(requerimento.type),
+        );
+        Blend estadoRequerimentoBlend = Blend(
+          getStatusDescription(requerimento.status),
+        );
         return AlertDialog(
           backgroundColor: bgColor,
           shape: RoundedRectangleBorder(
@@ -270,7 +275,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                               ),
                               Center(
                                 child: Text(
-                                  'Informações do Utente',
+                                  'IDENTIFICAÇÃO DO UTENTE',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.blue),
@@ -285,23 +290,42 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   buildRichText(
-                                      'NOME COMPLETO: ', utente.nomeCompleto),
+                                      'Nome Completo: ', utente.nomeCompleto),
                                   SizedBox(height: 2),
-                                  buildRichText('DATA DE NASCIMENTO: ',
-                                      utente.dataNascimento),
+                                  buildRichText('Sexo: ', utente.sexo),
                                   SizedBox(height: 2),
-                                  buildRichText('SEXO: ', utente.sexo),
+                                  buildRichText(
+                                      'Tipo de Documento: ',
+                                      getDocumentsDescription(
+                                          utente.tipoDocumentoIdentificacao)),
                                   SizedBox(height: 2),
-                                  buildRichText('EMAIL: ', utente.email),
+                                  buildRichText(
+                                      'Número de Documento: ',
+                                      utente.numeroDocumentoIdentificacao
+                                          .toString()),
                                   SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE TELEMÓVEL: ',
-                                      utente.numeroTelemovel),
+                                  buildRichText('Número de Utente de Saúde: ',
+                                      utente.numeroUtenteSaude.toString()),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'Número de Identificação Fiscal: ',
+                                      utente.numeroIdentificacaoFiscal
+                                          .toString()),
+                                  SizedBox(height: 2),
+                                  buildRichText('Número Segurança Social: ',
+                                      utente.numeroSegurancaSocial.toString()),
+                                  SizedBox(height: 2),
+                                  buildRichText('Validade Documento: ',
+                                      utente.documentoValidade),
+                                  SizedBox(height: 2),
+                                  buildRichText('Email: ', utente.email),
+                                  SizedBox(height: 2),
                                   Divider(
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
                                   Center(
-                                    child: Text('INFORMAÇÕES DE LOCALIZAÇÃO',
+                                    child: Text('NATURALIDADE',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.blue),
@@ -311,22 +335,17 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
-                                  buildRichText('MORADA: ', utente.morada),
+                                  buildRichText('Data de Nascimento: ',
+                                      utente.dataNascimento),
+                                  SizedBox(height: 2),
+                                  buildRichText('Distrito: ', utente.distrito),
+                                  SizedBox(height: 2),
+                                  buildRichText('Concelho: ', utente.concelho),
                                   SizedBox(height: 2),
                                   buildRichText(
-                                      'NÚMERO DA PORTA: ', utente.nr_porta),
+                                      'Freguesia: ', utente.freguesia),
                                   SizedBox(height: 2),
-                                  buildRichText('ANDAR: ', utente.nr_andar),
-                                  SizedBox(height: 2),
-                                  buildRichText('CÓDIGO POSTAL: ',
-                                      utente.nr_codigo_postal),
-                                  SizedBox(height: 2),
-                                  buildRichText('DISTRITO: ', utente.distrito),
-                                  SizedBox(height: 2),
-                                  buildRichText('CONCELHO: ', utente.concelho),
-                                  SizedBox(height: 2),
-                                  buildRichText(
-                                      'FREGUESIA: ', utente.freguesia),
+                                  buildRichText('Naturalidade: ', utente.pais),
                                   SizedBox(height: 2),
                                   Divider(
                                     color: Colors.white,
@@ -334,56 +353,38 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   ),
                                   Center(
                                     child: Text(
-                                        'INFORMAÇÕES DE NACIONALIDADE E NATURALIDADE',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: secondaryColor),
-                                        textAlign: TextAlign.center),
+                                      'RESIDÊNCIA',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                   Divider(
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
-                                  buildRichText(
-                                      'NATURALIDADE: ', utente.naturalidade),
-                                  SizedBox(height: 2),
-                                  buildRichText('NACIONALIDADE: ',
-                                      utente.paisNacionalidade),
-                                  Divider(
-                                    color: Colors.white,
-                                    thickness: 2,
-                                  ),
-                                  Center(
-                                    child: Text('INFORMAÇÕES DE IDENTIFICAÇÃO',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  Divider(
-                                    color: Colors.white,
-                                    thickness: 2,
-                                  ),
-                                  buildRichText(
-                                      'TIPO DE DOCUMENTO: ',
-                                      getDocumentsDescription(
-                                          utente.tipoDocumentoIdentificacao)),
-                                  SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE DOCUMENTO: ',
-                                      utente.numeroDocumentoIdentificacao),
-                                  SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE UTENTE DE SAÚDE: ',
-                                      utente.numeroUtenteSaude),
+                                  buildRichText('Morada: ', utente.morada),
                                   SizedBox(height: 2),
                                   buildRichText(
-                                      'NÚMERO DE IDENTIFICAÇÃO FISCAL: ',
-                                      utente.numeroIdentificacaoFiscal),
+                                      'Número Porta: ', utente.nr_porta),
+                                  if (utente.nr_andar != null &&
+                                      utente.nr_andar!.isNotEmpty) ...[
+                                    SizedBox(height: 2),
+                                    buildRichText('Andar: ', utente.nr_andar!),
+                                  ],
                                   SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE SEGURANÇA SOCIAL: ',
-                                      utente.numeroSegurancaSocial),
+                                  buildRichText('Código Postal: ',
+                                      utente.nr_codigo_postal),
                                   SizedBox(height: 2),
-                                  buildRichText('VALIDADE DO DOCUMENTO: ',
-                                      utente.documentoValidade),
+                                  buildRichText(
+                                      'Freguesia: ', utente.freguesia),
+                                  SizedBox(height: 2),
+                                  buildRichText('Concelho: ', utente.concelho),
+                                  SizedBox(height: 2),
+                                  buildRichText('Número Telemovel: ',
+                                      utente.numeroTelemovel.toString()),
+                                  SizedBox(height: 2),
                                   Divider(
                                     color: Colors.white,
                                     thickness: 2,
@@ -399,7 +400,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
-                                  buildRichText('ENTIDADE RESPONSÁVEL: ',
+                                  buildRichText('Entidade Responsável: ',
                                       utente.nomeEntidadeResponsavel),
                                 ],
                               ),
@@ -432,19 +433,33 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 color: Colors.white,
                                 thickness: 2,
                               ),
-                              buildRichText('CÓDIGO DO REQUERIMENTO: ',
+                              buildRichText('Código do Requerimento: ',
                                   'REQ/' + requerimento.id.toString()),
                               SizedBox(height: 2),
-                              buildRichText('DATA DO PEDIDO: ',
+                              buildRichText('Data do Pedido: ',
                                   requerimento.data.toString()),
-                              SizedBox(height: 2),
-                              buildRichText('TIPO DO REQUERIMENTO: ',
-                                  getTypeDescription(requerimento.type).item1),
-                              SizedBox(height: 2),
-                              buildRichText(
-                                  'ESTADO DO REQUERIMENTO: ',
-                                  getStatusDescription(requerimento.status)
-                                      .item1),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Text('Tipo do Requerimento: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  tipoRequerimentoBlend.widget,
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Estado do Requerimento: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey),
+                                  ),
+                                  estadoRequerimentoBlend.widget,
+                                ],
+                              ),
                               SizedBox(height: 2),
                               Divider(
                                 color: Colors.white,

@@ -4,7 +4,6 @@ import 'package:JMAI/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:JMAI/screens/Utente/requerimentos.dart';
-import 'package:JMAI/screens/Utente/EditarPerfil.dart';
 import 'side_menu.dart';
 import 'components/constants.dart';
 import 'package:JMAI/Class/Utilizador.dart';
@@ -14,12 +13,12 @@ import 'package:JMAI/screens/Admin/SignupMedico.dart';
 import 'package:JMAI/screens/Admin/SignupSecretarioClinico.dart';
 import 'package:JMAI/screens/SecretarioClinico/requerimentos_SC.dart';
 import 'package:JMAI/Class/Admin.dart';
+import 'package:JMAI/screens/Medico/requerimentos_Medico.dart';
 
 class MainScreen extends StatefulWidget {
   final Utilizador? user;
-  final String? uid;
 
-  const MainScreen({Key? key, this.uid, this.user}) : super(key: key);
+  const MainScreen({Key? key, this.user}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -53,10 +52,11 @@ class _MainScreenState extends State<MainScreen> {
     if (user is Utente) {
       _pages.addAll([
         Requerimentos(user: user),
-        EditarPerfilUtente(user: user),
       ]);
     } else if (user is Medico) {
-      _pages.addAll([]);
+      _pages.addAll([
+        RequerimentosMedico(user: user),
+      ]);
     } else if (user.role == 'SecretarioClinico') {
       _pages.addAll([
         RequerimentosSC(user: user),

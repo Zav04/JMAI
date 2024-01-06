@@ -2,7 +2,6 @@ import 'package:JMAI/controllers/MenuAppController.dart';
 import 'package:JMAI/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:JMAI/screens/sing_up/sing_up.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:JMAI/screens/main/main_screen.dart';
@@ -56,7 +55,6 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => LoginScreen(),
-          '/signup': (context) => Singup(),
           '/MainScreen': (context) => MainScreen(),
         },
       ),

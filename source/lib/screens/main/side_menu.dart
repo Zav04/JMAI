@@ -78,17 +78,6 @@ class _SideMenuState extends State<SideMenu> {
             },
             isSelected: selectedItemIndex == 1,
           ),
-          DrawerListTile(
-            title: "Editar Perfil",
-            svgSrc: "assets/icons/menu_profile.svg",
-            press: () {
-              setState(() {
-                selectedItemIndex = 2;
-              });
-              widget.onItemSelected(2);
-            },
-            isSelected: selectedItemIndex == 2,
-          ),
         ]);
         break;
       case 'SecretarioClinico':

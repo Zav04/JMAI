@@ -57,6 +57,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   @override
   Widget build(BuildContext context) {
     _dataJuntaMedica.addListener(_onDataJuntaMedicaChanged);
+
     return Container(
       width: 1150,
       color: bgColor,

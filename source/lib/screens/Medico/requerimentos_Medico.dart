@@ -16,10 +16,10 @@ class RequerimentosMedico extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _RequerimentosSCState createState() => _RequerimentosSCState();
+  _RequerimentosMedicoState createState() => _RequerimentosMedicoState();
 }
 
-class _RequerimentosSCState extends State<RequerimentosMedico> {
+class _RequerimentosMedicoState extends State<RequerimentosMedico> {
   List<Requerimento_DadosUtente> requerimentos = [];
 
   @override
@@ -51,7 +51,7 @@ class _RequerimentosSCState extends State<RequerimentosMedico> {
                   child: Column(
                     children: [
                       SizedBox(height: defaultPadding),
-                      RequerimentosSCTable(
+                      RequerimentosMedicoTable(
                         requerimentos: requerimentos,
                         updateTable: updateTable,
                       ),
@@ -78,13 +78,13 @@ class _RequerimentosSCState extends State<RequerimentosMedico> {
 
   Future<void> fetchRequerimentostoTable() async {
     try {
-      var response = await getRequerimentosUtenteStatusZero();
+      var response = await getRequerimentosUtenteStatusONE();
       if (response.success) {
         var jsonData = response.data;
         if (jsonData is List) {
           List<Requerimento_DadosUtente> listaRequerimentos =
               jsonData.map((item) {
-            var itemData = item['get_requerimentos_utente_status_zero'];
+            var itemData = item['get_requerimentos_utente_status_one'];
             return Requerimento_DadosUtente.fromJson(
                 itemData as Map<String, dynamic>);
           }).toList();

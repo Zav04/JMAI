@@ -1,0 +1,22 @@
+INSERT INTO RNU (nome_completo, Sexo, morada, nr_porta, nr_andar, codigo_postal, data_nascimento, pais, distrito, concelho, freguesia, tipo_documento_identificacao, documento_validade, numero_de_documento_de_identificação, numero_utente_saude, numero_de_identificacao_fiscal, numero_de_segurança_social, numero_de_telemovel, obito, id_entidade_responsavel)
+VALUES 
+('João Silva', 'Masculino', 'Rua das Flores, 123', '3', '2', '1234-567', '1980-05-21', 'Portugal', 'Lisboa', 'Lisboa', 'Santa Maria Maior', 1, '2025-05-21', 12345678, 987654321, 123456789, 234567890, 912345678, false, 1),
+('Maria Sousa', 'Feminino', 'Avenida da Liberdade, 456', '5', '3', '2345-678', '1990-07-15', 'Portugal', 'Porto', 'Porto', 'Santo Ildefonso', 1, '2026-07-15', 23456789, 876543210, 234567890, 345678901, 923456789, false, 2),
+('Ana Pereira', 'Feminino', 'Praceta das Amoreiras, 10', '1', 'R/C', '3456-789', '1995-03-30', 'Portugal', 'Braga', 'Braga', 'São Vicente', 1, '2028-03-30', 34567890, 765432109, 345678901, 456789012, 934567890, false, 3),
+('Francisco Santos', 'Masculino', 'Largo do Carmo, 20', '2', '1', '4567-890', '1985-11-12', 'Portugal', 'Aveiro', 'Aveiro', 'Glória', 1, '2027-11-12', 45678901, 654321098, 456789012, 567890123, 945678901, false, 4),
+('Sofia Oliveira', 'Feminino', 'Rua da Esperança, 5', '1B', '2', '5678-901', '1975-06-22', 'Portugal', 'Setúbal', 'Almada', 'Cacilhas', 1, '2026-06-22', 56789012, 543210987, 567890123, 678901234, 956789012, false, 5),
+('Miguel Ferreira', 'Masculino', 'Avenida dos Aliados, 100', '10', '3', '6789-012', '1992-09-17', 'Portugal', 'Faro', 'Faro', 'Sé', 1, '2030-09-17', 67890123, 432109876, 678901234, 789012345, 967890123, false, 6),
+('Cláudia Rocha', 'Feminino', 'Travessa das Rosas, 8', '3C', '2', '7890-123', '1988-02-05', 'Portugal', 'Viseu', 'Viseu', 'Santa Maria', 1, '2029-02-05', 78901234, 321098765, 789012345, 890123456, 978901234, false, 7),
+('Diogo Gomes', 'Masculino', 'Rua do Sobreiro, 15', '5A', '4', '8901-234', '1970-12-10', 'Portugal', 'Coimbra', 'Coimbra', 'Sé Nova', 1, '2025-12-10', 89012345, 210987654, 890123456, 901234567, 989012345, false, 8),
+('Marta Soares', 'Feminino', 'Praça do Rossio, 2', '2D', '1', '9012-345', '1983-04-18', 'Portugal', 'Leiria', 'Leiria', 'Pousos', 1, '2027-04-18', 90123456, 109876543, 901234567, 123456789, 990123456, false, 9),
+('Ricardo Neves', 'Masculino', 'Alameda dos Oceanos, 180', '12A', '5', '1990-345', '1978-08-19', 'Portugal', 'Lisboa', 'Loures', 'Moscaide', 1, '2028-08-19', 90123457, 198765432, 123456789, 234567890, 911234567, false, 10),
+('Sara Moreira', 'Feminino', 'Rua da Restauração, 77', '7', '3', '1122-334', '1993-01-23', 'Portugal', 'Porto', 'Matosinhos', 'Leça da Palmeira', 1, '2031-01-23', 12345670, 198765431, 234567891, 345678902, 922345678, false, 11),
+('Luís Figueiredo', 'Masculino', 'Beco dos Namorados, 9', '1F', '2', '2233-445', '1984-05-15', 'Portugal', 'Braga', 'Guimarães', 'Costa', 1, '2029-05-15', 23456781, 198765430, 234567892, 345678903, 933456789, false, 12),
+('Catarina Lima', 'Feminino', 'Pátio do Sol, 35', '3B', 'R/C', '3344-556', '1996-10-08', 'Portugal', 'Aveiro', 'Espinho', 'Anta', 1, '2032-10-08', 34567892, 198765429, 234567893, 345678904, 944567890, false, 13),
+('João Martins', 'Masculino', 'Ladeira do Castelo, 21', '21C', '4', '4455-667', '1972-03-02', 'Portugal', 'Setúbal', 'Sesimbra', 'Castelo', 1, '2024-03-02', 45678903, 198765428, 234567894, 345678905, 955678901, false, 14),
+('Helena Gonçalves', 'Feminino', 'Rua das Acácias, 48', '8', '2', '5566-778', '1989-07-29', 'Portugal', 'Faro', 'Albufeira', 'Olhos de Água', 1, '2030-07-29', 56789014, 198765427, 234567895, 345678906, 966789012, false, 15),
+('Pedro Almeida', 'Masculino', 'Travessa do Forno, 5', '5D', '1', '6677-889', '1991-12-14', 'Portugal', 'Viseu', 'Tondela', 'Santa Eufémia', 1, '2033-12-14', 67890125, 198765426, 234567896, 345678907, 977890123, false, 16),
+('Diana Carvalho', 'Feminino', 'Avenida das Américas, 200', '20', '6', '7788-990', '1980-04-20', 'Portugal', 'Coimbra', 'Figueira da Foz', 'Buarcos', 1, '2025-04-20', 78901236, 198765425, 234567897, 345678908, 988901234, false, 17),
+('Bruno Oliveira','Masculino', 'Rua Ouvinho Favelhos, 537', '537', '', '4805-631', '1999-06-06', 'Portugal', 'Braga', 'Guimarães', 'Briteiros', 1, '2033-12-14', 67890125, 123456789, 234567896, 345678907, 977890123, false, 3);
+
+--DELETE FROM RNU

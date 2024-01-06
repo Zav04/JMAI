@@ -11,11 +11,11 @@ import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class RequerimentosSCTable extends StatefulWidget {
+class RequerimentosMedicoTable extends StatefulWidget {
   final List<Requerimento_DadosUtente> requerimentos;
   VoidCallback updateTable;
 
-  RequerimentosSCTable({
+  RequerimentosMedicoTable({
     Key? key,
     required this.requerimentos,
     required this.updateTable,
@@ -25,7 +25,7 @@ class RequerimentosSCTable extends StatefulWidget {
   _RequerimentosTableSCState createState() => _RequerimentosTableSCState();
 }
 
-class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
+class _RequerimentosTableSCState extends State<RequerimentosMedicoTable> {
   @override
   void initState() {
     super.initState();
