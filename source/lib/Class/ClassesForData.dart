@@ -140,7 +140,7 @@ class RequerimentoRegister {
       'type': type,
       'submetido': submetido,
       'nunca_submetido': nuncaSubmetido,
-      'data_submissao': dataSubmetido,
+      'data_submetido': dataSubmetido,
     };
   }
 }

@@ -49,7 +49,7 @@ class _WarningAlertState extends State<WarningAlert> {
   }
 
   void _startDismissTimer() {
-    _timer = Timer(Duration(seconds: 2), () {
+    _timer = Timer(Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           _isVisible = false;

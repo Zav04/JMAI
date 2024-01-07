@@ -6,7 +6,6 @@ import 'package:JMAI/screens/main/components/Maps/paises.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:JMAI/screens/main/components/password_field.dart';
-import 'package:JMAI/screens/dashboard/components/sleep.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/overlay/SuccessAlert.dart';
@@ -466,7 +465,7 @@ class _SignupSecretarioClinicoFormState
             await singin(_emailController.text, _passwordController.text);
         if (response.success) {
           SuccessAlert.show(context, 'Conta Criada com Sucesso');
-          await fazerPausaAssincrona();
+          await Future.delayed(Duration(milliseconds: 200));
           setState(() {
             _nomeCompletoController.text = '';
             _dataDeNascimentoController.text = '';

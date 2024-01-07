@@ -469,6 +469,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                     child: TextButton(
                       onPressed: () async {
                         await _submitValidarRequerimento(requerimento.hashedId);
+                        sendEmailRequerimentoAceite(requerimento.emailUtente!);
                         widget.updateTable();
                         Navigator.of(dialogContext).pop();
                       },
@@ -489,6 +490,8 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                     child: TextButton(
                       onPressed: () async {
                         await _submitRecusarRequerimento(requerimento.hashedId);
+                        sendEmailRequerimentoRecusado(
+                            requerimento.emailUtente!);
                         widget.updateTable();
                         Navigator.of(dialogContext).pop();
                       },

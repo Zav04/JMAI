@@ -25,6 +25,7 @@ BEGIN
 	IF p_data_submissao!='' THEN
 		v_data=p_data_submissao::DATE;
 	END IF;
+	
     -- Insere o novo registro na tabela RequerimentoJuntaMedica
     INSERT INTO RequerimentoJuntaMedica (
         id_utente, 
@@ -46,6 +47,7 @@ BEGIN
 		p_submetido ,
 		v_data
     );
+	
 END;
 $$ LANGUAGE plpgsql;
 

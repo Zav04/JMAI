@@ -48,6 +48,7 @@ dependencies:
   printing: ^5.11.1
   table_calendar: ^3.0.0
   flutter_localization: ^0.2.0
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ flutter:
     - assets/images/excel_icon.svg
     - assets/images/images_icon.svg
     - assets/images/desconhecido_icon.svg
+    - assets/images/Footer.png
 
   fonts:
     - family: NotoSans

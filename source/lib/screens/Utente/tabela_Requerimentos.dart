@@ -1,4 +1,5 @@
 import 'package:JMAI/Class/Pre_Avalicao.dart';
+import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento.dart';
 import 'package:JMAI/Class/Utilizador.dart';
@@ -31,6 +32,8 @@ class RequerimentosTable extends StatefulWidget {
 
 class _RequerimentosTableState extends State<RequerimentosTable> {
   DateTime? selectedDateTime;
+  String dataJuntaMedica = '';
+
   PreAvalicao preAvalicao = PreAvalicao(
     hashed_id_pre_avaliacao: '',
     pre_avaliacao: '',
@@ -187,13 +190,17 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   icon: Icon(Icons.visibility),
                                   color: Colors.blue,
                                   onPressed: () async {
-                                    if (requerimento.status >= 2) {
-                                      var response =
-                                          await preAvalicaoData(requerimento);
-                                      if (response) {
-                                        showDetailsOverlay(
-                                            context, utente, requerimento);
+                                    if (requerimento.status >= 2 &&
+                                        requerimento.status <= 6) {
+                                      await preAvalicaoData(
+                                          requerimento.hashedId);
+                                      if (requerimento.status == 3 ||
+                                          requerimento.status == 4) {
+                                        await getAgendamento(
+                                            requerimento.hashedId);
                                       }
+                                      showDetailsOverlay(
+                                          context, utente, requerimento);
                                     } else {
                                       showDetailsOverlay(
                                           context, utente, requerimento);
@@ -205,17 +212,39 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   color: Colors.redAccent,
                                   onPressed: () async {
                                     if (requerimento.status == 0 ||
-                                        requerimento.status == 1)
-                                      await generatePdfForm(
+                                        requerimento.status == 1 ||
+                                        requerimento.status == 7) {
+                                      await requerimentoPdf(
                                           utente, requerimento);
-                                    if (requerimento.status == 2)
-                                      //TODO fazer o pdf da pre-avaliação
-                                      await generatePdfForm(
-                                          utente, requerimento);
-                                    //TODO fazer o pdf da marcação
-                                    if (requerimento.status == 3)
-                                      await generatePdfForm(
-                                          utente, requerimento);
+                                    }
+
+                                    if (requerimento.status == 2 ||
+                                        requerimento.status == 5 ||
+                                        requerimento.status == 6) {
+                                      if (requerimento.status >= 2 &&
+                                          requerimento.status <= 6) {
+                                        await preAvalicaoData(
+                                            requerimento.hashedId);
+                                      }
+
+                                      await preAvalicaoPdf(
+                                          utente, requerimento, preAvalicao);
+                                    }
+                                    if (requerimento.status == 3) {
+                                      if (requerimento.status >= 2 &&
+                                          requerimento.status <= 6) {
+                                        await preAvalicaoData(
+                                            requerimento.hashedId);
+                                        if (requerimento.status == 3 ||
+                                            requerimento.status == 4) {
+                                          await getAgendamento(
+                                              requerimento.hashedId);
+                                        }
+                                      }
+
+                                      await preAvalicaoPdf(
+                                          utente, requerimento, preAvalicao);
+                                    }
                                   },
                                 ),
                                 if (requerimento.status == 2) ...[
@@ -247,10 +276,10 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   IconButton(
                                       icon: Icon(Icons.calendar_month_outlined),
                                       color: Colors.green,
-                                      onPressed: () {
-                                        showCalendarAndTimeDialog(context);
-                                        //agendarJuntaMedica(
-                                        //selectedDateTime!, requerimento);
+                                      onPressed: () async {
+                                        await showCalendarAndTimeDialog(
+                                            context);
+                                        agendarJuntaMedica(requerimento);
                                       }),
                                 ],
                               ],
@@ -513,7 +542,18 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   estadoRequerimentoBlend.widget,
                                 ],
                               ),
-                              SizedBox(height: 2),
+                              SizedBox(height: 5),
+                              buildRichText(
+                                  'Ja foi submetido a um Junta Medica?: ',
+                                  requerimento.submetido == true
+                                      ? 'Sim'
+                                      : 'Não'),
+                              if (requerimento.submetido == true) ...[
+                                buildRichText(
+                                    'Data que foi submetido: ',
+                                    formatDateString(
+                                        requerimento.data_submetido!)),
+                              ],
                               Divider(
                                 color: Colors.white,
                                 thickness: 2,
@@ -585,6 +625,33 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   color: Colors.white,
                                   thickness: 2,
                                 ),
+                                if (requerimento.status == 3 ||
+                                    requerimento.status == 4) ...[
+                                  Divider(
+                                    color: Colors.white,
+                                    thickness: 2,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'INFORMAÇÕES DO AGENDAMENTO DA JUNTA MÉDICA',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: Colors.white,
+                                    thickness: 2,
+                                  ),
+                                  SizedBox(height: 2),
+                                  buildRichText('Data da Junta Médica: ',
+                                      formatTimestampString(dataJuntaMedica)),
+                                  Divider(
+                                    color: Colors.white,
+                                    thickness: 2,
+                                  ),
+                                ],
                               ]
                             ],
                           ),
@@ -722,8 +789,8 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     }).toList();
   }
 
-  Future<bool> preAvalicaoData(Requerimento requerimento) async {
-    var response = await getDadosPreAvalicao(requerimento.hashedId);
+  Future<void> preAvalicaoData(String hashedId) async {
+    var response = await getDadosPreAvalicao(hashedId);
     if (response.success) {
       setState(() {
         preAvalicao = PreAvalicao(
@@ -735,11 +802,21 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
           especialidade: response.data[0]['especialidade'],
         );
       });
-      return true;
     } else {
       ErrorAlert.show(
           context, 'Não foi possível obter os dados da pré-avaliação');
-      return false;
+    }
+  }
+
+  Future<void> getAgendamento(String hashedId) async {
+    var response = await getAgendamentoJuntaMedica(hashedId);
+    if (response.success) {
+      setState(() {
+        dataJuntaMedica = response.data;
+      });
+    } else {
+      ErrorAlert.show(
+          context, 'Não foi possível obter os dados da pré-avaliação');
     }
   }
 
@@ -765,16 +842,18 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     }
   }
 
-  // Future<void> agendarJuntaMedica(
-  //     DateTime agendamento, Requerimento requerimento) async {
-  //   var response = agendarJuntaMedicaRequerimento(
-  //       selectedDateTime!, requerimento.hashedId);
-  //   if (response.success) {
-  //     widget.updateTable();
-  //   } else {
-  //     ErrorAlert.show(context, 'Não foi possível agendar a junta médica');
-  //   }
-  // }
+  Future<void> agendarJuntaMedica(Requerimento requerimento) async {
+    String strData = selectedDateTime!.toString();
+    var response =
+        await agendarJuntaMedicaRequerimento(strData, requerimento.hashedId);
+    if (response.success) {
+      widget.updateTable();
+      SuccessAlert.show(context, 'Junta médica agendada com sucesso');
+    } else {
+      widget.updateTable();
+      ErrorAlert.show(context, response.errorMessage.toString());
+    }
+  }
 
   Future<TimeOfDay?> showCustomTimePicker(BuildContext context) async {
     TimeOfDay? selectedTime;
@@ -894,20 +973,13 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    // Ação para o botão Agendar
-                    // Atribua o combinedDateTime à variável selectedDateTime.
-                    // Certifique-se de que selectedDateTime esteja definida no escopo correto
                     selectedDateTime = combinedDateTime;
-
-                    // Feche o AlertDialog.
                     Navigator.of(dialogContext).pop();
                   },
                   child: const Text('Agendar'),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Ação para o botão Cancelar
-                    // Simplesmente feche o AlertDialog.
                     Navigator.of(dialogContext).pop();
                   },
                   child: const Text('Cancelar'),

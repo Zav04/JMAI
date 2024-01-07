@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/responsive.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +61,16 @@ class _RequerimentosState extends State<Requerimentos> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        //TODO VERIFICAR SE O UTENTE TEM REQUERIMENTOS EM CURSO
-                        onPressed: () => showRequerimentoFormDialog(context),
+                        onPressed: () async {
+                          var response = await verificarRequerimentoExistente(
+                              widget.user.hashedId);
+                          if (response.success) {
+                            response.data
+                                ? ErrorAlert.show(
+                                    context, "Já tem um requerimento em curso")
+                                : showRequerimentoFormDialog(context);
+                          }
+                        },
                         icon: Icon(Icons.add),
                         label: Text('Iniciar Requerimento'),
                       ),

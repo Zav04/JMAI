@@ -35,8 +35,6 @@ class _LoginScreen extends State<LoginScreen> {
     _passwordController.text = '';
     hashedId = '';
     role = '';
-    //TODO REMOVER ISTO ANTES DE ENTREGAR
-    submitlogin();
     super.initState();
   }
 
@@ -410,14 +408,15 @@ class _LoginScreen extends State<LoginScreen> {
     var infos;
     //String EMAILFORTESTES = "scts@gmail.com";
     //String EMAILFORTESTES = "medicojc@gmail.com";
-    String EMAILFORTESTES = "bruno.bx04@gmail.com";
-    // var response = await login(_emailController.text, _passwordController.text);
-    var response = await login(EMAILFORTESTES, "admin.");
+    //String EMAILFORTESTES = "bruno.bx04@gmail.com";
+    var response = await login(_emailController.text, _passwordController.text);
+    //var response = await login(EMAILFORTESTES, "admin.");
     //var response = await login(EMAILFORTESTES, "admin.");
     //var response = await login(EMAILFORTESTES, "admin.");
     //var response = await login(EMAILFORTESTES, "admin.");
     if (response.success == true) {
-      var getUser = await getUserRole(EMAILFORTESTES);
+      var getUser = await getUserRole(_emailController.text);
+      //var getUser = await getUserRole(EMAILFORTESTES);
       hashedId = getUser.data['hashed_id'];
       role = getUser.data['cargo_name'];
       switch (role) {

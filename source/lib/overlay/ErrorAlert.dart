@@ -49,7 +49,7 @@ class _ErrorAlertState extends State<ErrorAlert> {
   }
 
   void _startDismissTimer() {
-    _timer = Timer(Duration(seconds: 2), () {
+    _timer = Timer(Duration(seconds: 4), () {
       if (mounted) {
         setState(() {
           _isVisible = false;

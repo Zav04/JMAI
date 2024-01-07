@@ -4,7 +4,6 @@ import 'package:JMAI/screens/main/components/Maps/distritos_concelhos.dart';
 import 'package:JMAI/screens/main/components/Maps/concelhos_freguesias.dart';
 import 'package:JMAI/screens/main/components/Maps/paises.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
-import 'package:JMAI/screens/dashboard/components/sleep.dart';
 import 'package:flutter/services.dart';
 import 'package:JMAI/screens/main/components/password_field.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
@@ -558,7 +557,7 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
             await singin(_emailController.text, _passwordController.text);
         if (response.success) {
           SuccessAlert.show(context, 'Conta Criada com Sucesso');
-          await fazerPausaAssincrona();
+          await Future.delayed(Duration(milliseconds: 200));
           setState(() {
             _nomeCompletoController.text = '';
             _dataDeNascimentoController.text = '';

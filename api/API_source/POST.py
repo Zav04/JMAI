@@ -15,6 +15,7 @@ from SendEmail import enviarEmailRequerimentoAceite, enviarEmailRequerimentoRecu
 from Models.SendPreAvalicao import SendEmailPreAvaliacao
 from Models.RNU import RNU
 from Models.PreAvalição import PreAvaliacao
+from Models.Agendamento import Agendamento
 import httpx
 import json
 
@@ -411,6 +412,61 @@ async def get_dados_preavaliacao(hashedid: Search, db: SessionLocal = Depends(ge
         preAvalicao_info = result.fetchall()
         colunas = result.keys()
         result = [{coluna: valor for coluna, valor in zip(colunas, row)} for row in preAvalicao_info]
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+    
+
+
+@post_router.post("/agendar_junta_medica_requerimento/")
+async def agendar_junta_medica_requerimento(agenda: Agendamento, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("""
+        SELECT agendar_junta_medica(
+            :data,
+            :hashed_id
+        );
+        """)
+        result = db.execute(query, {"data": agenda.data,"hashed_id": agenda.hashed_id})
+        result = result.scalar()
+        db.commit()
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+
+@post_router.post("/get_data_agendamento_junta_medica/")
+async def get_data_agendamento_junta_medica(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM obter_data_agendamento_junta_medica(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        result = result.scalar()
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+    
+    
+    
+@post_router.post("/verificar_requerimento_existente/")
+async def verificar_requerimento_existente(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM verificar_requerimento_existente(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        result = result.scalar()
         return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])

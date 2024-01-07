@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
@@ -455,8 +454,10 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
       }
     }
     verificarTipoUtilizador(widget.utilizador);
-    widget.onRequerimentoAdded();
+
     Navigator.of(context).pop();
+    await Future.delayed(Duration(milliseconds: 200));
+    widget.onRequerimentoAdded();
   }
 
   void verificarTipoUtilizador(Utilizador user) async {
