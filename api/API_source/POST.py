@@ -14,6 +14,7 @@ from Models.Email import SendEmail
 from SendEmail import enviarEmailRequerimentoAceite, enviarEmailRequerimentoRecusado , enviarEmailPreAvaliação
 from Models.SendPreAvalicao import SendEmailPreAvaliacao
 from Models.RNU import RNU
+from Models.PreAvalição import PreAvaliacao
 import httpx
 import json
 
@@ -57,7 +58,7 @@ async def validation_create_secretario_clinico(secretario_clinico: SecretarioCli
             :data_nascimento,
             :numero_telemovel,
             :sexo,
-            :pais_nacionalidade,
+            :pais,
             :distrito,
             :concelho,
             :freguesia,
@@ -90,7 +91,7 @@ async def validation_create_medico(medico: MedicoRequest, db: SessionLocal = Dep
             :data_nascimento,
             :numero_telemovel,
             :sexo,
-            :pais_nacionalidade,
+            :pais,
             :distrito,
             :concelho,
             :freguesia,
@@ -119,10 +120,10 @@ async def validation_create_medico(medico: MedicoRequest, db: SessionLocal = Dep
 @post_router.post("/firebase_signup/")
 async def create_user(user:UserSignup):
     try:
-        user=singup(user.email,user.password)
-        if user!=True:
-            return {"error": user}
-        return {"response": user}
+        result=singup(user.email,user.password)
+        if result!=True:
+            return {"error": result}
+        return {"response": result}
     except Exception as e:
         return {"error": str(e)}
 
@@ -130,10 +131,10 @@ async def create_user(user:UserSignup):
 @post_router.post("/full_login/")
 async def full_login(user:UserSignup):
     try:
-        user=login(user.email,user.password)
-        if(user=="Credenciais Invalidas"):
-            return {"error": user}
-        return {"response": user}
+        result=login(user.email,user.password)
+        if(result=="Credenciais Invalidas"):
+            return {"error": result}
+        return {"response": result}
     except Exception as e:
         return {"error": str(e)}
 
@@ -153,9 +154,9 @@ async def verify_email_exist(user:UserSignup, db: SessionLocal = Depends(get_db)
         
         query = text("SELECT email_exists(:email);")
         result = db.execute(query, {"email": user.email})
-        email_exists = result.scalar()
+        result = result.scalar()
         db.commit()
-        return {"response": email_exists}
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
@@ -175,11 +176,11 @@ async def get_user_info(user:UserSignup, db: SessionLocal = Depends(get_db)):
         if user_info:
             hashed_id = user_info[0]
             cargo_name = user_info[1]
-            response = {
+            result = {
                 "hashed_id": hashed_id,
                 "cargo_name": cargo_name
             }
-        return {"response": response}
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
@@ -198,8 +199,8 @@ async def get_utente_info(hashedid: Search, db: SessionLocal = Depends(get_db)):
         user_info = result.fetchone()
         if user_info:
             # Desempacotar os valores retornados
-            response = dict(zip(result.keys(), user_info))
-        return {"response": response}
+            result = dict(zip(result.keys(), user_info))
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
@@ -217,8 +218,8 @@ async def get_secretario_clinico_info(hashedid: Search, db: SessionLocal = Depen
         result = db.execute(query, {"hashed_id": hashedid.hashed_id})
         user_info = result.fetchone()
         if user_info:
-            response = dict(zip(result.keys(), user_info))
-        return {"response": response}
+            result = dict(zip(result.keys(), user_info))
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
@@ -236,8 +237,8 @@ async def get_medic_info(hashedid: Search, db: SessionLocal = Depends(get_db)):
         result = db.execute(query, {"hashed_id": hashedid.hashed_id})
         user_info = result.fetchone()
         if user_info:
-            response = dict(zip(result.keys(), user_info))
-        return {"response": response}
+            result = dict(zip(result.keys(), user_info))
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
@@ -257,7 +258,6 @@ async def insert_requirement(requerimento: RequerimentoRequest, db: SessionLocal
         SELECT insert_requerimento_junta_medica(
             :hashed_id,
             :documentos,
-            :observacoes,
             :type,
             :nunca_submetido,
             :submetido,
@@ -282,11 +282,11 @@ async def fetch_requirement(hashedid: Search, db: SessionLocal = Depends(get_db)
     try:
         query = text("SELECT * FROM requerimentos_por_utente(:hashed_id);")
         result = db.execute(query, {"hashed_id": hashedid.hashed_id})
-        user_info = result.fetchall()
+        info = result.fetchall()
         colunas = result.keys()
-        requerimentos = [{coluna: valor for coluna, valor in zip(colunas, row)} for row in user_info]
+        result = [{coluna: valor for coluna, valor in zip(colunas, row)} for row in info]
 
-        return {"response": requerimentos}
+        return {"response": result}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
@@ -381,8 +381,7 @@ async def send_email_preavalicao(preavalicao: SendEmailPreAvaliacao, db: Session
         return {"error": error_msg}
     except Exception as e:
         return {"error": str(e)}
-    
-    
+
 
 
 @post_router.post("/rnu_verificar_existe_nss/")
@@ -410,4 +409,80 @@ async def rnu_get_dados_nss(NNS: RNU):
             raise HTTPException(status_code=400, detail=f"Erro ao se conectar com a API: {exc}") 
         except httpx.HTTPStatusError as exc:
             raise HTTPException(status_code=exc.response.status_code, detail=f"Erro na resposta da API: {exc.response.content}")
+
+
+@post_router.post("/insert_preavaliacao/")
+async def insert_preavaliacao(preavalicao: PreAvaliacao, db: SessionLocal = Depends(get_db)):
+    try:
+        # Converter os dados do modelo Pydantic para dicionário
+        preavalicao_data = preavalicao.dict()
+        query = text("""
+        SELECT inserir_pre_avaliacao(
+            :hashed_id_requerimento,
+            :hashed_id_medico, 
+            :pre_avaliacao,
+            :observacoes
+        );
+        """)
+        result = db.execute(query, preavalicao_data)
+        db.commit()
+        return {"response": result} 
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        error_messages = [str(arg) for arg in e.args]
+        return {"error": error_messages}
+    
+
+@post_router.post("/get_dados_preavaliacao/")
+async def get_dados_preavaliacao(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM get_preavaliacao_medico_info(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        preAvalicao_info = result.fetchall()
+        colunas = result.keys()
+        result = [{coluna: valor for coluna, valor in zip(colunas, row)} for row in preAvalicao_info]
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+
+@post_router.post("/accept_junta_medica_requerimento/")
+async def accept_junta_medica_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM accept_update_requerimento_status(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        result = result.scalar()
+        db.commit()
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+    
+@post_router.post("/decline_junta_medica_requerimento/")
+async def decline_junta_medica_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
+    try:
+        query = text("SELECT * FROM rejcted_update_requerimento_status(:hashed_id);")
+        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        result = result.scalar()
+        db.commit()
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
 

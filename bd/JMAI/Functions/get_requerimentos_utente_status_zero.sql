@@ -7,17 +7,18 @@ BEGIN
         'data_submissao', rj.data_submissao,
         'documentos', rj.documentos,
         'status_requerimento', rj.status,
-        'observacoes_requerimento', rj.observacoes,
         'type_requerimento', rj.type,
 		'submetido', rj.submetido,
 		'nunca_submetido', rj.nunca_submetido,
-		'data_submetido',rj.data_submetido,
-        'email_utente', usr.email
+		'data_submetido', rj.data_submetido,
+		'numero_utente_saude_by_SNS', rj.numero_utente_saude_by_SNS,
+        'email_utente', COALESCE(usr.email, NULL),
+        'numero_utente_saude', COALESCE(u.numero_utente_saude, NULL)
     )
     FROM RequerimentoJuntaMedica rj
-    JOIN Utente u ON rj.id_utente = u.id_utente
-    JOIN Utilizador usr ON u.id_utilizador = usr.id_utilizador
-    JOIN EntidadeResponsavel e ON u.id_entidade_responsavel = e.id_entidade_responsavel
+    LEFT JOIN Utente u ON rj.id_utente = u.id_utente
+    LEFT JOIN Utilizador usr ON u.id_utilizador = usr.id_utilizador
     WHERE rj.status = 0;
 END;
 $$ LANGUAGE plpgsql;
+

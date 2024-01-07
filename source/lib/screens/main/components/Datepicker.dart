@@ -50,14 +50,3 @@ TextInputFormatter createAutoHyphenDateFormatter() {
     );
   });
 }
-
-bool validarData(String dataString) {
-  try {
-    if (dataString == "") return false;
-    final DateFormat formato = DateFormat('dd-MM-yyyy');
-    final DateTime data = formato.parseStrict(dataString);
-    return true; // A data está no formato correto
-  } catch (e) {
-    return false; // A data não está no formato correto
-  }
-}

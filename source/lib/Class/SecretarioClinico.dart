@@ -1,4 +1,5 @@
 import 'package:JMAI/Class/Utilizador.dart';
+import 'package:JMAI/Class/DateTime.dart';
 
 class SecretarioClinico extends Utilizador {
   final String hashedId;
@@ -10,8 +11,7 @@ class SecretarioClinico extends Utilizador {
   final String concelho;
   final String freguesia;
   final String pais;
-  final String paisNacionalidade;
-  final String contacto;
+  final int contacto;
 
   SecretarioClinico({
     required this.hashedId,
@@ -23,7 +23,6 @@ class SecretarioClinico extends Utilizador {
     required this.concelho,
     required this.freguesia,
     required this.pais,
-    required this.paisNacionalidade,
     required this.contacto,
   }) : super(hashedId: hashedId, email: email, role: 'SecretarioClinico');
 
@@ -33,12 +32,13 @@ class SecretarioClinico extends Utilizador {
       email: json['email'],
       nomeCompleto: json['nome_secreatario_clinico'],
       sexo: json['sexo'],
-      dataNascimento: json['data_nascimento'],
+      dataNascimento: json['data_nascimento'] != null
+          ? formatDateString(json['data_nascimento'])
+          : '',
       distrito: json['distrito'],
       concelho: json['concelho'],
       freguesia: json['freguesia'],
       pais: json['pais'],
-      paisNacionalidade: json['pais_nacionalidade'],
       contacto: json['contacto'],
     );
   }

@@ -163,7 +163,7 @@ def enviarEmailPreAvaliação(receiver_email, grau_incapacidade):
     password = os.getenv('EMAIL_PASSWORD')
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "JMAI - Requerimento Aceite"
+    message["Subject"] = "JMAI - Pre-Avaliação Concluida" 
     message["From"] = sender_email
     message["To"] = receiver_email
 
@@ -208,13 +208,13 @@ def enviarEmailPreAvaliação(receiver_email, grau_incapacidade):
     <body>
     <div class="container">
     <div class="header">
-        <h2>Requerimento Aceite</h2>
+        <h2>Pre-Avaliação Concluida</h2>
     </div>
     <div class="content">
         <p>Caro(a),</p>
-        <p>É com satisfação que informamos que o seu requerimento foi aceite e encontra-se agora em fase de <strong>Pré-Avaliação</strong>.</p>
+        <p>É com satisfação que informamos que o seu requerimento foi aceite e encontra-se agora em fase de <strong>Agendamento</strong> caso aceite o pedido de junta médica.</p>
         <p>O valor simulado do grau de incapacidade é: <strong>${grau_incapacidade}%</strong>.</p>
-        <p>Caso deseje submeter-se a uma junta médica presencial, solicitamos que aceda à nossa plataforma e siga os passos subsequentes para agendamento. Se preferir, pode também optar por continuar o processo de forma digital.</p>
+        <p>Caso deseje submeter-se a uma junta médica presencial, solicitamos que aceda à nossa plataforma e siga os passos subsequentes para agendamento.</p>
         <p>Obrigado por preferir os nossos serviços!</p>
     </div>
     <div class="footer">
@@ -226,7 +226,9 @@ def enviarEmailPreAvaliação(receiver_email, grau_incapacidade):
     </html>
     """
 
-    html = html.replace('${grau_incapacidade}', grau_incapacidade);
+    grau_incapacidade_str = str(grau_incapacidade)
+    html = html.replace('${grau_incapacidade}', grau_incapacidade_str)
+
     part2 = MIMEText(html, "html")
     message.attach(part2)
 

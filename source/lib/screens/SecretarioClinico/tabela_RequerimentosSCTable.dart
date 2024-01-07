@@ -1,5 +1,4 @@
 // ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
@@ -93,11 +92,31 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Requerimentos",
-            style: Theme.of(context).textTheme.titleLarge,
-            textAlign: TextAlign.center,
+          Stack(
+            children: [
+              // Centraliza o texto na Stack
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Requerimentos",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              // Posiciona o ícone de refresh no canto direito
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    // Sua lógica de recarregamento da tabela
+                    widget.updateTable();
+                  },
+                ),
+              ),
+            ],
           ),
           SizedBox(
             width: double.infinity,
@@ -105,9 +124,10 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               columnSpacing: defaultPadding,
               columns: const [
                 DataColumn(label: Text('CODIGO')),
+                DataColumn(label: Text('NOME DO UTENTE')),
+                DataColumn(label: Text('NÚMERO DE SAÚDE')),
                 DataColumn(label: Text('TIPO REQUERIMENTO')),
                 DataColumn(label: Text('DATA DO PEDIDO')),
-                DataColumn(label: Text('ESTADO')),
                 DataColumn(label: Text('AÇÕES')),
               ],
               rows: sortRequerimentos()
@@ -116,21 +136,24 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                           DataCell(Text(
                             'REQ/' + requerimento.idRequerimento.toString(),
                           )),
+                          DataCell(Text(
+                            requerimento.nomeCompleto,
+                          )),
+                          DataCell(Text(
+                            requerimento.numeroUtenteSaude.toString(),
+                          )),
                           DataCell(Blend(getTypeDescription(
                                   requerimento.typeRequerimento))
                               .widget),
                           DataCell(Text(
                             requerimento.dataSubmissao.toString(),
                           )),
-                          DataCell(Blend(getStatusDescription(
-                                  requerimento.statusRequerimento))
-                              .widget),
                           DataCell(
                             IconButton(
-                              icon: Icon(Icons.visibility),
+                              icon: Icon(Icons.file_present_outlined),
                               color: Colors.blue,
                               onPressed: () {
-                                showUtenteDetailsOverlay(context, requerimento);
+                                showDetailsOverlay(context, requerimento);
                               },
                             ),
                           ),
@@ -144,12 +167,18 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
     );
   }
 
-  void showUtenteDetailsOverlay(
+  void showDetailsOverlay(
       BuildContext context, Requerimento_DadosUtente requerimento) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
+        Blend tipoRequerimentoBlend = Blend(
+          getTypeDescription(requerimento.typeRequerimento),
+        );
+        Blend estadoRequerimentoBlend = Blend(
+          getStatusDescription(requerimento.statusRequerimento),
+        );
         return AlertDialog(
           backgroundColor: bgColor,
           shape: RoundedRectangleBorder(
@@ -200,7 +229,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                               ),
                               Center(
                                 child: Text(
-                                  'Informações do Utente',
+                                  'IDENTIFICAÇÃO DO UTENTE',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.blue),
@@ -214,26 +243,52 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  buildRichText('NOME COMPLETO: ',
+                                  buildRichText('Nome Completo: ',
                                       requerimento.nomeCompleto),
                                   SizedBox(height: 2),
-                                  buildRichText('DATA DE NASCIMENTO: ',
-                                      requerimento.dataNascimentoUtente),
+                                  buildRichText(
+                                      'Sexo: ', requerimento.sexoUtente),
                                   SizedBox(height: 2),
                                   buildRichText(
-                                      'SEXO: ', requerimento.sexoUtente),
+                                      'Tipo de Documento: ',
+                                      getDocumentsDescription(requerimento
+                                          .tipoDocumentoIdentificacao)),
                                   SizedBox(height: 2),
                                   buildRichText(
-                                      'EMAIL: ', requerimento.emailUtente),
+                                      'Número de Documento: ',
+                                      requerimento.numeroDocumentoIdentificacao
+                                          .toString()),
                                   SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE TELEMÓVEL: ',
-                                      requerimento.numeroTelemovel),
+                                  buildRichText(
+                                      'Número de Utente de Saúde: ',
+                                      requerimento.numeroUtenteSaude
+                                          .toString()),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'Número de Identificação Fiscal: ',
+                                      requerimento.numeroIdentificacaoFiscal
+                                          .toString()),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'Número Segurança Social: ',
+                                      requerimento.numeroSegurancaSocial
+                                          .toString()),
+                                  SizedBox(height: 2),
+                                  buildRichText('Validade Documento: ',
+                                      requerimento.documentoValidade),
+                                  if (requerimento.emailUtente != null &&
+                                      requerimento.emailUtente!.isNotEmpty) ...[
+                                    SizedBox(height: 2),
+                                    buildRichText(
+                                        'Andar: ', requerimento.emailUtente!),
+                                  ],
+                                  SizedBox(height: 2),
                                   Divider(
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
                                   Center(
-                                    child: Text('INFORMAÇÕES DE LOCALIZAÇÃO',
+                                    child: Text('NATURALIDADE',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.blue),
@@ -243,26 +298,20 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
-                                  buildRichText(
-                                      'MORADA: ', requerimento.morada),
+                                  buildRichText('Data de Nascimento: ',
+                                      requerimento.dataNascimentoUtente),
                                   SizedBox(height: 2),
-                                  buildRichText('NÚMERO DA PORTA: ',
-                                      requerimento.nrPorta),
-                                  SizedBox(height: 2),
-                                  buildRichText('ANDAR: ',
-                                      requerimento.nrAndar.toString()),
-                                  SizedBox(height: 2),
-                                  buildRichText('CÓDIGO POSTAL: ',
-                                      requerimento.codigoPostal),
-                                  SizedBox(height: 2),
-                                  buildRichText('DISTRITO: ',
+                                  buildRichText('Distrito: ',
                                       requerimento.distritoUtente),
                                   SizedBox(height: 2),
-                                  buildRichText('CONCELHO: ',
+                                  buildRichText('Concelho: ',
                                       requerimento.concelhoUtente),
                                   SizedBox(height: 2),
-                                  buildRichText('FREGUESIA: ',
+                                  buildRichText('Freguesia: ',
                                       requerimento.freguesiaUtente),
+                                  SizedBox(height: 2),
+                                  buildRichText(
+                                      'Naturalidade: ', requerimento.pais),
                                   SizedBox(height: 2),
                                   Divider(
                                     color: Colors.white,
@@ -270,58 +319,41 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                   ),
                                   Center(
                                     child: Text(
-                                        'INFORMAÇÕES DE NACIONALIDADE E NATURALIDADE',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: secondaryColor),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  Divider(
-                                    color: Colors.white,
-                                    thickness: 2,
-                                  ),
-                                  buildRichText('NATURALIDADE: ',
-                                      requerimento.naturalidade),
-                                  SizedBox(height: 2),
-                                  buildRichText('NACIONALIDADE: ',
-                                      requerimento.paisNacionalidadeUtente),
-                                  Divider(
-                                    color: Colors.white,
-                                    thickness: 2,
-                                  ),
-                                  Center(
-                                    child: Text('INFORMAÇÕES DE IDENTIFICAÇÃO',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue),
-                                        textAlign: TextAlign.center),
+                                      'RESIDÊNCIA',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                   Divider(
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
                                   buildRichText(
-                                      'TIPO DE DOCUMENTO: ',
-                                      getDocumentsDescription(requerimento
-                                          .tipoDocumentoIdentificacao)),
+                                      'Morada: ', requerimento.morada),
                                   SizedBox(height: 2),
                                   buildRichText(
-                                      'NÚMERO DE DOCUMENTO: ',
-                                      requerimento
-                                          .numeroDocumentoIdentificacao),
+                                      'Número Porta: ', requerimento.nrPorta),
+                                  if (requerimento.nrAndar != null &&
+                                      requerimento.nrAndar!.isNotEmpty) ...[
+                                    SizedBox(height: 2),
+                                    buildRichText(
+                                        'Andar: ', requerimento.nrAndar!),
+                                  ],
                                   SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE UTENTE DE SAÚDE: ',
-                                      requerimento.numeroUtenteSaude),
+                                  buildRichText('Código Postal: ',
+                                      requerimento.codigoPostal),
                                   SizedBox(height: 2),
-                                  buildRichText(
-                                      'NÚMERO DE IDENTIFICAÇÃO FISCAL: ',
-                                      requerimento.numeroIdentificacaoFiscal),
+                                  buildRichText('Freguesia: ',
+                                      requerimento.freguesiaUtente),
                                   SizedBox(height: 2),
-                                  buildRichText('NÚMERO DE SEGURANÇA SOCIAL: ',
-                                      requerimento.numeroSegurancaSocial),
+                                  buildRichText('Concelho: ',
+                                      requerimento.concelhoUtente),
                                   SizedBox(height: 2),
-                                  buildRichText('VALIDADE DO DOCUMENTO: ',
-                                      requerimento.documentoValidade),
+                                  buildRichText('Número Telemovel: ',
+                                      requerimento.numeroTelemovel.toString()),
+                                  SizedBox(height: 2),
                                   Divider(
                                     color: Colors.white,
                                     thickness: 2,
@@ -337,7 +369,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                     color: Colors.white,
                                     thickness: 2,
                                   ),
-                                  buildRichText('ENTIDADE RESPONSÁVEL: ',
+                                  buildRichText('Entidade Responsável: ',
                                       requerimento.nomeEntidadeResponsavel),
                                 ],
                               ),
@@ -371,24 +403,48 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                 thickness: 2,
                               ),
                               buildRichText(
-                                  'CÓDIGO DO REQUERIMENTO: ',
+                                  'Código do Requerimento: ',
                                   'REQ/' +
                                       requerimento.idRequerimento.toString()),
                               SizedBox(height: 2),
-                              buildRichText('DATA DO PEDIDO: ',
+                              buildRichText('Data do Pedido: ',
                                   requerimento.dataSubmissao.toString()),
-                              SizedBox(height: 2),
-                              buildRichText(
-                                  'TIPO DO REQUERIMENTO: ',
-                                  getTypeDescription(
-                                          requerimento.typeRequerimento)
-                                      .item1),
-                              SizedBox(height: 2),
-                              buildRichText(
-                                  'ESTADO DO REQUERIMENTO: ',
-                                  getStatusDescription(
-                                          requerimento.statusRequerimento)
-                                      .item1),
+                              if (requerimento.nuncaSubmetido == true) ...[
+                                SizedBox(height: 2),
+                                buildRichText('Pedido: ',
+                                    'Nunca foi submetido a junta médica'),
+                                SizedBox(height: 5),
+                              ],
+                              if (requerimento.submetido == true) ...[
+                                SizedBox(height: 2),
+                                buildRichText(
+                                    'Pedido: ',
+                                    'Ja foi submetido a junta médica em ' +
+                                        requerimento.data_submetido.toString() +
+                                        ' e requer reavaliação'),
+                                SizedBox(height: 5),
+                              ],
+                              Row(
+                                children: [
+                                  Text('Tipo do Requerimento: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  tipoRequerimentoBlend.widget,
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Estado do Requerimento: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey),
+                                  ),
+                                  estadoRequerimentoBlend.widget,
+                                ],
+                              ),
                               SizedBox(height: 2),
                               Divider(
                                 color: Colors.white,
@@ -407,7 +463,19 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                 color: Colors.white,
                                 thickness: 2,
                               ),
-                              ...buildDocumentWidgets(requerimento.documentos!),
+                              if (requerimento.documentos!.length == 0) ...[
+                                Text(
+                                  'Não existem documentos associados ao requerimento',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                              if (requerimento.documentos!.length > 0) ...[
+                                ...buildDocumentWidgets(
+                                    requerimento.documentos!),
+                              ],
                             ],
                           ),
                         ),
@@ -423,36 +491,44 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    onPressed: () async {
-                      await _submitValidarRequerimento(requerimento.hashedId);
-                      widget.updateTable();
-                      Navigator.of(dialogContext).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      primary: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  SizedBox(
+                    width: 220, // Largura do botão
+                    height: 50, // Altura do botão
+                    child: TextButton(
+                      onPressed: () async {
+                        await _submitValidarRequerimento(requerimento.hashedId);
+                        widget.updateTable();
+                        Navigator.of(dialogContext).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        primary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
+                      child: Text('VALIDAR REQUERIMENTO'),
                     ),
-                    child: Text('Validar Requerimento'),
                   ),
                   SizedBox(width: 20),
-                  TextButton(
-                    onPressed: () async {
-                      await _submitRecusarRequerimento(requerimento.hashedId);
-                      widget.updateTable();
-                      Navigator.of(dialogContext).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      primary: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  SizedBox(
+                    width: 220, // Largura do botão
+                    height: 50, // Altura do botão
+                    child: TextButton(
+                      onPressed: () async {
+                        await _submitRecusarRequerimento(requerimento.hashedId);
+                        widget.updateTable();
+                        Navigator.of(dialogContext).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        primary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
+                      child: Text('CANCELAR REQUERIMENTO'),
                     ),
-                    child: Text('Cancelar Requerimento'),
                   ),
                 ],
               ),
@@ -461,6 +537,24 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
         );
       },
     );
+  }
+
+  Future<void> _submitValidarRequerimento(String hashed_id) async {
+    var response = await validarRequerimento(hashed_id);
+    if (response.success == true) {
+      SuccessAlert.show(context, 'Requrimento Aceite com sucesso');
+    } else {
+      ErrorAlert.show(context, response.errorMessage.toString());
+    }
+  }
+
+  Future<void> _submitRecusarRequerimento(String hashed_id) async {
+    var response = await recusarRequerimento(hashed_id);
+    if (response.success == true) {
+      SuccessAlert.show(context, 'Requrimento Recusado com sucesso');
+    } else {
+      ErrorAlert.show(context, response.errorMessage.toString());
+    }
   }
 
   Widget buildTextRow(String title, String value) {
@@ -484,7 +578,10 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
       text: TextSpan(
         style: DefaultTextStyle.of(context).style,
         children: <TextSpan>[
-          TextSpan(text: label, style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(
+              text: label,
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
           TextSpan(text: value),
         ],
       ),
@@ -495,7 +592,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
     if (await canLaunch(url)) {
       await launch(url, webOnlyWindowName: '_blank');
     } else {
-      print('Não foi possível abrir o documento');
+      ErrorAlert.show(context, 'Não foi possível abrir o documento');
     }
   }
 
@@ -571,23 +668,5 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
         ],
       );
     }).toList();
-  }
-
-  Future<void> _submitValidarRequerimento(String hashed_id) async {
-    var response = await validarRequerimento(hashed_id);
-    if (response.success == true) {
-      SuccessAlert.show(context, 'Requrimento Aceite com sucesso');
-    } else {
-      ErrorAlert.show(context, response.errorMessage.toString());
-    }
-  }
-
-  Future<void> _submitRecusarRequerimento(String hashed_id) async {
-    var response = await recusarRequerimento(hashed_id);
-    if (response.success == true) {
-      SuccessAlert.show(context, 'Requrimento Recusado com sucesso');
-    } else {
-      ErrorAlert.show(context, response.errorMessage.toString());
-    }
   }
 }

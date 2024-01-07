@@ -77,14 +77,34 @@ class _RequerimentosSCState extends State<RequerimentosSC> {
   }
 
   Future<void> fetchRequerimentostoTable() async {
+    var dados;
+    var itemData;
     try {
       var response = await getRequerimentosUtenteStatusZero();
-      if (response.success) {
+      if (response.success && response.data != null) {
         var jsonData = response.data;
+        for (var item in jsonData) {
+          var itemData = item['get_requerimentos_utente_status_zero'];
+          if (itemData['numero_utente_saude'] == null &&
+              itemData['numero_utente_saude_by_SNS'] != null) {
+            response =
+                await getDadosNSS(itemData['numero_utente_saude_by_SNS']);
+          } else {
+            response = await getDadosNSS(itemData['numero_utente_saude']);
+          }
+          if (response.success) {
+            dados = response.data;
+            dados[0].forEach((chave, valor) {
+              item['get_requerimentos_utente_status_zero'][chave] = valor;
+            });
+          } else {
+            ErrorAlert.show(context, response.errorMessage.toString());
+          }
+        }
         if (jsonData is List) {
           List<Requerimento_DadosUtente> listaRequerimentos =
               jsonData.map((item) {
-            var itemData = item['get_requerimentos_utente_status_zero'];
+            itemData = item['get_requerimentos_utente_status_zero'];
             return Requerimento_DadosUtente.fromJson(
                 itemData as Map<String, dynamic>);
           }).toList();
@@ -93,12 +113,9 @@ class _RequerimentosSCState extends State<RequerimentosSC> {
             requerimentos = listaRequerimentos;
           });
         }
-      } else {
-        ErrorAlert.show(context, response.errorMessage.toString());
       }
     } catch (e) {
-      print(e);
-      ErrorAlert.show(context, 'Erro ao processar os dados');
+      ErrorAlert.show(context, e.toString());
     }
   }
 }

@@ -6,12 +6,10 @@ class Requerimento_DadosUtente {
   final String dataSubmissao;
   final List<String>? documentos;
   final int statusRequerimento;
-  final String? observacoesRequerimento;
   final int typeRequerimento;
   final bool? submetido;
   final bool? nuncaSubmetido;
   final String? data_submetido;
-  final String utenteHashedId;
   final String nomeCompleto;
   final String sexoUtente;
   final String morada;
@@ -22,18 +20,17 @@ class Requerimento_DadosUtente {
   final String distritoUtente;
   final String concelhoUtente;
   final String freguesiaUtente;
-  final String naturalidade;
-  final String paisNacionalidadeUtente;
+  final String pais;
   final int tipoDocumentoIdentificacao;
-  final String numeroDocumentoIdentificacao;
-  final String numeroUtenteSaude;
-  final String numeroIdentificacaoFiscal;
-  final String numeroSegurancaSocial;
-  final String numeroTelemovel;
+  final int numeroDocumentoIdentificacao;
+  final int numeroUtenteSaude;
+  final int numeroIdentificacaoFiscal;
+  final int numeroSegurancaSocial;
+  final int numeroTelemovel;
   final bool obito;
   final String documentoValidade;
   final String nomeEntidadeResponsavel;
-  final String emailUtente;
+  String? emailUtente;
 
   Requerimento_DadosUtente({
     required this.idRequerimento,
@@ -44,9 +41,7 @@ class Requerimento_DadosUtente {
     this.submetido,
     this.nuncaSubmetido,
     this.data_submetido,
-    this.observacoesRequerimento,
     required this.typeRequerimento,
-    required this.utenteHashedId,
     required this.nomeCompleto,
     required this.sexoUtente,
     required this.morada,
@@ -57,8 +52,7 @@ class Requerimento_DadosUtente {
     required this.distritoUtente,
     required this.concelhoUtente,
     required this.freguesiaUtente,
-    required this.naturalidade,
-    required this.paisNacionalidadeUtente,
+    required this.pais,
     required this.tipoDocumentoIdentificacao,
     required this.numeroDocumentoIdentificacao,
     required this.numeroUtenteSaude,
@@ -68,46 +62,48 @@ class Requerimento_DadosUtente {
     required this.obito,
     required this.documentoValidade,
     required this.nomeEntidadeResponsavel,
-    required this.emailUtente,
+    this.emailUtente,
   });
 
   factory Requerimento_DadosUtente.fromJson(Map<String, dynamic> json) {
     return Requerimento_DadosUtente(
-      idRequerimento: json['id_requerimento'],
-      hashedId: json['hashed_id'],
+      idRequerimento: json['id_requerimento'] as int,
+      hashedId: json['hashed_id'] as String,
       dataSubmissao: formatDateString(json['data_submissao']),
-      documentos: List<String>.from(json['documentos']),
-      statusRequerimento: json['status_requerimento'],
-      observacoesRequerimento: json['observacoes_requerimento'] as String?,
-      typeRequerimento: json['type_requerimento'],
-      submetido: json['submetido'],
-      nuncaSubmetido: json['nunca_submetido'],
+      documentos: json['documentos'] != null
+          ? List<String>.from(json['documentos'])
+          : [],
+      statusRequerimento: json['status_requerimento'] as int,
+      typeRequerimento: json['type_requerimento'] as int,
+      submetido: json['submetido'] as bool?,
+      nuncaSubmetido: json['nunca_submetido'] as bool?,
       data_submetido: json['data_submetido'] != null
           ? formatDateString(json['data_submetido'])
           : "",
-      utenteHashedId: json['utente_hashed_id'],
-      nomeCompleto: json['nome_completo'],
-      sexoUtente: json['sexo_utente'],
-      morada: json['morada'],
-      dataNascimentoUtente: formatDateString(json['data_nascimento_utente']),
-      nrPorta: json['nr_porta'],
+      nomeCompleto: json['nome_completo'] as String,
+      sexoUtente: json['sexo'] as String,
+      morada: json['morada'] as String,
+      dataNascimentoUtente: formatDateString(json['data_nascimento']),
+      nrPorta: json['nr_porta'] as String,
       nrAndar: json['nr_andar'] as String?,
-      codigoPostal: json['codigo_postal'],
-      distritoUtente: json['distrito_utente'],
-      concelhoUtente: json['concelho_utente'],
-      freguesiaUtente: json['freguesia_utente'],
-      naturalidade: json['naturalidade'],
-      paisNacionalidadeUtente: json['pais_nacionalidade_utente'],
-      tipoDocumentoIdentificacao: json['tipo_documento_identificacao'],
-      numeroDocumentoIdentificacao: json['numero_documento_identificacao'],
-      numeroUtenteSaude: json['numero_utente_saude'],
-      numeroIdentificacaoFiscal: json['numero_identificacao_fiscal'],
-      numeroSegurancaSocial: json['numero_seguranca_social'],
-      numeroTelemovel: json['numero_telemovel'],
-      obito: json['obito'],
-      documentoValidade: formatDateString(json['documento_validade']),
-      nomeEntidadeResponsavel: json['nome_entidade_responsavel'],
-      emailUtente: json['email_utente'],
+      codigoPostal: json['codigo_postal'] as String,
+      distritoUtente: json['distrito'] as String,
+      concelhoUtente: json['concelho'] as String,
+      freguesiaUtente: json['freguesia'] as String,
+      pais: json['pais'] as String,
+      tipoDocumentoIdentificacao: json['tipo_documento_identificacao'] as int,
+      numeroDocumentoIdentificacao:
+          json['numero_de_documento_de_identificação'] as int,
+      numeroUtenteSaude: json['numero_utente_saude'] as int,
+      numeroIdentificacaoFiscal: json['numero_de_identificacao_fiscal'] as int,
+      numeroSegurancaSocial: json['numero_de_segurança_social'] as int,
+      numeroTelemovel: json['numero_de_telemovel'] as int,
+      obito: json['obito'] as bool,
+      documentoValidade: json['documento_validade'] != null
+          ? formatDateString(json['documento_validade'])
+          : '',
+      emailUtente: json['email_utente'] != null ? json['email_utente'] : '',
+      nomeEntidadeResponsavel: json['nome_entidade_responsavel'] as String,
     );
   }
 }

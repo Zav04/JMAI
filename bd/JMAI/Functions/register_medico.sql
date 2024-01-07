@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION register_medico(
     p_data_nascimento VARCHAR(255),
     p_numero_telemovel VARCHAR(255),
     p_sexo VARCHAR(255),
-    p_pais_nacionalidade VARCHAR(255),
+    p_pais VARCHAR(255),
     p_distrito VARCHAR(255),
     p_concelho VARCHAR(255),
     p_freguesia VARCHAR(255),
@@ -19,6 +19,7 @@ DECLARE
 	 v_id_especialidade BIGINT;
 	 v_p_num_cedula BIGINT;
 	 v_p_num_ordem BIGINT;
+	 v_p_data DATE;
 BEGIN
 
    IF p_nome_completo IS NULL OR p_nome_completo = '' THEN
@@ -94,19 +95,17 @@ BEGIN
 	 IF p_justvalidate_inputs IS FALSE THEN
 	v_p_num_cedula:=p_num_cedula::BIGINT;
 	v_p_num_ordem:=p_num_ordem::BIGINT;
+	v_p_data:=TO_DATE(p_data_nascimento, 'DD-MM-YYYY');
 	
--- Procurar o id da especialidade pelo nome
     SELECT id_especialidade INTO v_id_especialidade
     FROM Especialidade
     WHERE especialidade = p_especialidade;
 
 
-    -- Inserir o usuário na tabela de usuários
     INSERT INTO Utilizador(email, id_cargo)
-    VALUES (p_email, 3) -- assumindo que o id_cargo para médicos seja 3
+    VALUES (p_email, 3)
     RETURNING id_utilizador INTO v_id_utilizador;
 
-        -- Inserir o médico na tabela de médicos
        INSERT INTO Medico(
     id_utilizador,
     nome_medico,
@@ -119,27 +118,22 @@ BEGIN
     pais,
     distrito,
     concelho,
-    freguesia,
-    pais_nacionalidade
+    freguesia
 ) VALUES (
     v_id_utilizador,
     p_nome_completo,
     v_p_num_cedula,
     v_p_num_ordem,
     v_id_especialidade,
-    p_numero_telemovel,
-    p_data_nascimento,
+    p_numero_telemovel::BIGINT,
+    v_p_data,
     p_sexo,
-    'Portugal', -- Supondo que o campo 'pais' seja sempre Portugal
+    p_pais,
     p_distrito,
     p_concelho,
-    p_freguesia,
-    p_pais_nacionalidade
+    p_freguesia
 );
     END IF;
-    -- Retornar verdadeiro se a inserção for bem-sucedida
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
-
-

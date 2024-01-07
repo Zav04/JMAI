@@ -30,7 +30,6 @@ class RequerimentoForm extends StatefulWidget {
 class _RequerimentoFormState extends State<RequerimentoForm> {
   List<html.File> uploadedFiles = [];
   List<String> uploadedFilesUrls = [];
-  final TextEditingController _observacoesController = TextEditingController();
 
   bool _aceitaTermos = false;
   bool _ipveiculo = false;
@@ -42,7 +41,6 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   RequerimentoRegister requerimento = new RequerimentoRegister(
     hashed_id: '',
     documentos: [],
-    observacoes: '',
     type: 0,
   );
 
@@ -464,7 +462,6 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
       requerimento = RequerimentoRegister(
         hashed_id: user.hashedId,
         documentos: uploadedFilesUrls,
-        observacoes: _observacoesController.text,
         type: _multioso ? 1 : (_ipveiculo ? 2 : 0),
         submetido: _jaSubmeti,
         nuncaSubmetido: _nuncaSubmeti,

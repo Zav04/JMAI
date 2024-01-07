@@ -25,7 +25,7 @@ class SecretarioClinicoRegister {
   String? dataNascimento;
   String? numeroTelemovel;
   String? sexo;
-  String? paisNacionalidade;
+  String? pais;
   String? distrito;
   String? concelho;
   String? freguesia;
@@ -37,7 +37,7 @@ class SecretarioClinicoRegister {
     required this.dataNascimento,
     required this.numeroTelemovel,
     required this.sexo,
-    required this.paisNacionalidade,
+    required this.pais,
     required this.distrito,
     required this.concelho,
     required this.freguesia,
@@ -52,7 +52,7 @@ class SecretarioClinicoRegister {
       'data_nascimento': dataNascimento,
       'numero_telemovel': numeroTelemovel,
       'sexo': sexo,
-      'pais_nacionalidade': paisNacionalidade,
+      'pais': pais,
       'distrito': distrito,
       'concelho': concelho,
       'freguesia': freguesia,
@@ -68,7 +68,7 @@ class MedicoRegister {
   String? dataNascimento;
   String? numeroTelemovel;
   String? sexo;
-  String? paisNacionalidade;
+  String? pais;
   String? distrito;
   String? concelho;
   String? freguesia;
@@ -84,7 +84,7 @@ class MedicoRegister {
     required this.dataNascimento,
     required this.numeroTelemovel,
     required this.sexo,
-    required this.paisNacionalidade,
+    required this.pais,
     required this.distrito,
     required this.concelho,
     required this.freguesia,
@@ -100,9 +100,9 @@ class MedicoRegister {
     return {
       'nome_completo': nomeCompleto,
       'data_nascimento': dataNascimento,
-      'contacto': numeroTelemovel,
+      'numero_telemovel': numeroTelemovel,
       'sexo': sexo,
-      'pais_nacionalidade': paisNacionalidade,
+      'pais': pais,
       'distrito': distrito,
       'concelho': concelho,
       'freguesia': freguesia,
@@ -119,7 +119,6 @@ class MedicoRegister {
 class RequerimentoRegister {
   String? hashed_id;
   List<String>? documentos;
-  String? observacoes;
   int? type;
   final bool? submetido;
   final bool? nuncaSubmetido;
@@ -128,7 +127,6 @@ class RequerimentoRegister {
   RequerimentoRegister({
     required this.hashed_id,
     required this.documentos,
-    required this.observacoes,
     required this.type,
     this.submetido,
     this.nuncaSubmetido,
@@ -139,11 +137,33 @@ class RequerimentoRegister {
     return {
       'hashed_id': hashed_id,
       'documentos': documentos,
-      'observacoes': observacoes,
       'type': type,
       'submetido': submetido,
       'nunca_submetido': nuncaSubmetido,
       'data_submissao': dataSubmetido,
+    };
+  }
+}
+
+class PreAvalicaoRegister {
+  final String hashed_id_requerimento;
+  final String hashed_id_medico;
+  final double pre_avaliacao;
+  final String? observacoes;
+
+  PreAvalicaoRegister({
+    required this.hashed_id_requerimento,
+    required this.hashed_id_medico,
+    required this.pre_avaliacao,
+    this.observacoes,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'hashed_id_requerimento': hashed_id_requerimento,
+      'hashed_id_medico': hashed_id_medico,
+      'pre_avaliacao': pre_avaliacao,
+      'observacoes': observacoes,
     };
   }
 }

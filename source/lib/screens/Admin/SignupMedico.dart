@@ -71,7 +71,7 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
   TextEditingController _nrCedula = TextEditingController();
   TextEditingController _nrOrdem = TextEditingController();
   String? _selectedEspecialidade;
-  String _selectedpaisNacionalidade = 'Portugal';
+  String _selectedpais = 'Portugal';
   String? _selectedDistrito;
   String? _selectedConcelho;
   String? _selectedFreguesia;
@@ -445,7 +445,7 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
               const SizedBox(width: 20),
               Flexible(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedpaisNacionalidade,
+                  value: _selectedpais,
                   items: naturalidade
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -455,7 +455,7 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      _selectedpaisNacionalidade = newValue!;
+                      _selectedpais = newValue!;
                     });
                   },
                   decoration: InputDecoration(
@@ -542,36 +542,41 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
         distrito: _selectedDistrito != null ? _selectedDistrito : null,
         concelho: _selectedConcelho != null ? _selectedConcelho : null,
         freguesia: _selectedFreguesia != null ? _selectedFreguesia : null,
-        paisNacionalidade: _selectedpaisNacionalidade,
+        pais: _selectedpais,
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
         password: _passwordController.text.isNotEmpty
             ? _passwordController.text
             : null,
-        justvalidateInputs: false);
+        justvalidateInputs: true);
 
     var response = await validationCreateMedico(newmedico);
     if (response.success) {
-      response = await singin(_emailController.text, _passwordController.text);
+      newmedico.justvalidateInputs = false;
+      response = await validationCreateMedico(newmedico);
       if (response.success) {
-        newmedico.justvalidateInputs = true;
-        response = await validationCreateMedico(newmedico);
-        SuccessAlert.show(context, 'Conta Criada com Sucesso');
-        await fazerPausaAssincrona();
-        setState(() {
-          _nomeCompletoController.text = '';
-          _dataDeNascimentoController.text = '';
-          _telefoneController.text = '';
-          _nrCedula.text = '';
-          _nrOrdem.text = '';
-          _emailController.text = '';
-          _passwordController.text = '';
-          _selectedEspecialidade = null;
-          _selectedDistrito = null;
-          _selectedConcelho = null;
-          _selectedFreguesia = null;
-          _selectedGender = 'Masculino';
-          _selectedpaisNacionalidade = 'Portugal';
-        });
+        response =
+            await singin(_emailController.text, _passwordController.text);
+        if (response.success) {
+          SuccessAlert.show(context, 'Conta Criada com Sucesso');
+          await fazerPausaAssincrona();
+          setState(() {
+            _nomeCompletoController.text = '';
+            _dataDeNascimentoController.text = '';
+            _telefoneController.text = '';
+            _nrCedula.text = '';
+            _nrOrdem.text = '';
+            _emailController.text = '';
+            _passwordController.text = '';
+            _selectedEspecialidade = null;
+            _selectedDistrito = null;
+            _selectedConcelho = null;
+            _selectedFreguesia = null;
+            _selectedGender = 'Masculino';
+            _selectedpais = 'Portugal';
+          });
+        } else {
+          ErrorAlert.show(context, response.errorMessage.toString());
+        }
       } else {
         ErrorAlert.show(context, response.errorMessage.toString());
       }

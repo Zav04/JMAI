@@ -447,14 +447,14 @@ Future<CreateAPIResponse> getUserRole(String email) async {
   }
 }
 
-Future<CreateAPIResponse> getUtenteInfo(String hashedid) async {
+Future<CreateAPIResponse> getUtenteInfo(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_UTENTE_INFO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedid}),
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {
@@ -478,14 +478,14 @@ Future<CreateAPIResponse> getUtenteInfo(String hashedid) async {
   }
 }
 
-Future<CreateAPIResponse> getMedicoInfo(String hashedId) async {
+Future<CreateAPIResponse> getMedicoInfo(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_MEDIC_INFO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedId}),
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {
@@ -509,14 +509,14 @@ Future<CreateAPIResponse> getMedicoInfo(String hashedId) async {
   }
 }
 
-Future<CreateAPIResponse> getSecretarioClinicoInfo(String hashedId) async {
+Future<CreateAPIResponse> getSecretarioClinicoInfo(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_SECRETARIA_CLINICO_INFO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedId}),
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {
@@ -572,14 +572,14 @@ Future<CreateAPIResponse> insertRequerimento(
   }
 }
 
-Future<CreateAPIResponse> fetchRequerimentos(String hashedId) async {
+Future<CreateAPIResponse> fetchRequerimentos(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['FETCH_REQUIREMENT'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedId}),
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {
@@ -633,7 +633,7 @@ Future<CreateAPIResponse> getRequerimentosUtenteStatusZero() async {
   }
 }
 
-Future<CreateAPIResponse> getRequerimentosUtenteStatusONE() async {
+Future<CreateAPIResponse> getRequerimentosUtenteStatusone() async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['GET_REQUERIMENTOS_UTENTE_STATUS_ONE'].toString();
   try {
@@ -663,14 +663,14 @@ Future<CreateAPIResponse> getRequerimentosUtenteStatusONE() async {
   }
 }
 
-Future<CreateAPIResponse> validarRequerimento(String hashedid) async {
+Future<CreateAPIResponse> validarRequerimento(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['VALIDAR_REQUERIMENTO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedid}),
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {
@@ -694,14 +694,14 @@ Future<CreateAPIResponse> validarRequerimento(String hashedid) async {
   }
 }
 
-Future<CreateAPIResponse> recusarRequerimento(String hashedid) async {
+Future<CreateAPIResponse> recusarRequerimento(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['RECUSAR_REQUERIMENTO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'hashed_id': hashedid}),
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {
@@ -764,6 +764,165 @@ Future<CreateAPIResponse> sendEmailRequerimentoRecusado(String email) async {
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> sendEmailPreAvaliacao(
+    String email, double preavalicao) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['SEND_EMAIL_PREAVALICAO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'preavalicao': preavalicao}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> insertPreavliacao(
+    PreAvalicaoRegister preavalicao) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['INSERT_PREAVALIACAO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(preavalicao.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> getDadosPreAvalicao(String hashed_id) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['GET_DADOS_PREAVALICAO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashed_id}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> acceptJuntaMedicaRequerimento(
+    String hashed_id) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['ACCEPT_JUNTA_MEDICA_REQUERIMENTO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashed_id}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> declineJuntaMedicaRequerimento(
+    String hashed_id) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['DECLINE_JUNTA_MEDICA_REQUERIMENTO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashed_id}),
     );
 
     if (response.statusCode == 200) {

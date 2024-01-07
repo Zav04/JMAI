@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION register_secretario_clinico(
     p_data_nascimento VARCHAR(255),
     p_numero_telemovel VARCHAR(255),
     p_sexo VARCHAR(255),
-    p_pais_nacionalidade VARCHAR(255),
+    p_pais VARCHAR(255),
     p_distrito VARCHAR(255),
     p_concelho VARCHAR(255),
     p_freguesia VARCHAR(255),
@@ -63,7 +63,7 @@ BEGIN
         RAISE EXCEPTION 'Password tem de ter no minimo 6 carateres.';
     END IF;
 
-    IF p_justvalidate_input IS TRUE THEN
+    IF p_justvalidate_input IS FALSE THEN
         -- Inserir dados na tabela de utilizadores
         INSERT INTO Utilizador(email, id_cargo)
         VALUES (p_email, 2)
@@ -79,23 +79,20 @@ BEGIN
             distrito,
             concelho,
             freguesia,
-            pais_nacionalidade,
             contacto
         ) VALUES (
             v_id_utilizador,
             p_nome_completo,
             p_sexo,
-			'Portugal',
-            p_data_nascimento,
+			p_pais,
+            p_data_nascimento::DATE,
             p_distrito,
             p_concelho,
             p_freguesia,
-            p_pais_nacionalidade,
-            p_numero_telemovel
+            p_numero_telemovel::BIGINT
         );
     END IF;
 
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
-

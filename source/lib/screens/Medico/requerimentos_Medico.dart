@@ -54,6 +54,7 @@ class _RequerimentosMedicoState extends State<RequerimentosMedico> {
                       RequerimentosMedicoTable(
                         requerimentos: requerimentos,
                         updateTable: updateTable,
+                        user: widget.user,
                       ),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
@@ -77,14 +78,34 @@ class _RequerimentosMedicoState extends State<RequerimentosMedico> {
   }
 
   Future<void> fetchRequerimentostoTable() async {
+    var dados;
+    var itemData;
     try {
-      var response = await getRequerimentosUtenteStatusONE();
-      if (response.success) {
+      var response = await getRequerimentosUtenteStatusone();
+      if (response.success && response.data != null) {
         var jsonData = response.data;
+        for (var item in jsonData) {
+          var itemData = item['get_requerimentos_utente_status_one'];
+          if (itemData['numero_utente_one'] == null &&
+              itemData['numero_utente_saude_by_SNS'] != null) {
+            response =
+                await getDadosNSS(itemData['numero_utente_saude_by_SNS']);
+          } else {
+            response = await getDadosNSS(itemData['numero_utente_saude']);
+          }
+          if (response.success) {
+            dados = response.data;
+            dados[0].forEach((chave, valor) {
+              item['get_requerimentos_utente_status_one'][chave] = valor;
+            });
+          } else {
+            ErrorAlert.show(context, response.errorMessage.toString());
+          }
+        }
         if (jsonData is List) {
           List<Requerimento_DadosUtente> listaRequerimentos =
               jsonData.map((item) {
-            var itemData = item['get_requerimentos_utente_status_one'];
+            itemData = item['get_requerimentos_utente_status_one'];
             return Requerimento_DadosUtente.fromJson(
                 itemData as Map<String, dynamic>);
           }).toList();
@@ -92,14 +113,10 @@ class _RequerimentosMedicoState extends State<RequerimentosMedico> {
           setState(() {
             requerimentos = listaRequerimentos;
           });
-        } else {
-          print('Dados recebidos não estão no formato de lista');
         }
-      } else {
-        ErrorAlert.show(context, response.errorMessage.toString());
       }
     } catch (e) {
-      ErrorAlert.show(context, 'Erro ao processar os dados');
+      ErrorAlert.show(context, e.toString());
     }
   }
 }

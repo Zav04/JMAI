@@ -36,7 +36,7 @@ BEGIN
     END IF;
 	
 
-  IF p_justvalidate_inputs IS TRUE THEN
+  IF p_justvalidate_inputs IS FALSE THEN
   
   INSERT INTO Utilizador(email, id_cargo)
   VALUES (p_email, 1) 

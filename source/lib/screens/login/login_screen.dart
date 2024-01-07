@@ -35,6 +35,8 @@ class _LoginScreen extends State<LoginScreen> {
     _passwordController.text = '';
     hashedId = '';
     role = '';
+    //TODO REMOVER ISTO ANTES DE ENTREGAR
+    submitlogin();
     super.initState();
   }
 
@@ -249,8 +251,6 @@ class _LoginScreen extends State<LoginScreen> {
                     backgroundColor: buttonColor,
                   ),
                   onPressed: () async {
-                    print(
-                        "Botão Registar pressionado"); // Remova isso após o teste
                     var response = await _submmit(context);
                     if (response) {
                       Navigator.of(dialogContext).pop();
@@ -281,11 +281,11 @@ class _LoginScreen extends State<LoginScreen> {
         numeroUtenteSaude: _nssController.text,
         email: _emailController.text,
         password: _passwordController.text,
-        justvalidateInputs: false,
+        justvalidateInputs: true,
       );
       response = await createUser(newUtente);
       if (response.success) {
-        newUtente.justvalidateInputs = true;
+        newUtente.justvalidateInputs = false;
         response = await createUser(newUtente);
         if (response.success) {
           response =
@@ -408,9 +408,16 @@ class _LoginScreen extends State<LoginScreen> {
   Future<bool> submitlogin() async {
     var dados;
     var infos;
-    var response = await login(_emailController.text, _passwordController.text);
+    //String EMAILFORTESTES = "scts@gmail.com";
+    //String EMAILFORTESTES = "medicojc@gmail.com";
+    String EMAILFORTESTES = "bruno.bx04@gmail.com";
+    // var response = await login(_emailController.text, _passwordController.text);
+    var response = await login(EMAILFORTESTES, "admin.");
+    //var response = await login(EMAILFORTESTES, "admin.");
+    //var response = await login(EMAILFORTESTES, "admin.");
+    //var response = await login(EMAILFORTESTES, "admin.");
     if (response.success == true) {
-      var getUser = await getUserRole(_emailController.text);
+      var getUser = await getUserRole(EMAILFORTESTES);
       hashedId = getUser.data['hashed_id'];
       role = getUser.data['cargo_name'];
       switch (role) {
@@ -418,13 +425,9 @@ class _LoginScreen extends State<LoginScreen> {
           infos = await getUtenteInfo(hashedId!);
           if (infos.success) {
             int nss = infos.data['numero_utente_saude'];
-            print(nss);
             response = await getDadosNSS(nss);
             if (response.success) {
               dados = response.data;
-              print(infos.data['hashed_id']);
-              print(infos.data['email']);
-              print(dados);
               dados[0]['hashed_id'] = infos.data['hashed_id'];
               dados[0]['email'] = infos.data['email'];
               utilizador = Utente.fromJson(dados[0]);

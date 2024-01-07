@@ -71,7 +71,7 @@ class _SignupSecretarioClinicoFormState
       TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   String _selectedGender = 'Masculino';
-  String _selectedpaisNacionalidade = 'Portugal';
+  String _selectedpais = 'Portugal';
   String? _selectedDistrito;
   String? _selectedConcelho;
   String? _selectedFreguesia;
@@ -357,7 +357,7 @@ class _SignupSecretarioClinicoFormState
               const SizedBox(width: 20),
               Flexible(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedpaisNacionalidade,
+                  value: _selectedpais,
                   items: paises.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -366,7 +366,7 @@ class _SignupSecretarioClinicoFormState
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      _selectedpaisNacionalidade = newValue!;
+                      _selectedpais = newValue!;
                     });
                   },
                   decoration: InputDecoration(
@@ -449,35 +449,39 @@ class _SignupSecretarioClinicoFormState
         distrito: _selectedDistrito != null ? _selectedDistrito : null,
         concelho: _selectedConcelho != null ? _selectedConcelho : null,
         freguesia: _selectedFreguesia != null ? _selectedFreguesia : null,
-        paisNacionalidade: _selectedpaisNacionalidade,
+        pais: _selectedpais,
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
         password: _passwordController.text.isNotEmpty
             ? _passwordController.text
             : null,
-        justvalidateInputs: false);
+        justvalidateInputs: true);
 
     var response =
         await validationCreateSecretarioClinico(newSecretarioClinico);
     if (response.success) {
-      response = await singin(_emailController.text, _passwordController.text);
+      newSecretarioClinico.justvalidateInputs = false;
+      response = await validationCreateSecretarioClinico(newSecretarioClinico);
       if (response.success) {
-        newSecretarioClinico.justvalidateInputs = true;
         response =
-            await validationCreateSecretarioClinico(newSecretarioClinico);
-        SuccessAlert.show(context, 'Conta Criada com Sucesso');
-        await fazerPausaAssincrona();
-        setState(() {
-          _nomeCompletoController.text = '';
-          _dataDeNascimentoController.text = '';
-          _telefoneController.text = '';
-          _emailController.text = '';
-          _passwordController.text = '';
-          _selectedDistrito = null;
-          _selectedConcelho = null;
-          _selectedFreguesia = null;
-          _selectedGender = 'Masculino';
-          _selectedpaisNacionalidade = 'Portugal';
-        });
+            await singin(_emailController.text, _passwordController.text);
+        if (response.success) {
+          SuccessAlert.show(context, 'Conta Criada com Sucesso');
+          await fazerPausaAssincrona();
+          setState(() {
+            _nomeCompletoController.text = '';
+            _dataDeNascimentoController.text = '';
+            _telefoneController.text = '';
+            _emailController.text = '';
+            _passwordController.text = '';
+            _selectedDistrito = null;
+            _selectedConcelho = null;
+            _selectedFreguesia = null;
+            _selectedGender = 'Masculino';
+            _selectedpais = 'Portugal';
+          });
+        } else {
+          ErrorAlert.show(context, response.errorMessage.toString());
+        }
       } else {
         ErrorAlert.show(context, response.errorMessage.toString());
       }

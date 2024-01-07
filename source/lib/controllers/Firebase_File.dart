@@ -20,7 +20,6 @@ Future<String?> uploadFileToFirebase(html.File file) async {
     String downloadUrl = await snapshot.ref.getDownloadURL();
     return downloadUrl;
   } catch (e) {
-    print(e);
     return null;
   }
 }

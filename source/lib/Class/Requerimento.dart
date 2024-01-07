@@ -5,7 +5,6 @@ class Requerimento {
   final String hashedId;
   final String data;
   final List<String> documentos;
-  final String observacoes;
   final int type;
   final int status;
   final bool? submetido;
@@ -17,7 +16,6 @@ class Requerimento {
     required this.hashedId,
     required this.data,
     required this.documentos,
-    required this.observacoes,
     required this.type,
     required this.status,
     this.submetido,
@@ -33,7 +31,6 @@ class Requerimento {
       documentos: json['documentos'] != null
           ? List<String>.from(json['documentos'])
           : [],
-      observacoes: json['observacoes'],
       type: json['type'],
       status: json['status'],
       submetido: json['submetido'],

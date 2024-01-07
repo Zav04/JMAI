@@ -1,3 +1,4 @@
+import 'package:JMAI/Class/Pre_Avalicao.dart';
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento.dart';
 import 'package:JMAI/Class/Utilizador.dart';
@@ -9,14 +10,19 @@ import 'package:tuple/tuple.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
 import 'package:intl/intl.dart';
 import 'package:JMAI/screens/main/components/GeneratePdf.dart';
+import 'package:JMAI/overlay/ErrorAlert.dart';
+import 'package:JMAI/controllers/API_Connection.dart';
+import 'package:JMAI/Class/DateTime.dart';
 
 class RequerimentosTable extends StatefulWidget {
   final Utilizador user;
   final List<Requerimento> requerimentos;
+  final VoidCallback updateTable;
   const RequerimentosTable({
     Key? key,
     required this.user,
     required this.requerimentos,
+    required this.updateTable,
   }) : super(key: key);
 
   @override
@@ -24,6 +30,14 @@ class RequerimentosTable extends StatefulWidget {
 }
 
 class _RequerimentosTableState extends State<RequerimentosTable> {
+  PreAvalicao preAvalicao = PreAvalicao(
+    hashed_id_pre_avaliacao: '',
+    pre_avaliacao: '',
+    data_pre_avaliacao: '',
+    nome_medico: '',
+    especialidade: '',
+  );
+
   Utente utente = Utente(
     hashedId: '',
     email: '',
@@ -89,6 +103,8 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         return Tuple2('Finalizado', Colors.green);
       case 5:
         return Tuple2('Cancelado', Colors.red);
+      case 6:
+        return Tuple2('Marcação Disponivel', Colors.blue);
       default:
         return Tuple2('Status Desconhecido', Colors.grey);
     }
@@ -188,18 +204,67 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 IconButton(
                                   icon: Icon(Icons.visibility),
                                   color: Colors.blue,
-                                  onPressed: () {
-                                    showDetailsOverlay(
-                                        context, utente, requerimento);
+                                  onPressed: () async {
+                                    if (requerimento.status == 2) {
+                                      var response =
+                                          await preAvalicaoData(requerimento);
+                                      if (response) {
+                                        showDetailsOverlay(
+                                            context, utente, requerimento);
+                                      }
+                                    }
                                   },
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.download),
                                   color: Colors.redAccent,
                                   onPressed: () async {
-                                    await generatePdfForm(utente, requerimento);
+                                    if (requerimento.status == 0 ||
+                                        requerimento.status == 1)
+                                      await generatePdfForm(
+                                          utente, requerimento);
+                                    if (requerimento.status == 2)
+                                      //TODO fazer o pdf da pre-avaliação
+                                      await generatePdfForm(
+                                          utente, requerimento);
+                                    //TODO fazer o pdf da marcação
+                                    if (requerimento.status == 3)
+                                      await generatePdfForm(
+                                          utente, requerimento);
                                   },
                                 ),
+                                if (requerimento.status == 2) ...[
+                                  IconButton(
+                                    icon: Icon(
+                                        Icons.check_circle_outline_outlined),
+                                    color: Colors.green,
+                                    onPressed: () async {
+                                      var response = await acceptJuntaMedica(
+                                          requerimento.hashedId);
+                                      if (response) {
+                                        widget.updateTable();
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.close_outlined),
+                                    color: Colors.red,
+                                    onPressed: () async {
+                                      var response = await declineJuntaMedica(
+                                          requerimento.hashedId);
+                                      if (response) {
+                                        widget.updateTable();
+                                      }
+                                    },
+                                  ),
+                                ],
+                                if (requerimento.status == 6) ...[
+                                  IconButton(
+                                    icon: Icon(Icons.calendar_month_outlined),
+                                    color: Colors.green,
+                                    onPressed: () async {},
+                                  ),
+                                ],
                               ],
                             ),
                           )
@@ -478,7 +543,61 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 color: Colors.white,
                                 thickness: 2,
                               ),
-                              ...buildDocumentWidgets(requerimento.documentos),
+                              if (requerimento.documentos.length == 0) ...[
+                                Text(
+                                  'Não existem documentos associados ao requerimento',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                              if (requerimento.documentos.length > 0) ...[
+                                ...buildDocumentWidgets(
+                                    requerimento.documentos),
+                              ],
+                              if (requerimento.status == 2) ...[
+                                Divider(
+                                  color: Colors.white,
+                                  thickness: 2,
+                                ),
+                                Center(
+                                  child: Text(
+                                    'INFORMAÇÕES DA PRÉ-AVALIAÇÃO',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Divider(
+                                  color: Colors.white,
+                                  thickness: 2,
+                                ),
+                                SizedBox(height: 2),
+                                buildRichText(
+                                    'Data da Pré Avaliação: ',
+                                    formatTimestampString(
+                                        preAvalicao.data_pre_avaliacao)),
+                                SizedBox(height: 2),
+                                buildRichText('Médico Responsável: ',
+                                    preAvalicao.nome_medico),
+                                SizedBox(height: 2),
+                                buildRichText('Especialidade do Médico: ',
+                                    preAvalicao.especialidade),
+                                buildRichText('Resultado da Pré Avaliação: ',
+                                    preAvalicao.pre_avaliacao.toString()),
+                                if (preAvalicao.observacoes != '') ...[
+                                  SizedBox(height: 2),
+                                  buildRichText('Observações: ',
+                                      preAvalicao.observacoes.toString()),
+                                  SizedBox(height: 2),
+                                ],
+                                Divider(
+                                  color: Colors.white,
+                                  thickness: 2,
+                                ),
+                              ]
                             ],
                           ),
                         ),
@@ -537,7 +656,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     if (await canLaunch(url)) {
       await launch(url, webOnlyWindowName: '_blank');
     } else {
-      print('Não foi possível abrir o documento');
+      ErrorAlert.show(context, 'Não foi possível abrir o documento');
     }
   }
 
@@ -613,5 +732,48 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         ],
       );
     }).toList();
+  }
+
+  Future<bool> preAvalicaoData(Requerimento requerimento) async {
+    var response = await getDadosPreAvalicao(requerimento.hashedId);
+    if (response.success) {
+      setState(() {
+        preAvalicao = PreAvalicao(
+          hashed_id_pre_avaliacao: response.data[0]['hashed_id_pre_avaliacao'],
+          pre_avaliacao: response.data[0]['pre_avaliacao'],
+          observacoes: response.data[0]['observacoes'],
+          data_pre_avaliacao: response.data[0]['data_pre_avaliacao'],
+          nome_medico: response.data[0]['nome_medico'],
+          especialidade: response.data[0]['especialidade'],
+        );
+      });
+      return true;
+    } else {
+      ErrorAlert.show(
+          context, 'Não foi possível obter os dados da pré-avaliação');
+      return false;
+    }
+  }
+
+  Future<bool> acceptJuntaMedica(String hashed_id) async {
+    var response = await acceptJuntaMedicaRequerimento(hashed_id);
+    if (response.success) {
+      return true;
+    } else {
+      ErrorAlert.show(
+          context, 'Não foi possível atualizar o estado do requerimento');
+      return false;
+    }
+  }
+
+  Future<bool> declineJuntaMedica(String hashed_id) async {
+    var response = await declineJuntaMedicaRequerimento(hashed_id);
+    if (response.success) {
+      return true;
+    } else {
+      ErrorAlert.show(
+          context, 'Não foi possível atualizar o estado do requerimento');
+      return false;
+    }
   }
 }

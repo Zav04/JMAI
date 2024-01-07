@@ -6,7 +6,7 @@ class MedicoRequest(BaseModel):
     data_nascimento: Optional[str] = ''
     numero_telemovel: Optional[str] = ''
     sexo: Optional[str] = ''
-    pais_nacionalidade: Optional[str] = ''
+    pais: Optional[str] = ''
     distrito: Optional[str] = ''
     concelho: Optional[str] = ''
     freguesia: Optional[str] = ''

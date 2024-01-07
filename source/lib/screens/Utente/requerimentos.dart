@@ -70,6 +70,7 @@ class _RequerimentosState extends State<Requerimentos> {
                       RequerimentosTable(
                         user: widget.user,
                         requerimentos: requerimentos,
+                        updateTable: updateTable,
                       ),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
@@ -132,7 +133,6 @@ class _RequerimentosState extends State<Requerimentos> {
       }
     } catch (e) {
       ErrorAlert.show(context, e.toString());
-      print(e.toString());
     }
   }
 }
