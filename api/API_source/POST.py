@@ -114,8 +114,7 @@ async def validation_create_medico(medico: MedicoRequest, db: SessionLocal = Dep
         db.rollback()
         error_messages = [str(arg) for arg in e.args]
         return {"error": error_messages}
-    
-    
+
 
 @post_router.post("/firebase_signup/")
 async def create_user(user:UserSignup):
@@ -296,39 +295,6 @@ async def fetch_requirement(hashedid: Search, db: SessionLocal = Depends(get_db)
         return {"error": str(e)}
     
     
-@post_router.post("/validar_requerimento/")
-async def validar_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
-    try:
-        query = text("SELECT * FROM validar_requerimento(:hashed_id);")
-        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
-        result = result.scalar()
-        db.commit()
-        return {"response": result}
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__['orig'])
-        error_msg = error_msg.split('\n')[0]
-        return {"error": error_msg}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}
-    
-    
-@post_router.post("/recusar_requerimento/")
-async def recusar_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
-    try:
-        query = text("SELECT * FROM recusar_requerimento(:p_hashed_id);")
-        result = db.execute(query, {"p_hashed_id": hashedid.hashed_id})
-        result = result.scalar()
-        db.commit()
-        return {"response": result}
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__['orig'])
-        error_msg = error_msg.split('\n')[0]
-        return {"error": error_msg}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}
-    
 
 
 @post_router.post("/send_email_validar_requerimento/")
@@ -454,35 +420,5 @@ async def get_dados_preavaliacao(hashedid: Search, db: SessionLocal = Depends(ge
         db.rollback()
         return {"error": str(e)}
 
-@post_router.post("/accept_junta_medica_requerimento/")
-async def accept_junta_medica_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
-    try:
-        query = text("SELECT * FROM accept_update_requerimento_status(:hashed_id);")
-        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
-        result = result.scalar()
-        db.commit()
-        return {"response": result}
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__['orig'])
-        error_msg = error_msg.split('\n')[0]
-        return {"error": error_msg}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}
-    
-@post_router.post("/decline_junta_medica_requerimento/")
-async def decline_junta_medica_requerimento(hashedid: Search, db: SessionLocal = Depends(get_db)):
-    try:
-        query = text("SELECT * FROM rejcted_update_requerimento_status(:hashed_id);")
-        result = db.execute(query, {"hashed_id": hashedid.hashed_id})
-        result = result.scalar()
-        db.commit()
-        return {"response": result}
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__['orig'])
-        error_msg = error_msg.split('\n')[0]
-        return {"error": error_msg}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}
+
 

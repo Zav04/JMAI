@@ -4,7 +4,7 @@ RETURNS BOOL AS $$
 BEGIN
   -- Atualiza o status do requerimento
   UPDATE RequerimentoJuntaMedica
-  SET status = 5
+  SET status = 7
   WHERE hashed_id = p_hashed_id;
   RETURN TRUE;
   

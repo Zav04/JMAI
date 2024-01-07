@@ -667,7 +667,7 @@ Future<CreateAPIResponse> validarRequerimento(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['VALIDAR_REQUERIMENTO'].toString();
   try {
-    final response = await http.post(
+    final response = await http.put(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'hashed_id': hashed_id}),
@@ -698,7 +698,7 @@ Future<CreateAPIResponse> recusarRequerimento(String hashed_id) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['RECUSAR_REQUERIMENTO'].toString();
   try {
-    final response = await http.post(
+    final response = await http.put(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'hashed_id': hashed_id}),
@@ -887,7 +887,7 @@ Future<CreateAPIResponse> acceptJuntaMedicaRequerimento(
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['ACCEPT_JUNTA_MEDICA_REQUERIMENTO'].toString();
   try {
-    final response = await http.post(
+    final response = await http.put(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'hashed_id': hashed_id}),
@@ -919,7 +919,39 @@ Future<CreateAPIResponse> declineJuntaMedicaRequerimento(
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['DECLINE_JUNTA_MEDICA_REQUERIMENTO'].toString();
   try {
-    final response = await http.post(
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'hashed_id': hashed_id}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return CreateAPIResponse(
+            success: false, errorMessage: responseData['error']);
+      } else {
+        return CreateAPIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return CreateAPIResponse(success: false);
+    }
+  } catch (e) {
+    return CreateAPIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
+Future<CreateAPIResponse> agendarJuntaMedicaRequerimento(
+    DateTime data, String hashed_id) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['AGENDAR_JUNTA_MEDICA_REQUERIMENTO'].toString();
+  try {
+    final response = await http.put(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'hashed_id': hashed_id}),

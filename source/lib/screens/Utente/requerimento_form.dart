@@ -444,24 +444,26 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   }
 
   void _submitForm() async {
-    for (var file in uploadedFiles) {
-      String? fileUrl = await uploadFileToFirebase(file);
-      if (fileUrl != null) {
-        uploadedFilesUrls.add(fileUrl);
-      } else {
-        ErrorAlert.show(context, "Falha ao carregar o arquivo");
+    if (uploadedFiles.length > 0) {
+      for (var file in uploadedFiles) {
+        String? fileUrl = await uploadFileToFirebase(file);
+        if (fileUrl != null) {
+          uploadedFilesUrls.add(fileUrl);
+        } else {
+          ErrorAlert.show(context, "Falha ao carregar o arquivo");
+        }
       }
     }
     verificarTipoUtilizador(widget.utilizador);
-    Navigator.of(context).pop();
     widget.onRequerimentoAdded();
+    Navigator.of(context).pop();
   }
 
   void verificarTipoUtilizador(Utilizador user) async {
     if (user is Utente) {
       requerimento = RequerimentoRegister(
         hashed_id: user.hashedId,
-        documentos: uploadedFilesUrls,
+        documentos: uploadedFilesUrls.length == 0 ? [] : uploadedFilesUrls,
         type: _multioso ? 1 : (_ipveiculo ? 2 : 0),
         submetido: _jaSubmeti,
         nuncaSubmetido: _nuncaSubmeti,
@@ -469,7 +471,6 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
       );
       var response = await insertRequerimento(requerimento);
       if (response.success == true) {
-        sleep(Durations.medium3);
         SuccessAlert.show(context, 'Requrimento submetido com sucesso');
       } else {
         ErrorAlert.show(context, response.errorMessage.toString());

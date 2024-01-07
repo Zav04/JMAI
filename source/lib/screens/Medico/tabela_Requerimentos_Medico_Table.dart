@@ -8,7 +8,7 @@ import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tuple/tuple.dart';
+import 'package:JMAI/screens/main/components/Descriptions.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
@@ -59,34 +59,6 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
       return dateA.compareTo(dateB);
     });
     return requerimentos;
-  }
-
-  Tuple2<String, Color> getTypeDescription(int status) {
-    switch (status) {
-      case 1:
-        return Tuple2('Multiuso', Colors.lime);
-      case 2:
-        return Tuple2('Importação de Veículo Automóvel', Colors.purple);
-      default:
-        return Tuple2('Status Desconhecido', Colors.grey);
-    }
-  }
-
-  Tuple2<String, Color> getStatusDescription(int status) {
-    switch (status) {
-      case 0:
-        return Tuple2('Em espera de Aprovação', Colors.grey);
-      case 1:
-        return Tuple2('Aprovado a espera de Pre-Avaliação', Colors.orange);
-      case 2:
-        return Tuple2('Pré-Avaliação Concluída', Colors.yellow);
-      case 3:
-        return Tuple2('Agendado', Colors.blue);
-      case 4:
-        return Tuple2('Finalizado', Colors.green);
-      default:
-        return Tuple2('Status Desconhecido', Colors.grey);
-    }
   }
 
   String getDocumentsDescription(int typeDocument) {

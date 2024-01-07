@@ -6,13 +6,13 @@ import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tuple/tuple.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
 import 'package:intl/intl.dart';
 import 'package:JMAI/screens/main/components/GeneratePdf.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/Class/DateTime.dart';
+import 'package:JMAI/screens/main/components/Descriptions.dart';
 
 class RequerimentosTable extends StatefulWidget {
   final Utilizador user;
@@ -30,6 +30,7 @@ class RequerimentosTable extends StatefulWidget {
 }
 
 class _RequerimentosTableState extends State<RequerimentosTable> {
+  DateTime? selectedDateTime;
   PreAvalicao preAvalicao = PreAvalicao(
     hashed_id_pre_avaliacao: '',
     pre_avaliacao: '',
@@ -78,38 +79,6 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     return requerimentos;
   }
 
-  Tuple2<String, Color> getTypeDescription(int status) {
-    switch (status) {
-      case 1:
-        return Tuple2('Multiuso', Colors.lime);
-      case 2:
-        return Tuple2('Importação de Veículo Automóvel', Colors.purple);
-      default:
-        return Tuple2('Status Desconhecido', Colors.grey);
-    }
-  }
-
-  Tuple2<String, Color> getStatusDescription(int status) {
-    switch (status) {
-      case 0:
-        return Tuple2('Em espera de Aprovação', Colors.grey);
-      case 1:
-        return Tuple2('Aprovado a espera de Pre-Avaliação', Colors.orange);
-      case 2:
-        return Tuple2('Pré-Avaliação Concluída', Colors.yellow);
-      case 3:
-        return Tuple2('Agendado', Colors.blue);
-      case 4:
-        return Tuple2('Finalizado', Colors.green);
-      case 5:
-        return Tuple2('Cancelado', Colors.red);
-      case 6:
-        return Tuple2('Marcação Disponivel', Colors.blue);
-      default:
-        return Tuple2('Status Desconhecido', Colors.grey);
-    }
-  }
-
   String getDocumentsDescription(int typeDocument) {
     switch (typeDocument) {
       case 1:
@@ -132,18 +101,31 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "REQUERIMENTOS",
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Divider(
-            color: Colors.white,
-            thickness: 2,
+          Stack(
+            children: [
+              // Centraliza o texto na Stack
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Requerimentos",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              // Posiciona o ícone de refresh no canto direito
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    // Sua lógica de recarregamento da tabela
+                    widget.updateTable();
+                  },
+                ),
+              ),
+            ],
           ),
           SizedBox(
             width: double.infinity,
@@ -205,13 +187,16 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                   icon: Icon(Icons.visibility),
                                   color: Colors.blue,
                                   onPressed: () async {
-                                    if (requerimento.status == 2) {
+                                    if (requerimento.status >= 2) {
                                       var response =
                                           await preAvalicaoData(requerimento);
                                       if (response) {
                                         showDetailsOverlay(
                                             context, utente, requerimento);
                                       }
+                                    } else {
+                                      showDetailsOverlay(
+                                          context, utente, requerimento);
                                     }
                                   },
                                 ),
@@ -260,10 +245,13 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 ],
                                 if (requerimento.status == 6) ...[
                                   IconButton(
-                                    icon: Icon(Icons.calendar_month_outlined),
-                                    color: Colors.green,
-                                    onPressed: () async {},
-                                  ),
+                                      icon: Icon(Icons.calendar_month_outlined),
+                                      color: Colors.green,
+                                      onPressed: () {
+                                        showCalendarAndTimeDialog(context);
+                                        //agendarJuntaMedica(
+                                        //selectedDateTime!, requerimento);
+                                      }),
                                 ],
                               ],
                             ),
@@ -556,7 +544,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                 ...buildDocumentWidgets(
                                     requerimento.documentos),
                               ],
-                              if (requerimento.status == 2) ...[
+                              if (requerimento.status >= 2) ...[
                                 Divider(
                                   color: Colors.white,
                                   thickness: 2,
@@ -774,6 +762,161 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
       ErrorAlert.show(
           context, 'Não foi possível atualizar o estado do requerimento');
       return false;
+    }
+  }
+
+  // Future<void> agendarJuntaMedica(
+  //     DateTime agendamento, Requerimento requerimento) async {
+  //   var response = agendarJuntaMedicaRequerimento(
+  //       selectedDateTime!, requerimento.hashedId);
+  //   if (response.success) {
+  //     widget.updateTable();
+  //   } else {
+  //     ErrorAlert.show(context, 'Não foi possível agendar a junta médica');
+  //   }
+  // }
+
+  Future<TimeOfDay?> showCustomTimePicker(BuildContext context) async {
+    TimeOfDay? selectedTime;
+    int? selectedHourIndex;
+    final List<int> availableHours = List.generate(13, (index) => 8 + index);
+
+    // Mostra um diálogo com a lista de horários permitidos
+    return await showDialog<TimeOfDay>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Selecione um horário',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              content: Container(
+                height: 500,
+                width: 200,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: availableHours.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          int hour = availableHours[index];
+                          bool isSelected = selectedHourIndex == index;
+                          return ListTile(
+                            title: Text('${hour}:00'),
+                            tileColor: isSelected ? Colors.blue : null,
+                            onTap: () {
+                              setState(() {
+                                selectedHourIndex = index;
+                                selectedTime = TimeOfDay(hour: hour, minute: 0);
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                    TextButton(
+                      onPressed: selectedTime != null
+                          ? () {
+                              Navigator.pop(context, selectedTime);
+                            }
+                          : null,
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            selectedTime != null ? Colors.blue : Colors.grey,
+                        primary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text('Agendar'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> showCalendarAndTimeDialog(BuildContext context) async {
+    DateTime? selectedDate;
+    TimeOfDay? selectedTime;
+
+    // Mostra o DatePicker
+    selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      locale: const Locale('pt', 'PT'),
+    );
+
+    if (selectedDate != null) {
+      // Chama a função personalizada para escolher a hora
+      selectedTime = await showCustomTimePicker(context);
+
+      if (selectedTime != null) {
+        // Combina a data e a hora em um objeto DateTime
+        final combinedDateTime = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+        );
+
+        await showDialog<void>(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: const Text('Confirmação de Agendamento'),
+              content: Text(
+                'Deseja Agendar uma Junta Médica em: ${DateFormat('dd/MM/yyyy HH:mm').format(combinedDateTime)}',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    // Ação para o botão Agendar
+                    // Atribua o combinedDateTime à variável selectedDateTime.
+                    // Certifique-se de que selectedDateTime esteja definida no escopo correto
+                    selectedDateTime = combinedDateTime;
+
+                    // Feche o AlertDialog.
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: const Text('Agendar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Ação para o botão Cancelar
+                    // Simplesmente feche o AlertDialog.
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 }

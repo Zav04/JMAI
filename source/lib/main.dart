@@ -8,6 +8,7 @@ import 'package:JMAI/screens/main/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final FirebaseOptions firebaseOptions = FirebaseOptions(
   apiKey: dotenv.env['FIRE_APIKEY'].toString(),
@@ -35,6 +36,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => MenuAppController()),
       ],
       child: MaterialApp(
+        supportedLocales: [
+          const Locale('en', 'US'), // Inglês
+          const Locale('pt', 'PT'), // Português de Portugal
+          // Adicione outros idiomas que você suportará
+        ],
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
             scaffoldBackgroundColor: bgColor,
