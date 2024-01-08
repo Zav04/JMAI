@@ -16,6 +16,7 @@ from Models.SendPreAvalicao import SendEmailPreAvaliacao
 from Models.RNU import RNU
 from Models.PreAvalição import PreAvaliacao
 from Models.Agendamento import Agendamento
+from Models.USF import USF
 import httpx
 import json
 
@@ -466,6 +467,24 @@ async def verificar_requerimento_existente(hashedid: Search, db: SessionLocal = 
     try:
         query = text("SELECT * FROM verificar_requerimento_existente(:hashed_id);")
         result = db.execute(query, {"hashed_id": hashedid.hashed_id})
+        result = result.scalar()
+        return {"response": result}
+    except SQLAlchemyError as e:
+        error_msg = str(e.__dict__['orig'])
+        error_msg = error_msg.split('\n')[0]
+        return {"error": error_msg}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
+    
+
+
+@post_router.post("/USF_insert/")
+async def USF_insert(usf: USF, db: SessionLocal = Depends(get_db)):
+    try:
+
+        query = text("SELECT * FROM USF_register_utente(:email,:password,:NNS, :validationInputs);")
+        result = db.execute(query, {"email": usf.email, "password": usf.password, "NNS": usf.numero_utente, "validationInputs": True})
         result = result.scalar()
         return {"response": result}
     except SQLAlchemyError as e:
