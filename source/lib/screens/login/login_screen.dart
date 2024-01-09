@@ -175,7 +175,7 @@ class _LoginScreen extends State<LoginScreen> {
                 child: Text(
                   'Registro na Aplicação',
                   textAlign: TextAlign.center,
-                  style: TextStyle(), // Adicione seu estilo aqui se necessário
+                  style: TextStyle(),
                 ),
               ),
               IconButton(
@@ -214,7 +214,7 @@ class _LoginScreen extends State<LoginScreen> {
                       LengthLimitingTextInputFormatter(9),
                     ],
                   ),
-                  SizedBox(height: 10), // Espaço entre os campos
+                  SizedBox(height: 10),
                   TextField(
                     keyboardType: TextInputType.emailAddress,
                     controller: _emailController,
@@ -230,7 +230,7 @@ class _LoginScreen extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10), // Espaço entre os campos
+                  SizedBox(height: 10),
                   PasswordField(controller: _passwordController),
                 ],
               ),
@@ -273,8 +273,8 @@ class _LoginScreen extends State<LoginScreen> {
         return false;
       }
     } catch (e) {}
-    var response = await validationNSSUser(nss!);
-    if (response.success && response.data == true) {
+    var response = await getDadosNSS(nss!);
+    if (response.success && response.data.isNotEmpty) {
       UtenteRegister newUtente = UtenteRegister(
         numeroUtenteSaude: _nssController.text,
         email: _emailController.text,

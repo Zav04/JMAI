@@ -1,4 +1,5 @@
 // ignore_for_file: must_be_immutable
+import 'package:JMAI/Class/Requerimento.dart';
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
@@ -55,6 +56,9 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
     }
   }
 
+  TextEditingController _recusadoController = TextEditingController();
+  bool closed = true;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,7 +72,6 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
         children: [
           Stack(
             children: [
-              // Centraliza o texto na Stack
               Align(
                 alignment: Alignment.center,
                 child: Text(
@@ -76,14 +79,12 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              // Posiciona o ícone de refresh no canto direito
               Positioned(
                 right: 0,
                 top: 0,
                 child: IconButton(
                   icon: Icon(Icons.refresh),
                   onPressed: () {
-                    // Sua lógica de recarregamento da tabela
                     widget.updateTable();
                   },
                 ),
@@ -464,8 +465,8 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 220, // Largura do botão
-                    height: 50, // Altura do botão
+                    width: 220,
+                    height: 50,
                     child: TextButton(
                       onPressed: () async {
                         await _submitValidarRequerimento(requerimento.hashedId);
@@ -485,15 +486,17 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                   ),
                   SizedBox(width: 20),
                   SizedBox(
-                    width: 220, // Largura do botão
-                    height: 50, // Altura do botão
+                    width: 220,
+                    height: 50,
                     child: TextButton(
                       onPressed: () async {
-                        await _submitRecusarRequerimento(requerimento.hashedId);
-                        sendEmailRequerimentoRecusado(
-                            requerimento.emailUtente!);
-                        widget.updateTable();
-                        Navigator.of(dialogContext).pop();
+                        await _showRecusarObservacoes(context, requerimento);
+                        if (closed == false) {
+                          await _submitRecusarRequerimento(
+                              requerimento.hashedId);
+                          widget.updateTable();
+                          Navigator.of(dialogContext).pop();
+                        }
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -507,6 +510,93 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                   ),
                 ],
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showRecusarObservacoes(
+      BuildContext context, Requerimento_DadosUtente requerimento) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          surfaceTintColor: bgColor,
+          backgroundColor: bgColor,
+          iconColor: bgColor,
+          shadowColor: bgColor,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Motivos'),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  _recusadoController.clear();
+                  Navigator.of(dialogContext).pop();
+                  setState(() {
+                    closed = true;
+                  });
+                },
+              ),
+            ],
+          ),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: 600,
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              minHeight: 80,
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  TextField(
+                    controller: _recusadoController,
+                    decoration: InputDecoration(
+                      hintText: 'Detalhes da Recusa do Requerimento',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                    maxLines: 5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Concluir Recusa do Requerimento',
+                style: TextStyle(color: buttonTextColor),
+              ),
+              style: TextButton.styleFrom(
+                primary: buttonColor,
+                backgroundColor: buttonColor,
+              ),
+              onPressed: () async {
+                if (_recusadoController.text.isEmpty) {
+                  ErrorAlert.show(
+                      context, 'Por favor preencha o campo de observações');
+                } else {
+                  sendEmailRequerimentoRecusado(
+                      requerimento.emailUtente!, _recusadoController.text);
+                  setState(() {
+                    closed = false;
+                  });
+
+                  Navigator.of(dialogContext).pop();
+                  _recusadoController.clear();
+                }
+              },
             ),
           ],
         );

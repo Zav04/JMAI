@@ -79,7 +79,7 @@ def enviarEmailRequerimentoAceite(receiver_email):
         server.quit()
         
 
-def enviarEmailRequerimentoRecusado(receiver_email):
+def enviarEmailRequerimentoRecusado(receiver_email,observacoes):
     sender_email = os.getenv('EMAIL_SENDER')
     password = os.getenv('EMAIL_PASSWORD')
 
@@ -135,6 +135,8 @@ def enviarEmailRequerimentoRecusado(receiver_email):
         <p>Caro(a),</p>
         <p>Após uma análise cuidadosa, lamentamos informar que o seu requerimento não pôde ser aceite. Esta decisão foi tomada com base em critérios específicos e rigorosos que regem os nossos procedimentos.</p>
         <p>Entendemos que esta notícia possa ser dececionante, e estamos disponíveis para esclarecer quaisquer dúvidas ou fornecer mais informações sobre os motivos desta decisão. Encorajamos a submissão de um novo requerimento no futuro, caso assim o deseje.</p>
+        <p>O requerimento foi rejeitado devido aos seguinte fatores: </p>
+        <p><strong>${observacoes}</strong></p>
         <p>Agradecemos a sua compreensão e interesse nos nossos serviços.</p>
     </div>
     <div class="footer">
@@ -147,6 +149,7 @@ def enviarEmailRequerimentoRecusado(receiver_email):
 
     """
 
+    html = html.replace('${observacoes}', observacoes)
     part2 = MIMEText(html, "html")
     message.attach(part2)
 

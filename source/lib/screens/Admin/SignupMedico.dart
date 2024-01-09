@@ -509,8 +509,7 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
               primary: buttonColor,
               onPrimary: buttonTextColor,
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(30), // Aqui também ajuste o raio
+                borderRadius: BorderRadius.circular(30),
               ),
               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
             ),

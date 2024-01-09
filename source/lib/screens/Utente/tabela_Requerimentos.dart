@@ -108,7 +108,6 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         children: [
           Stack(
             children: [
-              // Centraliza o texto na Stack
               Align(
                 alignment: Alignment.center,
                 child: Text(
@@ -116,14 +115,12 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              // Posiciona o ícone de refresh no canto direito
               Positioned(
                 right: 0,
                 top: 0,
                 child: IconButton(
                   icon: Icon(Icons.refresh),
                   onPressed: () {
-                    // Sua lógica de recarregamento da tabela
                     widget.updateTable();
                   },
                 ),
@@ -861,7 +858,6 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     int? selectedHourIndex;
     final List<int> availableHours = List.generate(13, (index) => 8 + index);
 
-    // Mostra um diálogo com a lista de horários permitidos
     return await showDialog<TimeOfDay>(
       context: context,
       builder: (context) {
@@ -940,7 +936,6 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     DateTime? selectedDate;
     TimeOfDay? selectedTime;
 
-    // Mostra o DatePicker
     selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -950,11 +945,9 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     );
 
     if (selectedDate != null) {
-      // Chama a função personalizada para escolher a hora
       selectedTime = await showCustomTimePicker(context);
 
       if (selectedTime != null) {
-        // Combina a data e a hora em um objeto DateTime
         final combinedDateTime = DateTime(
           selectedDate.year,
           selectedDate.month,

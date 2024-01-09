@@ -18,6 +18,7 @@ from Models.RNU import RNU
 from Models.PreAvalição import PreAvaliacao
 from Models.Agendamento import Agendamento
 from Models.USF import USF
+from Models.Email_Recusado import SendEmail_Recusado
 import httpx
 import json
 
@@ -299,20 +300,6 @@ async def fetch_requirement(hashedid: Search, db: SessionLocal = Depends(get_db)
     
     
 
-
-@post_router.post("/send_email_validar_requerimento/")
-async def send_email_validar_requerimento(sendEmail: SendEmail):
-    try:
-        enviarEmailRequerimentoAceite(sendEmail.email)
-        return {"response": True}
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__['orig'])
-        error_msg = error_msg.split('\n')[0]
-        return {"error": error_msg}
-    except Exception as e:
-        return {"error": str(e)}
-    
-
 @post_router.post("/send_email_agendado/")
 async def send_email_agendado(sendEmail: SendEmail_Agendamento):
     try:
@@ -325,14 +312,11 @@ async def send_email_agendado(sendEmail: SendEmail_Agendamento):
     except Exception as e:
         return {"error": str(e)}
     
-    
-    
-
 
 @post_router.post("/send_email_recusar_requerimento/")
-async def send_email_recusar_requerimento(sendEmail: SendEmail):
+async def send_email_recusar_requerimento(sendEmail: SendEmail_Recusado):
     try:
-        enviarEmailRequerimentoRecusado(sendEmail.email)
+        enviarEmailRequerimentoRecusado(sendEmail.email, sendEmail.observacoes)
         return {"response": True}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])

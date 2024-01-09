@@ -54,7 +54,7 @@ class Utente extends Utilizador {
       sexo: json['sexo'] ?? '',
       morada: json['morada'] ?? '',
       nr_porta: json['nr_porta'] ?? '',
-      nr_andar: json['nr_andar'] as String?, // Permite que seja null
+      nr_andar: json['nr_andar'] as String?,
       nr_codigo_postal: json['codigo_postal'] ?? '',
       dataNascimento: json['data_nascimento'] != null
           ? formatDateString(json['data_nascimento'])

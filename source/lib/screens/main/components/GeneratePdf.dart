@@ -9,7 +9,6 @@ import 'dart:html' as html;
 
 Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
   final pdf = pw.Document();
-  // Carregar a imagem dos assets
   final imageBytes = await rootBundle.load('assets/images/Footer.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
 
@@ -27,8 +26,7 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
                 image,
                 width: 300,
                 height: 150,
-              ) // Ajuste o tamanho conforme necessário
-              ),
+              )),
           pw.Divider(),
           pw.Text('Exmo/a Senhor/a,Diretor/a Executivo/a',
               style:
@@ -113,7 +111,6 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
               _buildCheckBox(requerimento.type == 1),
               _buildTextField(
                   'Multiuso (Decreto-Lei nº 202/96, de 23 de outubro com a redação dada pelo Decreto-Lei nº 174/97 de 19 de julho)'),
-              // ... outros widgets
             ],
           ),
           pw.SizedBox(height: 5),
@@ -122,7 +119,6 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
               _buildCheckBox(requerimento.type == 2),
               _buildTextField(
                   'Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho 2007).'),
-              // ... outros widgets
             ],
           ),
           pw.SizedBox(height: 10),
@@ -134,7 +130,6 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
               _buildCheckBox(requerimento.nuncaSubmetido!),
               _buildTextField(
                   'Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade.'),
-              // ... outros widgets
             ],
           ),
           pw.SizedBox(height: 5),
@@ -162,10 +157,8 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
     ),
   );
 
-  // Salva o documento PDF
   Uint8List pdfInBytes = await pdf.save();
 
-  // Preparando para o download
   final blob = html.Blob([pdfInBytes]);
   final url = html.Url.createObjectUrlFromBlob(blob);
   final anchor = html.AnchorElement(href: url)
@@ -177,7 +170,7 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
 Future<void> preAvalicaoPdf(
     Utente utente, Requerimento requerimento, PreAvalicao preAvalicao) async {
   final pdf = pw.Document();
-  // Carregar a imagem dos assets
+
   final imageBytes = await rootBundle.load('assets/images/Footer.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
 
@@ -195,8 +188,7 @@ Future<void> preAvalicaoPdf(
                 image,
                 width: 300,
                 height: 150,
-              ) // Ajuste o tamanho conforme necessário
-              ),
+              )),
           pw.Divider(),
           pw.Text('Exmo/a Senhor/a,Diretor/a Executivo/a',
               style:
@@ -281,7 +273,6 @@ Future<void> preAvalicaoPdf(
               _buildCheckBox(requerimento.type == 1),
               _buildTextField(
                   'Multiuso (Decreto-Lei nº 202/96, de 23 de outubro com a redação dada pelo Decreto-Lei nº 174/97 de 19 de julho)'),
-              // ... outros widgets
             ],
           ),
           pw.SizedBox(height: 5),
@@ -290,7 +281,6 @@ Future<void> preAvalicaoPdf(
               _buildCheckBox(requerimento.type == 2),
               _buildTextField(
                   'Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho 2007).'),
-              // ... outros widgets
             ],
           ),
           pw.SizedBox(height: 10),
@@ -302,7 +292,6 @@ Future<void> preAvalicaoPdf(
               _buildCheckBox(requerimento.nuncaSubmetido!),
               _buildTextField(
                   'Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade.'),
-              // ... outros widgets
             ],
           ),
           pw.SizedBox(height: 5),
@@ -342,8 +331,7 @@ Future<void> preAvalicaoPdf(
                     image,
                     width: 300,
                     height: 150,
-                  ) // Ajuste o tamanho conforme necessário
-                  ),
+                  )),
               pw.Divider(),
               pw.Text('Relatorio Médico Pré-Avaliação',
                   style: pw.TextStyle(
@@ -377,10 +365,8 @@ Future<void> preAvalicaoPdf(
     ),
   );
 
-  // Salva o documento PDF
   Uint8List pdfInBytes = await pdf.save();
 
-  // Preparando para o download
   final blob = html.Blob([pdfInBytes]);
   final url = html.Url.createObjectUrlFromBlob(blob);
   final anchor = html.AnchorElement(href: url)
@@ -393,18 +379,15 @@ pw.Widget _buildTitle(String title) {
   return pw.Padding(
     padding: pw.EdgeInsets.only(top: 8.0),
     child: pw.Container(
-      width:
-          300, // Isso fará com que o container se expanda para a largura total disponível.
-      alignment:
-          pw.Alignment.center, // Isso centralizará o texto dentro do container.
+      width: 300,
+      alignment: pw.Alignment.center,
       decoration: pw.BoxDecoration(
         border: pw.Border.all(
-          width: 1.0, // Aumente a largura da borda conforme necessário
+          width: 1.0,
         ),
       ),
       child: pw.Padding(
-        padding: pw.EdgeInsets.all(
-            8.0), // Aumente o preenchimento conforme necessário
+        padding: pw.EdgeInsets.all(8.0),
         child: pw.Text(
           title,
           style: pw.TextStyle(
@@ -427,11 +410,11 @@ pw.Widget _buildJustifiedRow(List<pw.Widget> widgets) {
 
 pw.Widget _buildParagraph(String text) {
   return pw.Container(
-    padding: pw.EdgeInsets.all(2.0), // Adiciona algum espaço ao redor do texto
+    padding: pw.EdgeInsets.all(2.0),
     child: pw.Text(
       text,
       style: pw.TextStyle(fontSize: 10),
-      textAlign: pw.TextAlign.justify, // Justifica o texto
+      textAlign: pw.TextAlign.justify,
     ),
   );
 }

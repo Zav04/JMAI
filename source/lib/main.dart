@@ -37,9 +37,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         supportedLocales: [
-          const Locale('en', 'US'), // Inglês
-          const Locale('pt', 'PT'), // Português de Portugal
-          // Adicione outros idiomas que você suportará
+          const Locale('en', 'US'),
+          const Locale('pt', 'PT'),
         ],
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

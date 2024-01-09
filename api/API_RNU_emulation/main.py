@@ -37,23 +37,6 @@ async def RNU_GET_DADOS_BY_NNS(nns_rnu: RNU, db: SessionLocal = Depends(get_db))
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
-    
-    
-@api.post("/RNU_GET_NNS_EXIST/")
-async def RNU_GET_NNS_EXIST(nns_rnu: RNU, db: SessionLocal = Depends(get_db)):
-    try:
-        query = text("SELECT * FROM verificar_utente_existente(:NNS);")
-        result = db.execute(query, {"NNS": nns_rnu.NNS})
-        result = result.scalar()
-        db.commit()
-        return {"response": result}
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__['orig'])
-        error_msg = error_msg.split('\n')[0]
-        return {"error": error_msg}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}
 
 
 

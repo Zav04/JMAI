@@ -61,38 +61,6 @@ Future<APIResponse> getEntidadesResponsaveis() async {
   }
 }
 
-Future<APIResponse> validationNSSUser(int nss) async {
-  String url = dotenv.env['API_URL'].toString() +
-      dotenv.env['RNU_VERIFICAR_EXISTE_NSS'].toString();
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({"NNS": nss}),
-    );
-
-    if (response.statusCode == 200) {
-      var responseBody = utf8.decode(response.bodyBytes);
-      var responseData = jsonDecode(responseBody);
-
-      if (responseData.containsKey('error') && responseData['error'] != null) {
-        return APIResponse(success: false, errorMessage: responseData['error']);
-      } else {
-        return APIResponse(
-          success: true,
-          data: responseData['response'],
-        );
-      }
-    } else {
-      return APIResponse(
-          success: false,
-          errorMessage: 'Erro no servidor: ${response.statusCode}');
-    }
-  } catch (e) {
-    return APIResponse(success: false, errorMessage: e.toString());
-  }
-}
-
 Future<APIResponse> getDadosNSS(int nss) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['RNU_GET_DADOS_NNS'].toString();
@@ -732,14 +700,15 @@ Future<APIResponse> sendEmailRequerimentoAceite(String email) async {
   }
 }
 
-Future<APIResponse> sendEmailRequerimentoRecusado(String email) async {
+Future<APIResponse> sendEmailRequerimentoRecusado(
+    String email, String observacoes) async {
   String url = dotenv.env['API_URL'].toString() +
       dotenv.env['SEND_EMAIL_RECUSAR_REQUERIMENTO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
+      body: jsonEncode({'email': email, 'observacoes': observacoes}),
     );
 
     if (response.statusCode == 200) {

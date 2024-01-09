@@ -149,7 +149,7 @@ class _SignupSecretarioClinicoFormState
                       onPressed: () async {
                         await presentDatePicker(
                             context, _dataDeNascimentoController);
-                      }, // Refer step 3
+                      },
                     ),
                   ),
                   keyboardType: TextInputType.datetime,
@@ -420,8 +420,7 @@ class _SignupSecretarioClinicoFormState
               primary: buttonColor,
               onPrimary: buttonTextColor,
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(30), // Aqui também ajuste o raio
+                borderRadius: BorderRadius.circular(30),
               ),
               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
             ),

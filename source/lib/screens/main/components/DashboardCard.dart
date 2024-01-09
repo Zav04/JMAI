@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/DashboardCardInfo.dart';
 
-// Widget para o cartão do dashboard
 class DashboardCard extends StatelessWidget {
   final DashboardCardInfo info;
 

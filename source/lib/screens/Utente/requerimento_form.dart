@@ -154,9 +154,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                             : (bool? valor) {
                                 setState(() {
                                   _nuncaSubmeti = valor!;
-                                  if (_nuncaSubmeti)
-                                    _jaSubmeti =
-                                        false; // Atualiza _jaSubmeti com base em _nuncaSubmeti
+                                  if (_nuncaSubmeti) _jaSubmeti = false;
                                 });
                               },
                         controlAffinity: ListTileControlAffinity.leading,

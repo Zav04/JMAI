@@ -14,10 +14,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<DashboardCardInfo> cardData = generateRandomCardData();
-    // Substitua 'defaultPadding' pelo valor do seu padding padrão
     double defaultPadding = 20.0;
-
-    // Substitua 'logoImage' pelo seu AssetImage ou NetworkImage conforme necessário
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -26,9 +23,7 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           children: [
             Header(user: user),
-            SizedBox(
-                height: defaultPadding *
-                    2), // Aumenta o espaço entre o logo e os cartões
+            SizedBox(height: defaultPadding * 2),
             Text(
               'Bem Vindo à plataforma',
               style: TextStyle(
@@ -44,18 +39,11 @@ class DashboardScreen extends StatelessWidget {
                 fontSize: 80,
                 color: Color(0xFFD9CAA1),
               ),
-              // Estilos de texto e outras propriedades...
             ),
-
-            SizedBox(
-                height: defaultPadding *
-                    10), // Aumenta o espaço entre o texto e os cartões
-            // Aqui você pode começar a adicionar os cartões do novo dashboard
+            SizedBox(height: defaultPadding * 10),
             GridView.builder(
-              physics:
-                  NeverScrollableScrollPhysics(), // Para evitar rolagem dentro da GridView
-              shrinkWrap:
-                  true, // Para limitar a GridView ao espaço ocupado pelos seus filhos
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: defaultPadding,
@@ -66,7 +54,6 @@ class DashboardScreen extends StatelessWidget {
               itemBuilder: (context, index) =>
                   DashboardCard(info: cardData[index]),
             ),
-            // Outros widgets podem seguir aqui...
           ],
         ),
       ),

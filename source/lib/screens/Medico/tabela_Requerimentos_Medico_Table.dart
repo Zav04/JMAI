@@ -1,5 +1,4 @@
 // ignore_for_file: must_be_immutable
-
 import 'package:JMAI/Class/ClassesForData.dart';
 import 'package:JMAI/Class/Medico.dart';
 import 'package:JMAI/Class/Utilizador.dart';
@@ -103,7 +102,6 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
         children: [
           Stack(
             children: [
-              // Centraliza o texto na Stack
               Align(
                 alignment: Alignment.center,
                 child: Text(
@@ -111,14 +109,12 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              // Posiciona o ícone de refresh no canto direito
               Positioned(
                 right: 0,
                 top: 0,
                 child: IconButton(
                   icon: Icon(Icons.refresh),
                   onPressed: () {
-                    // Sua lógica de recarregamento da tabela
                     widget.updateTable();
                   },
                 ),
@@ -499,8 +495,8 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 220, // Largura do botão
-                    height: 50, // Altura do botão
+                    width: 220,
+                    height: 50,
                     child: TextButton(
                       onPressed: () async {
                         await _showPreAvalicaoDialog(context, requerimento);
@@ -610,7 +606,6 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
                 backgroundColor: buttonColor,
               ),
               onPressed: () async {
-                print(medico.hashedId);
                 var response = await _submitPreAvalicao(requerimento, medico);
                 if (response) {
                   Navigator.of(dialogContext).pop();
@@ -632,13 +627,11 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
       Requerimento_DadosUtente requerimento, Medico medico) async {
     String preAvaliacaoText = _preavalicaoValor.text;
 
-    // Verifica se o campo de pré-avaliação está vazio
     if (preAvaliacaoText.isEmpty) {
       ErrorAlert.show(context, 'Preencha o campo Pre Avaliação');
       return false;
     }
 
-    // Verifica se o valor é numérico e está dentro do intervalo permitido
     double? preAvaliacaoValue = double.tryParse(preAvaliacaoText);
     if (preAvaliacaoValue == null ||
         preAvaliacaoValue < 0.00 ||
@@ -647,7 +640,6 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
       return false;
     }
 
-    // Verifica se o valor não termina com um ponto
     if (preAvaliacaoText.endsWith('.')) {
       ErrorAlert.show(context, 'Formato inválido. Não termine com um ponto.');
       return false;
