@@ -848,6 +848,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
         await agendarJuntaMedicaRequerimento(strData, requerimento.hashedId);
     if (response.success) {
       widget.updateTable();
+      sendEmailAgendado(utente.email, formatTimestampString(strData));
       SuccessAlert.show(context, 'Junta médica agendada com sucesso');
     } else {
       widget.updateTable();

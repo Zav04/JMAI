@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juntas Medicas USF</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
+    integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+  <form action="" method="post">
+
+    <h1>Junta Medicas USF</h1>
+
+    <fieldset>
+      <legend><span class="number">1</span>Informação Utente</legend>
+
+      <div class="mt-4">
+        <input class="form-control" type="email" id="email" name="email" placeholder="Email">
+
+        <input class="form-control" type="password" id="password" name="password" placeholder="Palavra-Passe">
+
+        <input class="form-control" type="number" id="numeroUtente" name="numero_utente" placeholder="Numero Utente">
+      </div>
+
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="number">2</span>Informação Requerimento</legend>
+
+      <!-- Radio Button for tipo requerimento -->
+      <label for="tipo_requerimento">Tipo de Requerimento:</label>
+      <br />
+      <input type="radio" id="tipo_requerimento" name="tipo_requerimento" value="multiuso">
+      <label for="tipo_requerimento">Multiuso</label>
+      <br />
+      <input type="radio" id="tipo_requerimento" name="tipo_requerimento" value="veiculo">
+      <label for="tipo_requerimento">Veiculo</label>
+      <br />
+
+      <!-- Radio Button for Tipo Submissão -->
+      <label for="tipo_submissao">Tipo de Submissão:</label>
+      <br />
+      <input type="radio" id="tipo_submissao" name="tipo_submissao" value="primeira_vez">
+      <label for="tipo_submissao">Primeira Vez</label>
+      <br />
+      <input type="radio" id="tipo_submissao" name="tipo_submissao" value="segunda_vez">
+      <label for="tipo_submissao">Avaliação</label>
+      <br />
+
+      <!-- Show data picker if tipo_submissao == "segunda_vez" -->
+      <div class="mt-2 d-none" id="div_data">
+        <label for="data_avaliacao">Data de Avaliação Anterior:</label>
+        <input class="form-control" type="text" id="data_avaliacao" name="data_avaliacao" placeholder="Data de Avaliação Anterior">
+      </div>
+
+      <!-- Checkbox to confirm the terms -->
+      <div class="mt-4">
+        <input type="checkbox" id="terms" name="terms" value="termos">
+        <label for="terms">Aceito os termos e condições</label>
+      </div>
+
+    </fieldset>
+
+
+
+    <button type="submit">Enviar Requerimento</button>
+
+  </form>
+</body>
+
+<script>
+  toastr.options = {
+    "closeButton": false,
+    "progressBar": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": true,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+  }
+
+  flatpickr("#data_avaliacao", {
+    enableTime: false,
+    dateFormat: "d-m-Y",
+    maxDate: "today",
+  });
+
+  var numeroUtente = document.getElementById("numeroUtente");
+  numeroUtente.addEventListener("keyup", function () {
+    if (numeroUtente.value.length > 9) {
+      numeroUtente.value = numeroUtente.value.slice(0, 9);
+    }
+  });
+
+  var tipoSubmissao = document.getElementsByName("tipo_submissao");
+  var dataAvaliacao = document.getElementById("div_data");
+  tipoSubmissao.forEach(function (radio) {
+    radio.addEventListener("click", function () {
+      if (radio.value == "segunda_vez") {
+        dataAvaliacao.classList.remove("d-none");
+      } else {
+        dataAvaliacao.classList.add("d-none");
+        document.getElementById("data_avaliacao").value = "";
+      }
+    });
+  });
+</script>
+
+<script>
+  const form = document.querySelector("form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    console.log(data);
+    fetch("http://localhost:8000/USF_insert/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if(data.response === true){
+          toastr.success("Requerimento enviado com sucesso!", "Sucesso!");
+        form.reset();
+        }else{
+          toastr.error(data.error, "Erro!");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+</script>
+
+</html>
