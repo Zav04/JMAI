@@ -762,6 +762,36 @@ Future<APIResponse> sendEmailRequerimentoRecusado(String email) async {
   }
 }
 
+Future<APIResponse> sendEmailAgendado(String email, String agendamento) async {
+  String url = dotenv.env['API_URL'].toString() +
+      dotenv.env['SEND_EMAIL_AGENDADO'].toString();
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'agendamento': agendamento}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      var responseData = jsonDecode(responseBody);
+
+      if (responseData.containsKey('error') && responseData['error'] != null) {
+        return APIResponse(success: false, errorMessage: responseData['error']);
+      } else {
+        return APIResponse(
+          success: true,
+          data: responseData['response'],
+        );
+      }
+    } else {
+      return APIResponse(success: false);
+    }
+  } catch (e) {
+    return APIResponse(success: false, errorMessage: e.toString());
+  }
+}
+
 Future<APIResponse> sendEmailPreAvaliacao(
     String email, double preavalicao) async {
   String url = dotenv.env['API_URL'].toString() +

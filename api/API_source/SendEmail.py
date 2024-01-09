@@ -221,6 +221,7 @@ def enviarEmailPreAvaliação(receiver_email, grau_incapacidade):
         <p>Com os melhores cumprimentos,</p>
         <p>JMAI</p>
     </div>
+    
     </div>
     </body>
     </html>
@@ -228,6 +229,81 @@ def enviarEmailPreAvaliação(receiver_email, grau_incapacidade):
 
     grau_incapacidade_str = str(grau_incapacidade)
     html = html.replace('${grau_incapacidade}', grau_incapacidade_str)
+
+    part2 = MIMEText(html, "html")
+    message.attach(part2)
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
+        server.quit()
+        
+def enviarEmailAgendamento(receiver_email, data_agendamento):
+    sender_email = os.getenv('EMAIL_SENDER')
+    password = os.getenv('EMAIL_PASSWORD')
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Confirmação de Agendamento de Junta Médica" 
+    message["From"] = sender_email
+    message["To"] = receiver_email
+
+    html = f"""\
+    <html>
+    <head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            background: #009688;
+            color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+            border-radius: 7px 7px 0 0;
+        }}
+        .content {{
+            padding: 20px;
+            text-align: center;
+        }}
+        .footer {{
+            text-align: center;
+            padding: 10px 0;
+            color: #aaa;
+        }}
+    </style>
+    </head>
+    <body>
+    <div class="container">
+        <div class="header">
+            <h2>Agendamento de Junta Médica</h2>
+        </div>
+        <div class="content">
+            <p>Prezado(a),</p>
+            <p>É com prazer que confirmamos o agendamento da sua Junta Médica.</p>
+            <p>A sua Junta Medica está marcada para: <strong>{data_agendamento}</strong>.</p>
+            <p>Por favor, certifique-se de levar todos os documentos necessários e chegar ao local e ao horário marcado.</p>
+            <p>Obrigado por preferir os nossos serviços!</p>
+        </div>
+        <div class="footer">
+        <p>Com os melhores cumprimentos,</p>
+        <p>JMAI</p>
+        </div>
+    </div>
+    </body>
+    </html>
+    """
 
     part2 = MIMEText(html, "html")
     message.attach(part2)
