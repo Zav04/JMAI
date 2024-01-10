@@ -14,6 +14,7 @@ import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:intl/intl.dart';
 import 'package:JMAI/screens/main/components/DecimalInputFormatter.dart';
+import 'package:JMAI/overlay/WarningAlert.dart';
 
 class RequerimentosMedicoTable extends StatefulWidget {
   final Utilizador user;
@@ -628,7 +629,7 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
     String preAvaliacaoText = _preavalicaoValor.text;
 
     if (preAvaliacaoText.isEmpty) {
-      ErrorAlert.show(context, 'Preencha o campo Pre Avaliação');
+      WarningAlert.show(context, 'Preencha o campo Pre Avaliação');
       return false;
     }
 
@@ -636,12 +637,12 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
     if (preAvaliacaoValue == null ||
         preAvaliacaoValue < 0.00 ||
         preAvaliacaoValue > 99.99) {
-      ErrorAlert.show(context, 'O valor deve estar entre 0 e 99.99');
+      WarningAlert.show(context, 'O valor deve estar entre 0 e 99.99');
       return false;
     }
 
     if (preAvaliacaoText.endsWith('.')) {
-      ErrorAlert.show(context, 'Formato inválido. Não termine com um ponto.');
+      WarningAlert.show(context, 'Formato inválido. Não termine com um ponto.');
       return false;
     }
 

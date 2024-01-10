@@ -13,6 +13,7 @@ import 'package:JMAI/Class/SecretarioClinico.dart';
 import 'package:JMAI/Class/Admin.dart';
 import 'package:flutter/services.dart';
 import 'package:JMAI/Class/ClassesForData.dart';
+import 'package:JMAI/overlay/WarningAlert.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -268,7 +269,7 @@ class _LoginScreen extends State<LoginScreen> {
       if (_nssController.text.isNotEmpty) {
         nss = int.parse(_nssController.text);
       } else {
-        ErrorAlert.show(
+        WarningAlert.show(
             context, 'O campo Número de Saúde não pode estar vazio');
         return false;
       }
@@ -304,7 +305,7 @@ class _LoginScreen extends State<LoginScreen> {
         return false;
       }
     } else {
-      ErrorAlert.show(
+      WarningAlert.show(
           context, 'O Número de Saúde inserido não existe no sistema do RNU');
       return false;
     }
@@ -385,7 +386,7 @@ class _LoginScreen extends State<LoginScreen> {
   Future<bool> submitResetPassword() async {
     var response = await verifyEmailExist(_emailController.text);
     if (response.success && response.data == false) {
-      ErrorAlert.show(context, 'Este email não está registado no sistema');
+      WarningAlert.show(context, 'Este email não está registado no sistema');
       return false;
     } else if (response.success && response.data == true) {
       response = await resetPassword(_emailController.text);

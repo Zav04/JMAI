@@ -1,5 +1,4 @@
 // ignore_for_file: must_be_immutable
-import 'package:JMAI/Class/Requerimento.dart';
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
@@ -11,6 +10,7 @@ import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:intl/intl.dart';
+import 'package:JMAI/overlay/WarningAlert.dart';
 
 class RequerimentosSCTable extends StatefulWidget {
   final List<Requerimento_DadosUtente> requerimentos;
@@ -584,8 +584,11 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               ),
               onPressed: () async {
                 if (_recusadoController.text.isEmpty) {
-                  ErrorAlert.show(
+                  WarningAlert.show(
                       context, 'Por favor preencha o campo de observações');
+                  setState(() {
+                    closed = true;
+                  });
                 } else {
                   sendEmailRequerimentoRecusado(
                       requerimento.emailUtente!, _recusadoController.text);
@@ -657,7 +660,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
     if (await canLaunch(url)) {
       await launch(url, webOnlyWindowName: '_blank');
     } else {
-      ErrorAlert.show(context, 'Não foi possível abrir o documento');
+      WarningAlert.show(context, 'Não foi possível abrir o documento');
     }
   }
 
