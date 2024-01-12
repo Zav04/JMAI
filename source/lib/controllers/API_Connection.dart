@@ -5,8 +5,8 @@ import 'package:JMAI/Class/APIResponse.dart';
 import 'package:JMAI/Class/ClassesForData.dart';
 
 Future<APIResponse> checkConnection() async {
-  String url =
-      dotenv.env['API_URL'].toString() + dotenv.env['CONNECTED'].toString();
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
+      dotenv.env['CONNECTED'].toString();
   try {
     final response = await http.get(Uri.parse(url));
 
@@ -33,7 +33,7 @@ Future<APIResponse> checkConnection() async {
 }
 
 Future<APIResponse> getEntidadesResponsaveis() async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['G_ENTIDADES_RESPONSAVEIS'].toString();
   try {
     final response = await http.get(Uri.parse(url));
@@ -62,7 +62,7 @@ Future<APIResponse> getEntidadesResponsaveis() async {
 }
 
 Future<APIResponse> getDadosNSS(int nss) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['RNU_GET_DADOS_NNS'].toString();
   try {
     final response = await http.post(
@@ -94,8 +94,8 @@ Future<APIResponse> getDadosNSS(int nss) async {
 }
 
 Future<APIResponse> createUser(UtenteRegister utente) async {
-  String url =
-      dotenv.env['API_URL'].toString() + dotenv.env['CREATE_USER'].toString();
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
+      dotenv.env['CREATE_USER'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -126,7 +126,7 @@ Future<APIResponse> createUser(UtenteRegister utente) async {
 }
 
 Future<APIResponse> validationEditUser(UtenteRegister utente) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['VALIDATION_EDIT_USER'].toString();
   try {
     final response = await http.put(
@@ -159,7 +159,7 @@ Future<APIResponse> validationEditUser(UtenteRegister utente) async {
 
 Future<APIResponse> validationCreateSecretarioClinico(
     SecretarioClinicoRegister secretarioClinico) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['VALIDATION_CREATE_SECRETARIO_CLINICO'].toString();
   try {
     final response = await http.post(
@@ -191,7 +191,7 @@ Future<APIResponse> validationCreateSecretarioClinico(
 }
 
 Future<APIResponse> validationCreateMedico(MedicoRegister medico) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['VALIDATION_CREATE_MEDICO'].toString();
   try {
     final response = await http.post(
@@ -223,7 +223,7 @@ Future<APIResponse> validationCreateMedico(MedicoRegister medico) async {
 }
 
 Future<APIResponse> loadEspecialidades() async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['LOAD_ESPECIALIDADE'].toString();
   try {
     final response = await http.get(Uri.parse(url));
@@ -252,7 +252,7 @@ Future<APIResponse> loadEspecialidades() async {
 }
 
 Future<APIResponse> singin(String email, String password) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['FIREBASE_SIGIN'].toString();
   try {
     final response = await http.post(
@@ -282,8 +282,8 @@ Future<APIResponse> singin(String email, String password) async {
 }
 
 Future<APIResponse> verifyEmailExist(String email) async {
-  String url =
-      dotenv.env['API_URL'].toString() + dotenv.env['V_EMAIL_EXIST'].toString();
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
+      dotenv.env['V_EMAIL_EXIST'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -312,7 +312,7 @@ Future<APIResponse> verifyEmailExist(String email) async {
 }
 
 Future<APIResponse> resetPassword(String email) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['FIREBASE_FORGOTPASSWORD'].toString();
   try {
     final response = await http.post(
@@ -342,8 +342,8 @@ Future<APIResponse> resetPassword(String email) async {
 }
 
 Future<APIResponse> login(String email, String password) async {
-  String url =
-      dotenv.env['API_URL'].toString() + dotenv.env['FULL_LOGIN'].toString();
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
+      dotenv.env['FULL_LOGIN'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -372,8 +372,8 @@ Future<APIResponse> login(String email, String password) async {
 }
 
 Future<APIResponse> getUserRole(String email) async {
-  String url =
-      dotenv.env['API_URL'].toString() + dotenv.env['GETUSERINFO'].toString();
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
+      dotenv.env['GETUSERINFO'].toString();
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -402,7 +402,7 @@ Future<APIResponse> getUserRole(String email) async {
 }
 
 Future<APIResponse> getUtenteInfo(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_UTENTE_INFO'].toString();
   try {
     final response = await http.post(
@@ -432,7 +432,7 @@ Future<APIResponse> getUtenteInfo(String hashed_id) async {
 }
 
 Future<APIResponse> getMedicoInfo(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_MEDIC_INFO'].toString();
   try {
     final response = await http.post(
@@ -462,7 +462,7 @@ Future<APIResponse> getMedicoInfo(String hashed_id) async {
 }
 
 Future<APIResponse> getSecretarioClinicoInfo(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_SECRETARIA_CLINICO_INFO'].toString();
   try {
     final response = await http.post(
@@ -493,7 +493,7 @@ Future<APIResponse> getSecretarioClinicoInfo(String hashed_id) async {
 
 Future<APIResponse> insertRequerimento(
     RequerimentoRegister requerimento) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['INSERT_REQUIREMENT'].toString();
   try {
     final response = await http.post(
@@ -523,7 +523,7 @@ Future<APIResponse> insertRequerimento(
 }
 
 Future<APIResponse> fetchRequerimentos(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['FETCH_REQUIREMENT'].toString();
   try {
     final response = await http.post(
@@ -553,7 +553,7 @@ Future<APIResponse> fetchRequerimentos(String hashed_id) async {
 }
 
 Future<APIResponse> getRequerimentosUtenteStatusZero() async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_REQUERIMENTOS_UTENTE_STATUS_ZERO'].toString();
   try {
     final response = await http.get(Uri.parse(url));
@@ -582,7 +582,7 @@ Future<APIResponse> getRequerimentosUtenteStatusZero() async {
 }
 
 Future<APIResponse> getRequerimentosUtenteStatusone() async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_REQUERIMENTOS_UTENTE_STATUS_ONE'].toString();
   try {
     final response = await http.get(Uri.parse(url));
@@ -611,7 +611,7 @@ Future<APIResponse> getRequerimentosUtenteStatusone() async {
 }
 
 Future<APIResponse> validarRequerimento(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['VALIDAR_REQUERIMENTO'].toString();
   try {
     final response = await http.put(
@@ -641,7 +641,7 @@ Future<APIResponse> validarRequerimento(String hashed_id) async {
 }
 
 Future<APIResponse> recusarRequerimento(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['RECUSAR_REQUERIMENTO'].toString();
   try {
     final response = await http.put(
@@ -671,7 +671,7 @@ Future<APIResponse> recusarRequerimento(String hashed_id) async {
 }
 
 Future<APIResponse> sendEmailRequerimentoAceite(String email) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['SEND_EMAIL_VALIDAR_REQUERIMENTO'].toString();
   try {
     final response = await http.post(
@@ -702,7 +702,7 @@ Future<APIResponse> sendEmailRequerimentoAceite(String email) async {
 
 Future<APIResponse> sendEmailRequerimentoRecusado(
     String email, String observacoes) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['SEND_EMAIL_RECUSAR_REQUERIMENTO'].toString();
   try {
     final response = await http.post(
@@ -732,7 +732,7 @@ Future<APIResponse> sendEmailRequerimentoRecusado(
 }
 
 Future<APIResponse> sendEmailAgendado(String email, String agendamento) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['SEND_EMAIL_AGENDADO'].toString();
   try {
     final response = await http.post(
@@ -763,7 +763,7 @@ Future<APIResponse> sendEmailAgendado(String email, String agendamento) async {
 
 Future<APIResponse> sendEmailPreAvaliacao(
     String email, double preavalicao) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['SEND_EMAIL_PREAVALICAO'].toString();
   try {
     final response = await http.post(
@@ -793,7 +793,7 @@ Future<APIResponse> sendEmailPreAvaliacao(
 }
 
 Future<APIResponse> insertPreavliacao(PreAvalicaoRegister preavalicao) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['INSERT_PREAVALIACAO'].toString();
   try {
     final response = await http.post(
@@ -823,7 +823,7 @@ Future<APIResponse> insertPreavliacao(PreAvalicaoRegister preavalicao) async {
 }
 
 Future<APIResponse> getDadosPreAvalicao(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_DADOS_PREAVALICAO'].toString();
   try {
     final response = await http.post(
@@ -853,7 +853,7 @@ Future<APIResponse> getDadosPreAvalicao(String hashed_id) async {
 }
 
 Future<APIResponse> acceptJuntaMedicaRequerimento(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['ACCEPT_JUNTA_MEDICA_REQUERIMENTO'].toString();
   try {
     final response = await http.put(
@@ -883,7 +883,7 @@ Future<APIResponse> acceptJuntaMedicaRequerimento(String hashed_id) async {
 }
 
 Future<APIResponse> declineJuntaMedicaRequerimento(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['DECLINE_JUNTA_MEDICA_REQUERIMENTO'].toString();
   try {
     final response = await http.put(
@@ -914,7 +914,7 @@ Future<APIResponse> declineJuntaMedicaRequerimento(String hashed_id) async {
 
 Future<APIResponse> agendarJuntaMedicaRequerimento(
     String data, String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['AGENDAR_JUNTA_MEDICA_REQUERIMENTO'].toString();
   try {
     final response = await http.post(
@@ -944,7 +944,7 @@ Future<APIResponse> agendarJuntaMedicaRequerimento(
 }
 
 Future<APIResponse> getAgendamentoJuntaMedica(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['GET_DATA_AGENDAMENTO_JUNTA_MEDICA'].toString();
   try {
     final response = await http.post(
@@ -974,7 +974,7 @@ Future<APIResponse> getAgendamentoJuntaMedica(String hashed_id) async {
 }
 
 Future<APIResponse> verificarRequerimentoExistente(String hashed_id) async {
-  String url = dotenv.env['API_URL'].toString() +
+  String url = dotenv.env['API_URL_ANDROID'].toString() +
       dotenv.env['VERIFICAR_REQUERIMENTO_EXISTENTE'].toString();
   try {
     final response = await http.post(

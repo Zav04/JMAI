@@ -13,8 +13,6 @@ import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/Class/DateTime.dart';
 import 'package:JMAI/screens/main/components/Descriptions.dart';
-import 'dart:math';
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -234,7 +232,8 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                       await preAvalicaoPdf(
                                           utente, requerimento, preAvalicao);
                                     }
-                                    if (requerimento.status == 3) {
+                                    if (requerimento.status == 3 ||
+                                        requerimento.status == 4) {
                                       if (requerimento.status >= 2 &&
                                           requerimento.status <= 6) {
                                         await preAvalicaoData(

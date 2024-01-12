@@ -122,17 +122,41 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
               ),
             ],
           ),
-          SizedBox(
-            width: double.infinity,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: DataTable(
               columnSpacing: defaultPadding,
               columns: const [
-                DataColumn(label: Text('CODIGO')),
-                DataColumn(label: Text('NOME DO UTENTE')),
-                DataColumn(label: Text('NÚMERO DE SAÚDE')),
-                DataColumn(label: Text('TIPO REQUERIMENTO')),
-                DataColumn(label: Text('DATA DO PEDIDO')),
-                DataColumn(label: Text('AÇÕES')),
+                DataColumn(
+                    label: Text(
+                  'CODIGO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'NOME DO UTENTE',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'NÚMERO DE SAÚDE',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'TIPO REQUERIMENTO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'DATA DO PEDIDO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'AÇÕES',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
               ],
               rows: sortRequerimentos()
                   .map((requerimento) => DataRow(
@@ -197,7 +221,7 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
                   'DETALHES DO REQUERIMENTO',
                   style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 20,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -428,27 +452,19 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
                                         ' e requer reavaliação'),
                                 SizedBox(height: 5),
                               ],
-                              Row(
-                                children: [
-                                  Text('Tipo do Requerimento: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  tipoRequerimentoBlend.widget,
-                                ],
-                              ),
+                              Text('Tipo do Requerimento: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              tipoRequerimentoBlend.widget,
                               SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Estado do Requerimento: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
-                                  ),
-                                  estadoRequerimentoBlend.widget,
-                                ],
+                              Text(
+                                'Estado do Requerimento: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey),
                               ),
+                              estadoRequerimentoBlend.widget,
                               SizedBox(height: 2),
                               Divider(
                                 color: Colors.white,
@@ -538,8 +554,10 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Pre Avaliação - REQ/' +
-                  requerimento.idRequerimento.toString()),
+              Text(
+                'Pre Avaliação - REQ/' + requerimento.idRequerimento.toString(),
+                style: TextStyle(fontSize: 20),
+              ),
               IconButton(
                 icon: Icon(Icons.close),
                 onPressed: () {
@@ -552,10 +570,10 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
           ),
           content: ConstrainedBox(
             constraints: BoxConstraints(
-              minWidth: 600,
-              maxWidth: MediaQuery.of(context).size.width * 0.8,
-              minHeight: 80,
-              maxHeight: MediaQuery.of(context).size.height * 0.6,
+              minWidth: MediaQuery.of(context).size.width * 0.3,
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+              minHeight: MediaQuery.of(context).size.width * 0.2,
+              maxHeight: MediaQuery.of(context).size.height * 0.5,
             ),
             child: SingleChildScrollView(
               child: ListBody(
@@ -762,14 +780,14 @@ class _RequerimentosMedicoState extends State<RequerimentosMedicoTable> {
               Expanded(
                 child: Text(fileName, overflow: TextOverflow.ellipsis),
               ),
-              SizedBox(width: 20),
+              SizedBox(width: 2),
               ElevatedButton(
                   child: Text('Download'),
                   onPressed: () => openDocument(documento),
                   style: ElevatedButton.styleFrom(
                     primary: buttonColor,
                     onPrimary: buttonTextColor,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),

@@ -752,7 +752,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                   style: ElevatedButton.styleFrom(
                     primary: buttonColor,
                     onPrimary: buttonTextColor,
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
