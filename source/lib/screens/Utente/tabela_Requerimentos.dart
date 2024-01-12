@@ -5,7 +5,6 @@ import 'package:JMAI/Class/Requerimento.dart';
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:JMAI/Class/Utente.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +13,12 @@ import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/controllers/API_Connection.dart';
 import 'package:JMAI/Class/DateTime.dart';
 import 'package:JMAI/screens/main/components/Descriptions.dart';
+import 'dart:math';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class RequerimentosTable extends StatefulWidget {
   final Utilizador user;
@@ -127,17 +132,18 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
               ),
             ],
           ),
-          SizedBox(
-            width: double.infinity,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal, // Habilita a rolagem horizontal
             child: DataTable(
               columnSpacing: defaultPadding,
               columns: const [
                 DataColumn(
-                    label: Text(
-                  'CODIGO',
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                )),
+                  label: Text(
+                    'CODIGO',
+                    style: TextStyle(fontSize: 20, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 DataColumn(
                     label: Text(
                   'TIPO REQUERIMENTO',
@@ -168,6 +174,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                         cells: [
                           DataCell(Text(
                             'REQ/' + requerimento.id.toString(),
+                            style: TextStyle(fontSize: 15, color: Colors.white),
                           )),
                           DataCell(Blend(getTypeDescription(requerimento.type))
                               .widget),
@@ -318,7 +325,7 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                   'DETALHES DO REQUERIMENTO',
                   style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 20,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -518,27 +525,19 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                               buildRichText('Data do Pedido: ',
                                   requerimento.data.toString()),
                               SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text('Tipo do Requerimento: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  tipoRequerimentoBlend.widget,
-                                ],
-                              ),
+                              Text('Tipo do Requerimento: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              tipoRequerimentoBlend.widget,
                               SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Estado do Requerimento: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
-                                  ),
-                                  estadoRequerimentoBlend.widget,
-                                ],
+                              Text(
+                                'Estado do Requerimento: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey),
                               ),
+                              estadoRequerimentoBlend.widget,
                               SizedBox(height: 5),
                               buildRichText(
                                   'Ja foi submetido a um Junta Medica?: ',
@@ -704,11 +703,26 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
     );
   }
 
-  Future<void> openDocument(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url, webOnlyWindowName: '_blank');
+  Future<void> downloadAndOpenFile(String url) async {
+    // Verificar permissão de armazenamento
+    var status = await Permission.storage.request();
+    if (status.isGranted) {
+      try {
+        // Obter o diretório de download
+        final directory = await getExternalStorageDirectory();
+        final filePath = '${directory!.path}/${url.split('/').last}';
+
+        // Baixar o arquivo
+        Dio dio = Dio();
+        await dio.download(url, filePath);
+
+        // Abrir o arquivo baixado
+        OpenFile.open(filePath);
+      } catch (e) {
+        print("Erro ao baixar o arquivo: $e");
+      }
     } else {
-      ErrorAlert.show(context, 'Não foi possível abrir o documento');
+      print("Permissão de armazenamento negada");
     }
   }
 
@@ -766,14 +780,14 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
               Expanded(
                 child: Text(fileName, overflow: TextOverflow.ellipsis),
               ),
-              SizedBox(width: 20),
+              SizedBox(width: 2),
               ElevatedButton(
                   child: Text('Download'),
-                  onPressed: () => openDocument(documento),
+                  onPressed: () => downloadAndOpenFile(documento),
                   style: ElevatedButton.styleFrom(
                     primary: buttonColor,
                     onPrimary: buttonTextColor,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),

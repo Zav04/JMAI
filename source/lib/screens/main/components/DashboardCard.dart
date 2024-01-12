@@ -19,7 +19,7 @@ class DashboardCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(info.icon, color: Colors.white, size: 40),
+                Icon(info.icon, color: Colors.white, size: 25),
                 SizedBox(height: 10),
                 Text(
                   info.value,
@@ -40,7 +40,7 @@ class DashboardCard extends StatelessWidget {
             bottom: 8,
             child: Text(
               '*Dados ilustrativos',
-              style: TextStyle(color: Colors.white54, fontSize: 10),
+              style: TextStyle(color: Colors.white54, fontSize: 8),
             ),
           ),
         ],

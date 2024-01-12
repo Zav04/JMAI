@@ -14,7 +14,12 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<DashboardCardInfo> cardData = generateRandomCardData();
-    double defaultPadding = 20.0;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double defaultPadding = screenWidth < 600 ? 10.0 : 20.0;
+    int gridCount = screenWidth < 600
+        ? 2
+        : 4; // Colunas para dispositivos móveis ou desktop
+    double fontSize = screenWidth < 600 ? 57 : 80; // Tamanho da fonte adaptável
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -23,12 +28,12 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           children: [
             Header(user: user),
-            SizedBox(height: defaultPadding * 2),
+            SizedBox(height: defaultPadding),
             Text(
               'Bem Vindo à plataforma',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 80,
+                fontSize: fontSize,
                 color: Color(0xFF668239),
               ),
             ),
@@ -36,16 +41,16 @@ class DashboardScreen extends StatelessWidget {
               'JMAI - Juntas Médicas',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 80,
+                fontSize: fontSize,
                 color: Color(0xFFD9CAA1),
               ),
             ),
-            SizedBox(height: defaultPadding * 10),
+            SizedBox(height: defaultPadding * 2),
             GridView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
+                crossAxisCount: gridCount,
                 crossAxisSpacing: defaultPadding,
                 mainAxisSpacing: defaultPadding,
                 childAspectRatio: 1.5,

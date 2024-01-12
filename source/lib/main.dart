@@ -2,7 +2,6 @@ import 'package:JMAI/controllers/MenuAppController.dart';
 import 'package:JMAI/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_strategy/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:JMAI/screens/main/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,7 +20,6 @@ final FirebaseOptions firebaseOptions = FirebaseOptions(
 );
 
 void main() async {
-  setPathUrlStrategy();
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: firebaseOptions);

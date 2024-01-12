@@ -30,7 +30,6 @@ dependencies:
   fl_chart: ^0.62.0
   provider: ^6.0.5
   cupertino_icons: ^1.0.2
-  url_strategy: ^0.2.0
   firebase_core: any
   cloud_firestore: ^4.8.2
   firebase_auth: ^4.15.3
@@ -38,8 +37,6 @@ dependencies:
   font_awesome_flutter: ^10.6.0
   intl: ^0.18.0
   flutter_dotenv: ^5.1.0
-  html: ^0.15.4
-  universal_html: ^2.2.4
   file_picker: ^6.1.1
   http: ^1.1.2
   url_launcher: ^6.0.10
@@ -49,6 +46,10 @@ dependencies:
   table_calendar: ^3.0.0
   flutter_localization: ^0.2.0
   flutter_launcher_icons: ^0.13.1
+  share_plus: ^7.1.0
+  dio: ^5.4.0
+  open_file: ^3.3.2
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   flutter_test:
@@ -63,18 +64,22 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/
-    - assets/icons/
     - .env
-    - assets/images/pdf_icon.svg
+    - assets/icons/
+    - assets/images/
+    - assets/images/Footer.png
+    - assets/images/admin.png
+    - assets/images/desconhecido_icon.svg
     - assets/images/docx_icon.svg
     - assets/images/excel_icon.svg
     - assets/images/images_icon.svg
-    - assets/images/desconhecido_icon.svg
-    - assets/images/Footer.png
+    - assets/images/medico.png
+    - assets/images/pdf_icon.svg
+    - assets/images/secretario_clinico.png
+    - assets/images/utente.png
 
   fonts:
-    - family: NotoSans
+    - family: NotoSans-Regular
       fonts:
         - asset: assets/fonts/NotoSans-Regular.ttf
 

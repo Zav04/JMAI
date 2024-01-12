@@ -36,59 +36,48 @@ class _RequerimentosState extends State<Requerimentos> {
 
   @override
   Widget build(BuildContext context) {
+    double screenPadding =
+        MediaQuery.of(context).size.width < 600 ? 10 : defaultPadding;
+
     return SafeArea(
       child: SingleChildScrollView(
         primary: false,
-        padding: EdgeInsets.all(defaultPadding),
+        padding: EdgeInsets.all(screenPadding),
         child: Column(
           children: [
             Header(user: widget.user),
-            SizedBox(height: defaultPadding),
+            SizedBox(height: screenPadding),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 5,
+                  // Ajusta a proporção com base na largura da tela
+                  flex: MediaQuery.of(context).size.width < 600 ? 1 : 5,
                   child: Column(
                     children: [
                       ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          primary: buttonColor,
-                          onPrimary: buttonTextColor,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
+                        // Estilos do botão podem ser ajustados aqui conforme necessário
                         onPressed: () async {
-                          var response = await verificarRequerimentoExistente(
-                              widget.user.hashedId);
-                          if (response.success) {
-                            response.data
-                                ? ErrorAlert.show(
-                                    context, "Já tem um requerimento em curso")
-                                : showRequerimentoFormDialog(context);
-                          }
+                          showRequerimentoFormDialog(context);
                         },
                         icon: Icon(Icons.add),
                         label: Text('Iniciar Requerimento'),
                       ),
-                      SizedBox(height: defaultPadding),
+                      SizedBox(height: screenPadding),
                       RequerimentosTable(
                         user: widget.user,
                         requerimentos: requerimentos,
                         updateTable: updateTable,
                       ),
                       if (Responsive.isMobile(context))
-                        SizedBox(height: defaultPadding),
+                        SizedBox(height: screenPadding),
                     ],
                   ),
                 ),
                 if (!Responsive.isMobile(context))
-                  SizedBox(width: defaultPadding),
+                  SizedBox(width: screenPadding),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -107,6 +96,9 @@ class _RequerimentosState extends State<Requerimentos> {
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.8,
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              minHeight: MediaQuery.of(context).size.height * 0.8,
+              minWidth: MediaQuery.of(context).size.width * 0.8,
             ),
             child: SingleChildScrollView(
               child: RequerimentoForm(

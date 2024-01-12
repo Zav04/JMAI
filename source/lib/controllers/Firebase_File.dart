@@ -1,25 +1,28 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'dart:html' as html;
-import 'dart:convert';
 
-Future<String?> uploadFileToFirebase(html.File file) async {
+Future<String?> uploadFileFireBase(PlatformFile pickedFile) async {
   try {
-    String filePath = 'docs/${file.name}';
+    // Obtem o caminho do arquivo e cria um arquivo a partir dele
+    File file = File(pickedFile.path!);
+
+    // Define o caminho no Firebase Storage
+    String filePath = 'docs/${pickedFile.name}';
     firebase_storage.Reference ref =
         firebase_storage.FirebaseStorage.instance.ref(filePath);
 
-    final reader = html.FileReader();
-    reader.readAsDataUrl(file);
-    await reader.onLoad.first;
+    // Cria a tarefa de upload
+    firebase_storage.UploadTask uploadTask = ref.putFile(file);
 
-    final bytes =
-        Base64Decoder().convert(reader.result.toString().split(",").last);
-    firebase_storage.UploadTask uploadTask = ref.putData(
-        bytes, firebase_storage.SettableMetadata(contentType: file.type));
-    firebase_storage.TaskSnapshot snapshot = await uploadTask;
-    String downloadUrl = await snapshot.ref.getDownloadURL();
-    return downloadUrl;
+    // Inicia o upload e espera sua conclusão
+    await uploadTask.whenComplete(() {});
+
+    // Retorna a URL do arquivo após o upload
+    return await ref.getDownloadURL();
   } catch (e) {
+    // Tratamento de exceções
+    print(e);
     return null;
   }
 }

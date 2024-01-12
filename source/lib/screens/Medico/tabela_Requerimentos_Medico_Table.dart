@@ -5,7 +5,6 @@ import 'package:JMAI/Class/Utilizador.dart';
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:JMAI/screens/main/components/Descriptions.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
@@ -15,6 +14,7 @@ import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:intl/intl.dart';
 import 'package:JMAI/screens/main/components/DecimalInputFormatter.dart';
 import 'package:JMAI/overlay/WarningAlert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RequerimentosMedicoTable extends StatefulWidget {
   final Utilizador user;

@@ -5,15 +5,17 @@ import 'package:JMAI/Class/Requerimento.dart';
 import 'package:JMAI/Class/Utente.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/widgets.dart' as pw;
-import 'dart:html' as html;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
   final pdf = pw.Document();
   final imageBytes = await rootBundle.load('assets/images/Footer.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
 
-  final fontData = await rootBundle.load("fonts/NotoSans-Regular.ttf");
-  final ttf = pw.Font.ttf(fontData.buffer.asByteData());
+  //final fontData = await rootBundle.load("fonts/NotoSans-Regular.ttf");
+  //final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
   pdf.addPage(
     pw.Page(
@@ -158,13 +160,11 @@ Future<void> requerimentoPdf(Utente utente, Requerimento requerimento) async {
   );
 
   Uint8List pdfInBytes = await pdf.save();
-
-  final blob = html.Blob([pdfInBytes]);
-  final url = html.Url.createObjectUrlFromBlob(blob);
-  final anchor = html.AnchorElement(href: url)
-    ..setAttribute("download", "Requerimento.pdf")
-    ..click();
-  html.Url.revokeObjectUrl(url);
+  final directory = await getApplicationDocumentsDirectory();
+  final file = File('${directory.path}/Requerimento.pdf');
+  await file.writeAsBytes(pdfInBytes);
+  await Share.shareFiles(['${directory.path}/Requerimento.pdf'],
+      text: 'Requerimento.pdf');
 }
 
 Future<void> preAvalicaoPdf(
@@ -174,8 +174,8 @@ Future<void> preAvalicaoPdf(
   final imageBytes = await rootBundle.load('assets/images/Footer.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
 
-  final fontData = await rootBundle.load("fonts/NotoSans-Regular.ttf");
-  final ttf = pw.Font.ttf(fontData.buffer.asByteData());
+  //final fontData = await rootBundle.load("fonts/NotoSans-Regular.ttf");
+  //final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
   pdf.addPage(
     pw.Page(
@@ -367,12 +367,11 @@ Future<void> preAvalicaoPdf(
 
   Uint8List pdfInBytes = await pdf.save();
 
-  final blob = html.Blob([pdfInBytes]);
-  final url = html.Url.createObjectUrlFromBlob(blob);
-  final anchor = html.AnchorElement(href: url)
-    ..setAttribute("download", "PreAvalição.pdf")
-    ..click();
-  html.Url.revokeObjectUrl(url);
+  final directory = await getApplicationDocumentsDirectory();
+  final file = File('${directory.path}/Requerimento.pdf');
+  await file.writeAsBytes(pdfInBytes);
+  await Share.shareFiles(['${directory.path}/PreAvalicao.pdf'],
+      text: 'PreAvaliacao.pdf');
 }
 
 pw.Widget _buildTitle(String title) {

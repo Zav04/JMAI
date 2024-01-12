@@ -1,7 +1,7 @@
 import 'package:JMAI/Class/Utilizador.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:JMAI/controllers/Firebase_File.dart';
 import 'package:JMAI/overlay/ErrorAlert.dart';
@@ -27,7 +27,7 @@ class RequerimentoForm extends StatefulWidget {
 }
 
 class _RequerimentoFormState extends State<RequerimentoForm> {
-  List<html.File> uploadedFiles = [];
+  List<PlatformFile> uploadedFiles = [];
   List<String> uploadedFilesUrls = [];
 
   bool _aceitaTermos = false;
@@ -96,6 +96,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                       fontStyle: FontStyle.normal,
                       letterSpacing: 1.2,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 20),
                   Column(
@@ -160,37 +161,39 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                         controlAffinity: ListTileControlAffinity.leading,
                         contentPadding: EdgeInsets.symmetric(vertical: 12.0),
                       ),
-                      Row(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InkWell(
-                            onTap: () {
+                          CheckboxListTile(
+                            title: Text(
+                                'Já foi submetido a Junta Médica anteriormente?'),
+                            value: _jaSubmeti,
+                            onChanged: (bool? valor) {
                               setState(() {
-                                _jaSubmeti = !_nuncaSubmeti;
-                                if (_jaSubmeti) _nuncaSubmeti = false;
+                                _jaSubmeti = valor!;
+                                _nuncaSubmeti =
+                                    !_jaSubmeti; // Assegura que _nuncaSubmeti seja o oposto de _jaSubmeti
                               });
                             },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Checkbox(
-                                    value: _jaSubmeti,
-                                    onChanged: _nuncaSubmeti
-                                        ? null
-                                        : (bool? valor) {
-                                            setState(() {
-                                              _jaSubmeti = valor!;
-                                              if (_jaSubmeti)
-                                                _nuncaSubmeti = false;
-                                            });
-                                          },
-                                  ),
-                                  Text(
-                                    'Ja foi submetido em',
-                                    style: TextStyle(fontSize: 16.0),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 12.0),
+                          ),
+                          if (_jaSubmeti) // Só mostra os campos abaixo se _jaSubmeti for verdadeiro
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left:
+                                      20.0), // Indenta os widgets para alinhamento
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text(
+                                      'Data da última Junta Médica',
+                                      style: TextStyle(fontSize: 16.0),
+                                    ),
                                   ),
                                   Container(
                                     width: 250,
@@ -211,38 +214,34 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                                           borderSide:
                                               BorderSide(color: Colors.blue),
                                         ),
-                                        suffixIcon: IconButton(
-                                          icon:
-                                              const Icon(Icons.calendar_today),
-                                          onPressed: _jaSubmeti == false
-                                              ? null
-                                              : () async {
-                                                  await presentDatePicker(
-                                                      context,
-                                                      _dataJuntaMedica);
-                                                },
-                                        ),
+                                        suffixIcon: Icon(Icons.calendar_today),
                                       ),
                                       keyboardType: TextInputType.datetime,
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
                                             RegExp(r'[0-9\-]')),
+                                        // Supondo que createAutoHyphenDateFormatter() é uma função que você criou
                                         createAutoHyphenDateFormatter(),
                                       ],
+                                      onTap: () async {
+                                        await presentDatePicker(
+                                            context, _dataJuntaMedica);
+                                      },
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(', Pretendo uma Reavaliação',
-                                        style: TextStyle(fontSize: 16.0)),
+                                        vertical: 12.0),
+                                    child: Text(
+                                      'Pretendo uma Reavaliação',
+                                      style: TextStyle(fontSize: 16.0),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                   CheckboxListTile(
@@ -275,13 +274,14 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 20),
+                      SizedBox(width: 10),
                       Flexible(
                         child: ElevatedButton(
                           onPressed: _isFormValid() ? _submitForm : null,
                           child: Text(
-                            'Submeter Requerimento',
-                            style: TextStyle(color: buttonTextColor),
+                            'Submeter ',
+                            style:
+                                TextStyle(color: buttonTextColor, fontSize: 14),
                           ),
                           style: ElevatedButton.styleFrom(
                             primary: buttonColor,
@@ -300,18 +300,25 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   }
 
   void _pickFile() async {
-    final html.FileUploadInputElement input = html.FileUploadInputElement()
-      ..accept = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg';
-    input.click();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'png',
+        'jpg',
+        'jpeg'
+      ],
+    );
 
-    input.onChange.listen((e) {
-      final files = input.files;
-      if (files != null && files.isNotEmpty) {
-        setState(() {
-          uploadedFiles.addAll(files);
-        });
-      }
-    });
+    if (result != null) {
+      List<PlatformFile> files = result.files;
+      // Faça algo com os arquivos
+    }
   }
 
   Widget buildFileIcon(String fileName, String assetName) {
@@ -443,7 +450,7 @@ class _RequerimentoFormState extends State<RequerimentoForm> {
   void _submitForm() async {
     if (uploadedFiles.length > 0) {
       for (var file in uploadedFiles) {
-        String? fileUrl = await uploadFileToFirebase(file);
+        String? fileUrl = await uploadFileFireBase(file);
         if (fileUrl != null) {
           uploadedFilesUrls.add(fileUrl);
         } else {

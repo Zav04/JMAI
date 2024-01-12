@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:JMAI/Class/Requerimento_DadosUtente.dart';
 import 'package:JMAI/screens/main/components/constants.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:JMAI/screens/main/components/Descriptions.dart';
 import 'package:JMAI/screens/main/components/Etiquetas.dart';
@@ -11,6 +10,7 @@ import 'package:JMAI/overlay/ErrorAlert.dart';
 import 'package:JMAI/overlay/SuccessAlert.dart';
 import 'package:intl/intl.dart';
 import 'package:JMAI/overlay/WarningAlert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RequerimentosSCTable extends StatefulWidget {
   final List<Requerimento_DadosUtente> requerimentos;
@@ -91,24 +91,51 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               ),
             ],
           ),
-          SizedBox(
-            width: double.infinity,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: DataTable(
               columnSpacing: defaultPadding,
               columns: const [
-                DataColumn(label: Text('CODIGO')),
-                DataColumn(label: Text('NOME DO UTENTE')),
-                DataColumn(label: Text('NÚMERO DE SAÚDE')),
-                DataColumn(label: Text('TIPO REQUERIMENTO')),
-                DataColumn(label: Text('DATA DO PEDIDO')),
-                DataColumn(label: Text('AÇÕES')),
+                DataColumn(
+                    label: Text(
+                  'CODIGO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'NOME DO UTENTE',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'NÚMERO DE SAÚDE',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'TIPO REQUERIMENTO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'DATA DO PEDIDO',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
+                DataColumn(
+                    label: Text(
+                  'AÇÕES',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                )),
               ],
               rows: sortRequerimentos()
                   .map((requerimento) => DataRow(
                         cells: [
                           DataCell(Text(
-                            'REQ/' + requerimento.idRequerimento.toString(),
-                          )),
+                              'REQ/' + requerimento.idRequerimento.toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                              ))),
                           DataCell(Text(
                             requerimento.nomeCompleto,
                           )),
@@ -166,7 +193,7 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                   'DETALHES DO REQUERIMENTO',
                   style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 20,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -397,27 +424,19 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
                                         ' e requer reavaliação'),
                                 SizedBox(height: 5),
                               ],
-                              Row(
-                                children: [
-                                  Text('Tipo do Requerimento: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  tipoRequerimentoBlend.widget,
-                                ],
-                              ),
+                              Text('Tipo do Requerimento: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              tipoRequerimentoBlend.widget,
                               SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Estado do Requerimento: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
-                                  ),
-                                  estadoRequerimentoBlend.widget,
-                                ],
+                              Text(
+                                'Estado do Requerimento: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey),
                               ),
+                              estadoRequerimentoBlend.widget,
                               SizedBox(height: 2),
                               Divider(
                                 color: Colors.white,
@@ -460,55 +479,63 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
             ),
           ),
           actions: <Widget>[
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: TextButton(
-                      onPressed: () async {
-                        await _submitValidarRequerimento(requerimento.hashedId);
-                        sendEmailRequerimentoAceite(requerimento.emailUtente!);
-                        widget.updateTable();
-                        Navigator.of(dialogContext).pop();
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        primary: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: Text('VALIDAR REQUERIMENTO'),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: TextButton(
-                      onPressed: () async {
-                        await _showRecusarObservacoes(context, requerimento);
-                        if (closed == false) {
-                          await _submitRecusarRequerimento(
+            Center(
+              child: Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      height: 60,
+                      child: TextButton(
+                        onPressed: () async {
+                          await _submitValidarRequerimento(
                               requerimento.hashedId);
+                          sendEmailRequerimentoAceite(
+                              requerimento.emailUtente!);
                           widget.updateTable();
                           Navigator.of(dialogContext).pop();
-                        }
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        primary: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          primary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          alignment: Alignment.center,
+                          textStyle: TextStyle(fontSize: 12),
                         ),
+                        child: Text('VALIDAR REQUERIMENTO'),
                       ),
-                      child: Text('CANCELAR REQUERIMENTO'),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 15),
+                    SizedBox(
+                      width: 120,
+                      height: 60,
+                      child: TextButton(
+                        onPressed: () async {
+                          await _showRecusarObservacoes(context, requerimento);
+                          if (closed == false) {
+                            await _submitRecusarRequerimento(
+                                requerimento.hashedId);
+                            widget.updateTable();
+                            Navigator.of(dialogContext).pop();
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          primary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          alignment: Alignment.center,
+                          textStyle: TextStyle(fontSize: 12),
+                        ),
+                        child: Text('CANCELAR REQUERIMENTO'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -718,14 +745,14 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               Expanded(
                 child: Text(fileName, overflow: TextOverflow.ellipsis),
               ),
-              SizedBox(width: 20),
+              SizedBox(width: 2),
               ElevatedButton(
                   child: Text('Download'),
                   onPressed: () => openDocument(documento),
                   style: ElevatedButton.styleFrom(
                     primary: buttonColor,
                     onPrimary: buttonTextColor,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
