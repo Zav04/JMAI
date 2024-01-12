@@ -227,7 +227,8 @@ class _RequerimentosTableState extends State<RequerimentosTable> {
                                       await preAvalicaoPdf(
                                           utente, requerimento, preAvalicao);
                                     }
-                                    if (requerimento.status == 3) {
+                                    if (requerimento.status == 3 ||
+                                        requerimento.status == 4) {
                                       if (requerimento.status >= 2 &&
                                           requerimento.status <= 6) {
                                         await preAvalicaoData(
