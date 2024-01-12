@@ -115,230 +115,244 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
             style: Theme.of(context).textTheme.headline6,
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              Flexible(
-                child: TextField(
-                  controller: _nomeCompletoController,
-                  decoration: InputDecoration(
-                    labelText: 'Nome Completo',
-                    hintText: 'Insira o seu Nome Completo',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                ),
+          TextField(
+            controller: _nomeCompletoController,
+            decoration: InputDecoration(
+              labelText: 'Nome Completo',
+              hintText: 'Insira o seu Nome Completo',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
               ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: TextFormField(
-                  controller: _dataDeNascimentoController,
-                  decoration: InputDecoration(
-                    labelText: 'Data de Nascimento',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          await presentDatePicker(
-                              context, _dataDeNascimentoController);
-                        }),
-                  ),
-                  keyboardType: TextInputType.datetime,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]')),
-                    createAutoHyphenDateFormatter(),
-                  ],
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Insira a sua Data de Nascimento';
-                    }
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _dataDeNascimentoController,
+            decoration: InputDecoration(
+              labelText: 'Data de Nascimento',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              suffixIcon: IconButton(
+                  icon: const Icon(Icons.calendar_today),
+                  onPressed: () async {
+                    await presentDatePicker(
+                        context, _dataDeNascimentoController);
+                  }),
+            ),
+            keyboardType: TextInputType.datetime,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]')),
+              createAutoHyphenDateFormatter(),
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira a sua Data de Nascimento';
+              }
 
-                    return null;
-                  },
-                ),
+              return null;
+            },
+          ),
+          SizedBox(height: 20),
+          TextFormField(
+            controller: _telefoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              labelText: 'Telefone',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
               ),
-              SizedBox(width: 20),
-              Flexible(
-                child: TextFormField(
-                  controller: _telefoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: 'Telefone',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    prefixText: '+351 ',
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(9),
-                  ],
-                ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
               ),
-              SizedBox(width: 20),
-              Flexible(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedGender,
-                  items: <String>['Masculino', 'Feminimo']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedGender = newValue!;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Genero',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                  ),
-                  isExpanded: true,
-                ),
-              ),
+              prefixText: '+351 ',
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(9),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Flexible(
-                child: TextFormField(
-                  controller: _nrCedula,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Nº Cedula Medico',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(9),
-                  ],
-                ),
+          SizedBox(height: 20),
+          DropdownButtonFormField<String>(
+            value: _selectedGender,
+            items: <String>['Masculino', 'Feminimo']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (newValue) {
+              setState(() {
+                _selectedGender = newValue!;
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Genero',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
               ),
-              SizedBox(width: 20),
-              Flexible(
-                child: TextFormField(
-                  controller: _nrOrdem,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Nº Ordem Médicos',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(5),
-                  ],
-                ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
               ),
-              SizedBox(width: 20),
-              Flexible(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Especialidade',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      elevation: 0,
-                      value: _selectedEspecialidade,
-                      hint: Text('Especialidade'),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedEspecialidade = newValue;
-                        });
-                      },
-                      items: especialidade
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList(),
-                      isExpanded: true,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            ),
+            isExpanded: true,
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              Flexible(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Distrito',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+          TextFormField(
+            controller: _nrCedula,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: 'Nº Cedula Medico',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(9),
+            ],
+          ),
+          SizedBox(height: 20),
+          TextFormField(
+            controller: _nrOrdem,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: 'Nº Ordem Médicos',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(5),
+            ],
+          ),
+          SizedBox(height: 20),
+          InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Especialidade',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                elevation: 0,
+                value: _selectedEspecialidade,
+                hint: Text('Especialidade'),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedEspecialidade = newValue;
+                  });
+                },
+                items:
+                    especialidade.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
+                  );
+                }).toList(),
+                isExpanded: true,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Distrito',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                elevation: 0,
+                value: _selectedDistrito,
+                hint: Text('Distrito'),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedDistrito = newValue;
+                    _selectedConcelho = null;
+                    _selectedFreguesia = null;
+                  });
+                },
+                items: distritos.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      elevation: 0,
-                      value: _selectedDistrito,
-                      hint: Text('Distrito'),
-                      onChanged: (newValue) {
+                  );
+                }).toList(),
+                isExpanded: true,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Concelho',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                elevation: 0,
+                value: _selectedConcelho,
+                hint: Text('Concelho'),
+                onChanged: _selectedDistrito == null
+                    ? null
+                    : (newValue) {
                         setState(() {
-                          _selectedDistrito = newValue;
-                          _selectedConcelho = null;
+                          _selectedConcelho = newValue;
                           _selectedFreguesia = null;
                         });
                       },
-                      items: distritos
-                          .map<DropdownMenuItem<String>>((String value) {
+                items: _selectedDistrito == null
+                    ? []
+                    : concelhos[_selectedDistrito]!
+                        .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
@@ -347,160 +361,98 @@ class _SignupMedicoFormState extends State<SignupMedicoForm> {
                           ),
                         );
                       }).toList(),
-                      isExpanded: true,
-                    ),
-                  ),
-                ),
+                isExpanded: true,
               ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Concelho',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      elevation: 0,
-                      value: _selectedConcelho,
-                      hint: Text('Concelho'),
-                      onChanged: _selectedDistrito == null
-                          ? null
-                          : (newValue) {
-                              setState(() {
-                                _selectedConcelho = newValue;
-                                _selectedFreguesia = null;
-                              });
-                            },
-                      items: _selectedDistrito == null
-                          ? []
-                          : concelhos[_selectedDistrito]!
-                              .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            }).toList(),
-                      isExpanded: true,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Freguesia',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      elevation: 0,
-                      value: _selectedFreguesia,
-                      hint: Text('Freguesia'),
-                      onChanged: _selectedConcelho == null
-                          ? null
-                          : (newValue) {
-                              setState(() {
-                                _selectedFreguesia = newValue;
-                              });
-                            },
-                      items: _selectedConcelho == null
-                          ? []
-                          : freguesias[_selectedConcelho]!
-                              .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            }).toList(),
-                      isExpanded: true,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedpais,
-                  items: naturalidade
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedpais = newValue!;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Nacionalidade',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  ),
-                  isExpanded: true,
-                ),
-              ),
-            ],
+            ),
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              Flexible(
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Insira o seu Email para o Registro',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                ),
+          InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Freguesia',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
               ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: PasswordField(controller: _passwordController),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
               ),
-            ],
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                elevation: 0,
+                value: _selectedFreguesia,
+                hint: Text('Freguesia'),
+                onChanged: _selectedConcelho == null
+                    ? null
+                    : (newValue) {
+                        setState(() {
+                          _selectedFreguesia = newValue;
+                        });
+                      },
+                items: _selectedConcelho == null
+                    ? []
+                    : freguesias[_selectedConcelho]!
+                        .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                isExpanded: true,
+              ),
+            ),
           ),
-          const SizedBox(height: 150),
+          const SizedBox(height: 20),
+          DropdownButtonFormField<String>(
+            value: _selectedpais,
+            items: naturalidade.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (newValue) {
+              setState(() {
+                _selectedpais = newValue!;
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Nacionalidade',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            ),
+            isExpanded: true,
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            keyboardType: TextInputType.emailAddress,
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'Insira o seu Email para o Registro',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          PasswordField(controller: _passwordController),
+          const SizedBox(height: 50),
           ElevatedButton(
             onPressed: () {
               registerSubmit();
