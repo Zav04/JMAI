@@ -172,3 +172,17 @@ label.light {
     resize: vertical;
   }
 }
+
+
+#submitBtn:disabled {
+  background-color: #cccccc; /* Cinza */
+  color: #666666;
+  cursor: not-allowed;
+}
+
+/* Estilo do botão quando estiver habilitado */
+#submitBtn {
+  background-color: #668239;; /* Azul */
+  color: white;
+  cursor: pointer;
+}

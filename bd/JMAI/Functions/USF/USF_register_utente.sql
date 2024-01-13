@@ -3,12 +3,13 @@ p_email VARCHAR(255),
 p_password VARCHAR(255),
 p_numero_utente_saude VARCHAR(255),
 p_justvalidation_inputs BOOL
-) RETURNS BOOL AS $$
+) RETURNS BIGINT AS $$
 DECLARE
   v_id_utilizador BIGINT;
   v_morada_completa TEXT;
   v_id_entidade_responsavel BIGINT;
   v_tipo_documento_identificacao BIGINT;
+  v_numero_utente_NSS BIGINT;
 BEGIN
 	
 	IF p_numero_utente_saude IS NULL or p_numero_utente_saude='' THEN
@@ -18,6 +19,12 @@ BEGIN
 	IF LENGTH(p_numero_utente_saude) <> 9 THEN
     RAISE EXCEPTION 'O Número de Utente de Saúde deve conter exatamente 9 dígitos.';
 	END IF;
+	
+	v_numero_utente_NSS:=p_numero_utente_saude::BIGINT;
+
+	IF verificar_numero_utente_existente(v_numero_utente_NSS) THEN
+	   RAISE EXCEPTION 'O Número de Utente de Saúde ja esta registada.';
+    END IF;
 	
 	IF is_email_valid(p_email) IS FALSE THEN
         RAISE EXCEPTION 'Email não é valido';
@@ -46,11 +53,10 @@ BEGIN
     numero_utente_saude       
   ) VALUES (
     v_id_utilizador,
-    p_numero_utente_saude::BIGINT  
+    v_numero_utente_NSS
   );
  END IF;
 
-RETURN TRUE;
+RETURN v_id_utilizador;
 END;
 $$ LANGUAGE plpgsql;
-

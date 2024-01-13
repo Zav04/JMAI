@@ -352,21 +352,6 @@ async def send_email_preavalicao(preavalicao: SendEmailPreAvaliacao):
         return {"error": str(e)}
 
 
-
-@post_router.post("/rnu_verificar_existe_nss/")
-async def rnu_verificar_existe_nss(NNS: RNU):
-    async with httpx.AsyncClient() as client:
-        try:
-            response = await client.post('http://localhost:5000/RNU_GET_NNS_EXIST/', json={"NNS": NNS.NNS})
-            response.raise_for_status()
-            return response.json()
-        except httpx.RequestError as exc:
-            raise HTTPException(status_code=400, detail=f"Erro ao se conectar com a API: {exc}") 
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(status_code=exc.response.status_code, detail=f"Erro na resposta da API: {exc.response.content}")
-        
-        
-
 @post_router.post("/rnu_get_dados_nss/")
 async def rnu_get_dados_nss(NNS: RNU):
     async with httpx.AsyncClient() as client:
@@ -483,18 +468,66 @@ async def verificar_requerimento_existente(hashedid: Search, db: SessionLocal = 
 @post_router.post("/USF_insert/")
 async def USF_insert(usf: USF, db: SessionLocal = Depends(get_db)):
     try:
+        #Primerio validar se Existe o NSS no RNU
+        NSS=int(usf.numero_utente)
+        rnu_local = RNU(NNS=NSS)
+        response = await rnu_get_dados_nss(rnu_local)
+        if response['response'] == []:
+            return {"error": "Número de Sáude Não Existe no RNU"}
+        
+        #Depois validar se o o email e o NSS já existe na BD
+        query = text("SELECT * FROM USF_register_utente(:email,:password,:NNS, :validationInputs);")
+        response = db.execute(query, {"email": usf.email, "password": usf.password, "NNS": usf.numero_utente, "validationInputs": True})
 
         query = text("SELECT * FROM USF_register_utente(:email,:password,:NNS, :validationInputs);")
-        result = db.execute(query, {"email": usf.email, "password": usf.password, "NNS": usf.numero_utente, "validationInputs": True})
-        result = result.scalar()
-        return {"response": result}
+        response = db.execute(query, {"email": usf.email, "password": usf.password, "NNS": usf.numero_utente, "validationInputs": False})
+        response = response.scalar()
+        id_utilizador=response
+        db.commit()
+        
+        #Fazer Registo no FireBase
+        firebase_local = UserSignup(email=usf.email,password=usf.password)
+        response= await create_user(firebase_local)
+        
+        type='multiuso'
+        if(usf.tipo_requerimento==type):
+            type=1
+        else:
+            type=2
+        
+        submisao= 'primeira_vez'
+        if(usf.tipo_submissao==submisao):
+            submisao=1
+        else:
+            submisao=2
+        
+        if(submisao==1):
+            query = text("SELECT * FROM insert_requerimento_junta_medica_SNS(:id_utilizador,:documentos,:type,:nuncaSubmetido,:submetido,:data_submissao);")
+            response = db.execute(query, {"id_utilizador": id_utilizador, "documentos": "[]", "type": type, "nuncaSubmetido": True, "submetido": False,"data_submissao":""})
+            response = response.scalar()
+            db.commit()
+        else:
+            query = text("SELECT * FROM insert_requerimento_junta_medica_SNS(:id_utilizador,:documentos,:type,:nuncaSubmetido,:submetido,:data_submissao);")
+            response = db.execute(query, {"id_utilizador": id_utilizador, "documentos": "[]", "type": type, "nuncaSubmetido": False, "submetido": True,"data_submissao":usf.data_avaliacao})
+            response = response.scalar()
+            db.commit()
+        
+        return {"response": response}
     except SQLAlchemyError as e:
         error_msg = str(e.__dict__['orig'])
         error_msg = error_msg.split('\n')[0]
+        db.rollback()
         return {"error": error_msg}
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
+    
+    
+
+    
+    #Depois inserir na BD
+    #Depois inserir na Firebase
+    
 
 
 

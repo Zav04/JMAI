@@ -76,8 +76,7 @@
 
 
 
-    <button type="submit">Enviar Requerimento</button>
-
+    <button type="submit" id="submitBtn" disabled>Enviar Requerimento</button>
   </form>
 </body>
 
@@ -149,6 +148,77 @@
         console.error("Error:", error);
       });
   });
+</script>
+
+<script>
+  function verificarCampos() {
+  let email = document.getElementById("email").value;
+  let password = document.getElementById("password").value;
+  let numeroUtente = document.getElementById("numeroUtente").value;
+  let tipoRequerimento = document.querySelector('input[name="tipo_requerimento"]:checked');
+  let tipoSubmissao = document.querySelector('input[name="tipo_submissao"]:checked');
+  let terms = document.getElementById("terms").checked;
+
+  let camposPreenchidos = email && password && numeroUtente && tipoRequerimento && tipoSubmissao && terms;
+
+  // Se o tipo de submissão for "segunda_vez", verificar também o campo data_avaliacao
+  if (tipoSubmissao && tipoSubmissao.value === "segunda_vez") {
+    let dataAvaliacao = document.getElementById("data_avaliacao").value;
+    camposPreenchidos = camposPreenchidos && dataAvaliacao;
+  }
+
+  document.getElementById("submitBtn").disabled = !camposPreenchidos;
+}
+
+// Adicione o evento de ouvinte para todos os campos relevantes
+document.getElementById("email").addEventListener("input", verificarCampos);
+document.getElementById("password").addEventListener("input", verificarCampos);
+document.getElementById("numeroUtente").addEventListener("input", verificarCampos);
+document.querySelectorAll('input[name="tipo_requerimento"]').forEach((input) => {
+  input.addEventListener("change", verificarCampos);
+});
+document.querySelectorAll('input[name="tipo_submissao"]').forEach((input) => {
+  input.addEventListener("change", verificarCampos);
+});
+document.getElementById("terms").addEventListener("change", verificarCampos);
+document.getElementById("data_avaliacao").addEventListener("input", verificarCampos);
+
+// Verificar os campos quando a página é carregada
+document.addEventListener("DOMContentLoaded", verificarCampos);
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const submitBtn = document.getElementById('submitBtn');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const numeroUtenteInput = document.getElementById('numeroUtente');
+  const tipoRequerimentoRadios = document.querySelectorAll('input[name="tipo_requerimento"]');
+  const tipoSubmissaoRadios = document.querySelectorAll('input[name="tipo_submissao"]');
+  const termosCheckbox = document.getElementById('terms');
+
+  function verificarCampos() {
+  const isEmailFilled = emailInput.value.trim() !== '';
+  const isPasswordFilled = passwordInput.value.trim() !== '';
+  const isNumeroUtenteFilled = numeroUtenteInput.value.trim() !== '';
+  const isTipoRequerimentoSelected = Array.from(tipoRequerimentoRadios).some(radio => radio.checked);
+  const isTipoSubmissaoSelected = Array.from(tipoSubmissaoRadios).some(radio => radio.checked);
+  const isTermosChecked = termosCheckbox.checked;
+  const isDataAvaliacaoFilled = tipoSubmissaoRadios[1].checked ? dataAvaliacaoInput.value.trim() !== '' : true;
+
+  submitBtn.disabled = !(isEmailFilled && isPasswordFilled && isNumeroUtenteFilled && isTipoRequerimentoSelected && isTipoSubmissaoSelected && isTermosChecked && isDataAvaliacaoFilled);
+}
+
+  // Adicionar evento de 'input' para verificar a cada mudança
+  emailInput.addEventListener('input', verificarCampos);
+  passwordInput.addEventListener('input', verificarCampos);
+  numeroUtenteInput.addEventListener('input', verificarCampos);
+  tipoRequerimentoRadios.forEach(radio => radio.addEventListener('change', verificarCampos));
+  tipoSubmissaoRadios.forEach(radio => radio.addEventListener('change', verificarCampos));
+  termosCheckbox.addEventListener('change', verificarCampos);
+
+  verificarCampos(); // Verificação inicial
+});
 </script>
 
 </html>
