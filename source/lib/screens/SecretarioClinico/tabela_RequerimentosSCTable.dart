@@ -584,8 +584,8 @@ class _RequerimentosTableSCState extends State<RequerimentosSCTable> {
               ),
               onPressed: () async {
                 if (_recusadoController.text.isEmpty) {
-                  WarningAlert.show(
-                      context, 'Por favor preencha o campo de observações');
+                  WarningAlert.show(context,
+                      'Por favor preencha o campo de detalhes sobre a recusa do requerimento');
                   setState(() {
                     closed = true;
                   });

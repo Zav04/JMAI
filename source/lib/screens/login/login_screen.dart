@@ -174,7 +174,7 @@ class _LoginScreen extends State<LoginScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'Registro na Aplicação',
+                  'Registro na Plantaforma',
                   textAlign: TextAlign.center,
                   style: TextStyle(),
                 ),
